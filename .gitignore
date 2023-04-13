@@ -1,3 +1,10 @@
+# executables
+pschism_*
+out
+err
+out.*
+err.*
+
 # Prerequisites
 *.d
 
