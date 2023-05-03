@@ -20,7 +20,10 @@ module load cmaq-libs/intel2018.4-ncdf4
 cd build
 cmake -C ../cmake/SCHISM.local.build -C ../cmake/SCHISM.local.comet ../src/
 make
-cd ..
-cd Test_ECO_Toy
-cp ../build2/bin/pschism_COMET_TVD-VL .  
+cp pschism_COMET_GEN_DEBUG_DEBUG_GEN_TVD-VL ../cgem-real 
+```
+
+The source code is here:
+```
+/rsstu/users/l/lllowe/cgem/schism-cgem/src/CGEM
 ```
