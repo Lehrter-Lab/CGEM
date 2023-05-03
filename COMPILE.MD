@@ -20,7 +20,7 @@ module load cmaq-libs/intel2018.4-ncdf4
 cd build
 cmake -C ../cmake/SCHISM.local.build -C ../cmake/SCHISM.local.comet ../src/
 make
-cp bin/pschism_COMET_GEN_DEBUG_DEBUG_GEN_TVD-VL ../cgem-real 
+cp bin/pschism_COMET_GEN_DEBUG_DEBUG_GEN_TVD-VL ../../cgem-real 
 ```
 
 The source code is here:
