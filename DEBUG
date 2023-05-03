@@ -13,3 +13,13 @@ In hydro/schism_init.F90, comment out grid_setup.
 
 Duh, I was not copying to the right place
 
+But it still crashed.
+
+Now I'm just going to get fresh copies of schism_step and _init.
+
+It had the toy model, so it crashed.  I commented out the stuff.
+
+ACKKK, SCHISM just barfs with the -check flag on.
+
+Guess I should have stuck with write statements.
+
