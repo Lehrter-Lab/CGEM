@@ -1,0 +1,15 @@
+Debugging.
+
+5.3.2023
+I am getting an error in SCHISM.  Hopefully ARM DDT will be available soon.
+
+Try: comment out call to cgem_run in hydro/schism_step.F90
+Still crashes
+
+In hydro/schism_init.F90, comment out cgem_setup.
+Still crashes
+
+In hydro/schism_init.F90, comment out grid_setup.
+
+Duh, I was not copying to the right place
+
