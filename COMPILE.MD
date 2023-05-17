@@ -17,8 +17,10 @@ For intel:
 ```
 module load cmake
 module load cmaq-libs/intel2018.4-ncdf4
+cd /rsstu/users/l/lllowe/cgem/schism-cgem/
+mkdir build
 cd build
-cmake -C ../cmake/SCHISM.local.build -C ../cmake/SCHISM.local.comet ../src/
+cmake -C ../cmake/SCHISM.cgem.build -C ../cmake/SCHISM.local.comet ../src/
 make
 cp bin/pschism_COMET_GEN_DEBUG_DEBUG_GEN_TVD-VL ../../cgem-real 
 ```
