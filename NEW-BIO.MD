@@ -16,18 +16,39 @@ vi CGEM/CMakeLists.txt
 The modify:
 ```
 set(schismmodlibs cgem ${schismmodlibs} PARENT_SCOPE)
-add_library(cgem cgem_module.F90
-                 cgem_step.F90)
-
+add_library(cgem grid.F90 grid_setup.F90 cgem.F90 cgem_setup.F90 cgem_run.F90 cgem_step.F90
+calc_solar_zenith.F90
+cgem_growth.F90
+cgem_light.F90
+cgem_misc.F90
+cgem_utils.F90
+DailyRad_init.F90
+date_time.F90
+Model_Diagenesis.F90
+SDM.F90
+Sediment_Diagenesis_Flux.F90
+Sediment_Diagenesis_Routines.F90
+moc_src/constants.F90
+moc_src/depth2press.F90
+moc_src/f2pCO2.F90
+moc_src/gasx.F90
+moc_src/p2fCO2.F90
+moc_src/p80.F90
+moc_src/phsolvers.F90
+moc_src/rho.F90
+moc_src/rhoinsitu.F90
+moc_src/singledouble.F90
+moc_src/sw_adtg.F90
+moc_src/sw_ptmp.F90
+moc_src/sw_temp.F90
+moc_src/vars.F90
+moc_src/varsolver.F90
+ )
 add_dependencies(cgem core ${schismmodlibs})
 target_link_libraries(cgem core ${schismmodlibs})
 ```
 
-Why isn't core in `schismmodlibs`?
-
-Add dummy `cgem_module` and `cgem_step`.F90s.
-
-In CMakeLists.txt, add:
+In src/CMakeLists.txt, add CGEM.  It starts as **OFF**, and then you turn it on in SCHISM.build script.  When called in the build script, turn on "GEN".  CGEM here is to include the directory, but we are using USE_GEN for if statements.
 ```
 add_module(EcoSim   USE_ECO   OFF)
 #L3 start
@@ -35,43 +56,3 @@ add_module(CGEM   USE_CGEM   OFF)
 #L3 end
 add_module(Sediment USE_SED   OFF)
 ```
-and in the cmake directory, SCHISM.local.build, add:
-```
-set( USE_CGEM ON   CACHE BOOLEAN "Use CGEM module")
-```
-
-## SCHISM code with USE_XXX
-Core:
-- schism_glbl - better to avoid this
-- scribe_io
-Hydro:
-- schism_init
-
-
-## schism_init
-```
-#ifdef USE_CGEM
-       use cgem_module, only:nf
-#endif
-
-#ifdef USE_CGEM
-      ntrs(13) = nf  !number of state variables nf 
-      tr_mname(13) = 'GEM' !Needs to be 3 characters
-#endif
-
-      !Total # of tracers (including T,S)
-      !The big tracer arrays are: tr_el(ntracers,nvrt,nea2),tr_nd0(ntracers,nvrt,npa)
-      !The order of each tracer modules can be seen above
-      ntracers=sum(ntrs(:)) !including T,S
-
-
-#ifdef USE_CGEM
-      iYrS=start_year
-      iMonS=start_month
-      iDayS=start_day
-      iHrS=start_hour
-      iMinS=0 !sim_minute
-      iSecS=0 !sim_second
-#endif
-```
-
