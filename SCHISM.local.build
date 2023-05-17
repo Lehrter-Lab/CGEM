@@ -19,7 +19,7 @@ set(NO_PARMETIS OFF CACHE BOOLEAN "Turn off ParMETIS")
 # TVD_LIM must be one of SB, VL, MM or OS for Superbee, Van Leer, Minmod, or Osher.")
 set (TVD_LIM VL CACHE STRING "Flux limiter")
 #Turn OLDIO off to use the new scribe based I/O
-set (OLDIO ON CACHE BOOLEAN "Old nc output (each rank dumps its own data)")
+set (OLDIO OFF CACHE BOOLEAN "Old nc output (each rank dumps its own data)")
 
 set (PREC_EVAP OFF CACHE BOOLEAN "Include precipitation and evaporation calculation")
 set (USE_BULK_FAIRALL OFF CACHE BOOLEAN "Enable Fairall bulk scheme for air-sea exchange")
@@ -46,7 +46,6 @@ set( USE_ICM OFF  CACHE BOOLEAN "Use ICM module")
 set( USE_COSINE OFF   CACHE BOOLEAN "Use CoSiNE module")
 set( USE_FIB OFF   CACHE BOOLEAN "Use fecal indicating bacteria module")
 set( USE_SED OFF   CACHE BOOLEAN "Use sediment module")
-set( USE_CGEM ON   CACHE BOOLEAN "Use CGEM module")
 
 set( USE_FABM OFF   CACHE BOOLEAN "FABM BGC model interface")
 #If FABM is on, need to set FABM_BASE (after cloning from Joseph's fork: https://github.com/josephzhang8/fabm.git).
