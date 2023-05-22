@@ -56,3 +56,4 @@ set( USE_DVD OFF CACHE BOOLEAN "DVD module interface")
 
 set (DEBUG OFF CACHE BOOLEAN "Enable diagnostic output")
 set (USE_ANALYSIS OFF CACHE BOOLEAN "Enable (somewhat costly) derviation of derived flow/stress quantities")
+ 

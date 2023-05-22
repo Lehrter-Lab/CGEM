@@ -1448,9 +1448,9 @@
 #ifdef USE_GEN
 !Now it has nvrt, you can initialize arrays
       if(myrank==0) write(16,*) 'Initialize CGEM: nvrt=',nvrt
-      call grid_setup(ntrs(3))
+      call grid_setup
       call cgem_setup(ntrs(3))
-      !if(myrank==0) write(16,*) "After cgem_setup"
+      if(myrank==0) write(16,*) "After cgem_setup"
 
 #endif
 
