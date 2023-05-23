@@ -22,7 +22,9 @@ mkdir build
 cd build
 cmake -C ../cmake/SCHISM.cgem.build -C ../cmake/SCHISM.local.comet ../src/
 make
-cp bin/pschism_COMET_GEN_DEBUG_DEBUG_GEN_TVD-VL ../../cgem-real 
+cp bin/pschism_GEN_GEN_TVD-VL ../../cgem-real 
+or
+cp bin/pschism_GEN_GEN_TVD-VL ../../sasj_bay_setup
 ```
 
 The source code is here:
