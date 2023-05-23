@@ -15,9 +15,9 @@ subroutine cgem_run(istep,myrank)
   integer, intent(in) :: istep,myrank
   integer :: itmp1,itmp2,i,ierr,m,im,mm,k,TC_8
   real :: SDay
-  if(myrank==0) write(16,*) "In cgem_run: istep,dt=",istep,dt
+!  if(myrank==0) write(16,*) "In cgem_run: istep,dt=",istep,dt
 
-  if(myrank==0) write(16,*) "From grid: km=",km
+!  if(myrank==0) write(16,*) "From grid: km=",km
 
 
   SDay = 1./86400.
@@ -25,17 +25,17 @@ subroutine cgem_run(istep,myrank)
 !    is iterations times timestep
   TC_8 = istep*int(dt)
 
-  if(myrank==0) write(16,*) "Then, TC_8=",TC_8
+!  if(myrank==0) write(16,*) "Then, TC_8=",TC_8
 
   itmp1=irange_tr(1,3)
   itmp2=irange_tr(2,3)
 
-  if(myrank==0) write(16,*) "itmp1,itmp2",itmp1,itmp2
+  !if(myrank==0) write(16,*) "itmp1,itmp2",itmp1,itmp2
 
 
   do i=1,nea
 
-  if(myrank==0) write(16,*) "inea,idry",i,idry_e(i)
+  !if(myrank==0) write(16,*) "inea,idry",i,idry_e(i)
 
     if(idry_e(i)==1) cycle
 
@@ -46,9 +46,9 @@ subroutine cgem_run(istep,myrank)
     !settling vel in internal prisms (positive downward)
     mm = 1  
     do m=itmp1,itmp2 !tracer
-    if(myrank==0) write(16,*) "m,ws",m,ws(mm)
+  !  if(myrank==0) write(16,*) "m,ws",m,ws(mm)
       wsett(m,:,i)= ws(mm) 
-    if(myrank==0) write(16,*) "m",wsett(m,:,i)
+  !  if(myrank==0) write(16,*) "m",wsett(m,:,i)
       mm = mm+1
     enddo
 
@@ -56,19 +56,24 @@ subroutine cgem_run(istep,myrank)
    !write(6,*) "dump tr_el",tr_el(:,:,i)
 
 
+!  if(myrank==0) write(16,*) "set sinking",i,nea
+
+
 !Set previous values
     mm = 1 
     do m=itmp1,itmp2
      im = km
      do k=kbe(i)+1,nvrt
-       if(myrank==0) write(16,*) "Get previous ff"
-       if(myrank==0) write(16,*) "m,k,tr_el=",m,k,tr_el(m,k,i)
+  !     if(myrank==0) write(16,*) "Get previous ff"
+  !     if(myrank==0) write(16,*) "m,k,tr_el=",m,k,tr_el(m,k,i)
        ff(im,mm)=tr_el(m,k,i)
-       if(myrank==0) write(16,*) "im,mm,ff=",im,mm,ff(im,mm)
+  !     if(myrank==0) write(16,*) "im,mm,ff=",im,mm,ff(im,mm)
        im = im-1
      enddo !k
      mm = mm+1
     enddo !m
+
+!  if(myrank==0) write(16,*) "previous ff calculated",i
 
 !Set temperature and salinity
     im = km
@@ -78,10 +83,13 @@ subroutine cgem_run(istep,myrank)
     !  write(6,*) "tr_el(2,k,i)",tr_el(2,k,i)
       T(im)= tr_el(1,k,i)
       S(im)= tr_el(2,k,i)
-    if(myrank==0) write(16,*) "im,T(k)",T(im)
-    if(myrank==0) write(16,*) "im,S(k)",S(im)
+    !if(myrank==0) write(16,*) "im,T(k)",T(im)
+    !if(myrank==0) write(16,*) "im,S(k)",S(im)
       im = im-1
     enddo
+
+!  if(myrank==0) write(16,*) "set T and S",i
+
 
 !Call CGEM for a column
     !write(6,*) "before cgem_step, T(1)",i,T(1)
@@ -98,6 +106,9 @@ subroutine cgem_run(istep,myrank)
     !write(6,*) "after cgem_step, ff_new",ff_new(:,2)
     !write(6,*) 
 
+!  if(myrank==0) write(16,*) "after cgem_step",i
+
+
 !Set source
     mm = 1
     do m=itmp1,itmp2
@@ -110,6 +121,9 @@ subroutine cgem_run(istep,myrank)
      enddo !k
      mm = mm+1
     enddo !m
+
+!  if(myrank==0) write(16,*) "after bdy_frc",i
+
 
   enddo !i
 
