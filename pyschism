@@ -1,0 +1,15 @@
+#%Module
+set DIR /usr/local/usrapps/lllowe/pyschism/env_schism
+prepend-path PATH $DIR/bin 
+prepend-path PATH /usr/local/apps/miniconda/condabin
+setenv CONDA_SHLVL 2
+setenv CONDA_PREFIX $DIR 
+setenv CONDA_DEFAULT_ENV $DIR  
+setenv PYTHONPATH /usr/local/usrapps/lllowe/pyschism 
+setenv GDAL_DRIVER_PATH $DIR/lib/gdalplugins
+setenv PROJ_DATA $DIR/share/proj
+setenv UDUNITS2_XML_PATH $DIR/share/udunits/udunits2.xml
+setenv PROJ_NETWORK ON
+setenv GSETTINGS_SCHEMA_DIR $DIR/share/glib-2.0/schemas
+setenv XML_CATALOG_FILES {file:///usr/local/usrapps/lllowe/pyschism/env_schism/etc/xml/catalog file:///etc/xml/catalog}
+setenv GDAL_DATA $DIR/share/gdal

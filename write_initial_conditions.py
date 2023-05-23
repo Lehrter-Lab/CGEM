@@ -1,5 +1,6 @@
 from pylib import *
 import f90nml
+from fileinput import FileInput
 
 #Grid file
 fname='hgrid.gr3'
@@ -17,148 +18,157 @@ nospA = cgem.get('nosp').get('nospa')
 #number of zooplankton groups
 nospZ = cgem.get('nosp').get('nospz')
 print(nospA,nospZ)
+#Number of state vars, A/Qn/Qp(nospa), Z(nospz), and the rest(17)
+nf = 3*nospA + nospZ + 17
+print('nf',nf)
 
-#Initialize
-counter = 0
+#get initial conditions
+inits = cgem.get('init')
+print(inits)
+
+#Initialize lists
+#variable names
 names = []
+#initial conditions
 ics = []
 
 #!-A; Phytoplankton number density (cells/m3);
-iA = []
+iA  = inits.get('a_init')
+print(iA,type(iA))
 for i in range(nospA):
-    counter = counter+1
-    iA.append(i+1)
+    #iA is only a list (and subsettable) if nospA > 1
+    if(nospA==1):
+        ics.append(iA)
+    else:
+        ics.append(iA[i])
     names.append("A" + str(i+1))
-#    ics.append(
 
+print('ics',ics)
+print('names',names)
 
 #!-Qn: Phytoplankton Nitrogen Quota (mmol-N/cell)
-iQn=[]
+iQn= inits.get('qn_init')
 for i in range(nospA):
-    counter = counter+1
-    iQn.append(i+1)
+    #iQn is only a list (and subsettable) if nospA > 1
+    if(nospA==1):
+        ics.append(iQn)
+    else:
+        ics.append(iQn[i])
     names.append("Qn" + str(i+1))
 
 #!-Qp: Phytoplankton Phosphorus Quota (mmol-P/cell)
-iQp=[]
+iQp= inits.get('qp_init')
 for i in range(nospA):
-    counter = counter+1
-    iQp.append(i+1)
+    #iQp is only a list (and subsettable) if nospA > 1
+    if(nospA==1):
+        ics.append(iQp)
+    else:
+        ics.append(iQp[i])
     names.append("Qp" + str(i+1))
 
 #!-Z: Zooplankton number density (individuals/m3);
-iZ=[]
+iZ= inits.get('z_init')
 for i in range(nospZ):
-    counter = counter+1
-    iZ.append(i+1)
+    #iZ is only a list (and subsettable) if nospA > 1
+    if(nospZ==1):
+        ics.append(iZ)
+    else:
+        ics.append(iZ[i])
     names.append("Z" + str(i+1))
 
 #!-NO3; Nitrate (mmol-N/m3)
-counter = counter+1
-iNO3 = counter
+ics.append(inits.get('no3_init'))
 names.append("NO3")
 
 #!-NH4; Ammonium (mmol-N/m3)
-counter = counter+1
-
-iNH4 = counter
+ics.append(inits.get('nh4_init'))
 names.append("NH4")
 
 #!-PO4: Phosphate (mmol-P/m3)
-counter = counter+1
-iPO4 = counter
+ics.append(inits.get('po4_init'))
 names.append("PO4")
 
 #!-DIC: Dissolved Inorganic Carbon (mmol-C/m3) 
-counter = counter+1
-iDIC = counter
+ics.append(inits.get('dic_init'))
 names.append("DIC")
 
 #!-O2: Molecular Oxygen (mmol-O2/m3)
-counter = counter+1
-iO2 = counter
+ics.append(inits.get('o2_init'))
 names.append("O2")
 
 #!-OM1A: (mmol-C/m3--particulate)
 #! -- Particulate Organic Matter from dead Phytoplankton
-counter = counter+1
-iOM1A = counter
+ics.append(inits.get('om1_a_init'))
 names.append("OM1A")
 
 #!-OM2A: (mmol-C/m3--dissolved)
-#! -- Dissolved Organic Matter arising from dead Phytoplankton 
-counter = counter+1
-iOM2A = counter
+#! -- Dissolved Organic Matter from dead Phytoplankton 
+ics.append(inits.get('om2_a_init'))
 names.append("OM2A")
 
 #!-OM1Z:(mmol-C/m3--particulate)
 #! -- Particulate Organic Matter from Zooplankton fecal pellets.
-counter = counter+1
-iOM1Z = counter
+ics.append(inits.get('om1_z_init'))
 names.append("OM1Z")
 
 #!-OM2Z:(mmol-C/m3--dissolved)
-#!        -- Dissolved Organic Matter arising Zooplankton fecal pellets.
-counter = counter+1
-iOM2Z = counter
+#!        -- Dissolved Organic Matter from Zooplankton fecal pellets.
+ics.append(inits.get('om2_z_init'))
 names.append("OM2Z")
 
 #!-OM1R: (mmol-C/m3--particulate)
-#!-- Particulate Organic Matter arising from river outflow
-counter = counter+1
-iOM1R = counter
+#!-- Particulate Organic Matter from river outflow
+ics.append(inits.get('om1_r_init'))
 names.append("OM1R")
 
 #!-OM2R: (mmol-C/m3--dissolved)
-#!-- Dissolved Organic Matter arising from river outflow
-counter = counter+1
-iOM2R = counter
+#!-- Dissolved Organic Matter from river outflow
+ics.append(inits.get('om2_r_init'))
 names.append("OM2R")
 
 #!-CDOM: (ppb) 
 #!-- Colored Dissolved Organic Matter
-counter = counter+1
-iCDOM = counter
+ics.append(inits.get('cdom_init'))
 names.append("CDOM")
 
 #!-Silica: (mmol-Si/m3) -- Silica
-counter = counter+1
-iSi = counter
+ics.append(inits.get('si_init'))
 names.append("Si")
 
 #!-OM1BC: (mmol-C/m3--particulate)
 #!-- Particulate Organic Matter in initial and boundary conditions 
-counter = counter+1
-iOM1BC = counter
+ics.append(inits.get('om1_bc_init'))
 names.append("OM1BC")
 
 #!-OM2BC: (mmol-C/m3--dissolved)
 #!-- Dissolved Organic Matter in initial and boundary conditions
-counter = counter+1
-iOM2BC = counter
+ics.append(inits.get('om2_bc_init'))
 names.append("OM2BC")
 
 #!-ALK:  (mmol-HCO3/m3) -- Alkalinity
-counter = counter+1
-iALK = counter
+ics.append(inits.get('alk_init'))
 names.append("ALK")
 
 #!Tracer
-counter = counter+1
-iTR = counter
+ics.append(inits.get('tr_init'))
 names.append("TR")
 
-for i in range(counter):
+print(len(ics),'ics:',ics)
+print(len(names),'names:',names)
 
-
-for i in range(counter):
+for i in range(nf):
     filename = basename + str(i+1) + suffix
+    print(i+1)
     print(filename)
     print(names[i])
-
-#ICs
-#gd = grid
-#filename = basename + i + suffix 
-#gd.dp = gd.dp*0.;
-#gd.dp = gd.dp + VALUE  
-#gd.write_hgrid(filename)
+    print(ics[i])
+    gd = grid
+    gd.dp = gd.dp*0. + ics[i]
+    gd.write_hgrid(filename) 
+    #change first line in each file with name
+    with FileInput(filename, inplace = True, backup ='.bak') as f:
+        for line in f:
+            if(f.isfirstline()):
+                print(names[i], end ='\n')
+            else:
+                print(line, end='') 

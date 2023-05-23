@@ -1,0 +1,12 @@
+#%Module
+set DIR /usr/local/usrapps/lllowe/pylibs/env_pylibs
+prepend-path PATH $DIR/bin 
+prepend-path PATH /usr/local/apps/miniconda/condabin
+setenv CONDA_SHLVL 2
+setenv CONDA_PREFIX $DIR 
+setenv CONDA_DEFAULT_ENV $DIR  
+setenv PYTHONPATH /usr/local/usrapps/lllowe/pylibs 
+setenv PROJ_DATA $DIR/share/proj
+setenv PROJ_NETWORK ON
+setenv GSETTINGS_SCHEMA_DIR $DIR/share/glib-2.0/schemas
+setenv XML_CATALOG_FILES {file:///usr/local/usrapps/lllowe/pylibs/env_pylibs/etc/xml/catalog file:///etc/xml/catalog}

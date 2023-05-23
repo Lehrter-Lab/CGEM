@@ -1,0 +1,13 @@
+name: env_pylibs 
+channels:
+ - conda-forge
+dependencies:
+ - setuptools
+ - f90nml
+ - netCDF4
+ - numpy
+ - pandas
+ - pyproj
+ - scipy
+ - pyshp
+ - matplotlib
