@@ -19,13 +19,18 @@ Install pyschism
 pip install .
 ```
 
-Set the path to wherever you git-cloned pyschism:
+Set the path to wherever you git-cloned pyschism, e.g.:
 ```
-export PYTHONPATH=/rsstu/users/l/lllowe/cgem/pyschism
+export PYTHONPATH=/usr/local/usrapps/lllowe/pyschism
 ```
 
 Then check:
 ```
 python
 from pyschism import *
+```
+
+I created a module to activate the environment and export the PYTHONPATH 
+```
+
 ```
