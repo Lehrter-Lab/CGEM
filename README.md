@@ -27,7 +27,9 @@ This is not 'directory friendly' yet.  The grid file needs to be in the current 
 ### Timeseries extraction
 Python script [extract_time_series.py](extract_time_series.py) - uses nco to extract a timeseries, rename the variables, and add description and units attributes. They will be named var_ts_year_1.nc.  (It is hardcoded to just the first 'spool' of output.  More later.)
 
-Before using, first modify 'schismdir' in the script: the location of original SCHISM output files.  Outputs - timeseries netCDF files and a file 'ncfiles.dir' needed by the R script - are written to the 'outputs' directory in this repository.  The 'outputs' directory is ignored by git.
+Before using, first modify 'schismdir' in the script: the location of original SCHISM output files.  
+
+The outputs - timeseries netCDF files and a file 'ncfiles.txt' needed by the R script - are written to the 'outputs' directory in this repository.  The 'outputs' directory is ignored by git.
 
 To run with no write statements:
 ```
