@@ -51,4 +51,4 @@ Rscript plot_timeseries_schism.R
 
 It expects outputs created by extract_time_series.py.  The file 'timeseries.pdf' is written to the 'outputs' directory. 
 
-Requires the ncdf4 library.
+Requires the R library ncdf4.
