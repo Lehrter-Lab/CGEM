@@ -1,18 +1,15 @@
 library(ncdf4)
-#setwd("~/CHECK")
 
-#directory with extracted timeseries nc files
-inputdir <- "~/CHECK/outputs"
-#where to put pdf
-outdir <- "~/CHECK/outputs"
 #get the current working directory
 thisdir <- getwd()
+#results from python script should be in git-ignored directory 'outputs'
+outdir <- file.path(thisdir,"outputs")
 
 #plotting functions
 source(file.path(thisdir, "timeseries_plot.R"))
 
 #open file created by extract_time_series.py
-df <- read.csv(file.path(inputdir,"ncfiles.txt"))
+df <- read.csv(file.path(outdir,"ncfiles.txt"))
 #number of files
 numfiles <- length(df$File)
 
@@ -25,8 +22,9 @@ par(mfrow=pdf_layout)
 
 #go through files
 for (i in 1:numfiles) {
-  filename = file.path(inputdir,df$File[i])
-  nc <- nc_open(filename)
+  filename <- file.path(outdir,df$File[i])
+  print(filename)
+  nc <- nc_open(filename) 
   Var <- df$Var[i]
   rdata <- ncvar_get(nc, df$Var[i])
   time <- ncvar_get(nc, "time")

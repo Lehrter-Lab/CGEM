@@ -1,6 +1,7 @@
 #Right now, this needs to be run in the directory with the data
 # and it will write output to the current working directory
 import f90nml
+import os
 import sys
 import subprocess
 
@@ -9,6 +10,14 @@ debug = False
 iargs = len(sys.argv)
 if iargs > 1:
     debug = True
+
+#Directory with original SCHISM nc output
+schismdir = "~/CHECK/outputs"
+
+#Directory to output timeseries files
+#will go to a .git-ignored directory in the current working directory
+thisdir = os.getcwd()
+outdir = os.path.join(thisdir,"outputs")
 
 #Which year
 which_year = '2007'
@@ -167,9 +176,11 @@ outputfiles = []
 #For all the state variables
 for i in range(nf):
     base = basename + str(i+1)
-    inputfile = base + suffix
+    inputfile = os.path.join(schismdir,base + suffix)
+    if debug : print('inputfile',inputfile,"\n")
     outputfile = names[i] + '_ts_' + which_year + suffix 
     outputfiles.append(outputfile)
+    outputfile = os.path.join(outdir,outputfile)
     #Extract a time series to a file, which will be overwritten if it exists
     command = 'ncks -O -d nSCHISM_hgrid_node,' + str(which_node) + ' -d nSCHISM_vgrid_layers,' + str(which_layer) + ' ' + inputfile + ' ' + outputfile
     if debug : print(command,"\n")
@@ -214,7 +225,8 @@ for i in range(nf):
 if debug : print(outputfiles,"\n")
 
 #write a file with list of names for R to make plots
-file = open('ncfiles.txt','w')
+filename = os.path.join(outdir,'ncfiles.txt')
+file = open(filename,'w')
 file.write("Year,Var,File\n")
 for i in range(nf):
     file.write(which_year + ",")
