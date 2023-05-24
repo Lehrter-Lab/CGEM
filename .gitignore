@@ -1,3 +1,7 @@
+#post-processing output
+outputs/*
+
+
 # executables
 pschism_*
 out
