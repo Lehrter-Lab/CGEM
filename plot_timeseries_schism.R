@@ -23,7 +23,7 @@ par(mfrow=pdf_layout)
 #go through files
 for (i in 1:numfiles) {
   filename <- file.path(outdir,df$File[i])
-  print(filename)
+  #print(filename)
   nc <- nc_open(filename) 
   Var <- df$Var[i]
   rdata <- ncvar_get(nc, df$Var[i])
