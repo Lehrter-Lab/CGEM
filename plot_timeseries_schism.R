@@ -18,10 +18,10 @@ source(file.path(thisdir, "timeseries_plot.R"))
 #open file created by extract_time_series.py
 df <- read.csv(file.path(outdir,"ncfiles.txt"))
 #number of files
-numvars <- length(df$File)
+numvars <- length(df$Var)
 
 #setup pdf file in 4x4 layout
-pdfname <- file.path(outdir,"timeseries.pdf")
+pdfname <- file.path(outdir,paste0("timeseries_",iYr0,".pdf"))
 pdf(file=pdfname)
 pdf_layout <- c(4,4)
 which_mod <- pdf_layout[1] * pdf_layout[2]
@@ -29,11 +29,10 @@ par(mfrow=pdf_layout)
 
 #go through files
 for (i in 1:numvars) {
-
   rdata <- c()
   time <- c()
   for (j in 1:numfiles){
-  basename <- paste0(df$File[i],j,".nc")
+  basename <- paste0(df$Var[i],"_ts_",iYr0,"_",j,".nc")
   filename <- file.path(outdir,basename)
   print(filename)
   nc <- nc_open(filename) 
