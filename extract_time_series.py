@@ -200,9 +200,9 @@ for i in range(nf):
     base = basename + str(i+1)
     inputfile = os.path.join(schismdir,base + suffix)
     if debug : print('inputfile',inputfile,"\n")
-    outputfile = names[i] + '_ts_' + which_year + "_"
+    outputfile = names[i]
     outputfiles.append(outputfile)
-    outputfile = outputfile + which_year + suffix
+    outputfile = outputfile + '_ts_' + which_year + suffix
     outputfile = os.path.join(outdir,outputfile)
     #Extract a time series to a file, which will be overwritten if it exists
     command = 'ncks -O -d nSCHISM_hgrid_node,' + str(which_node) + ' -d nSCHISM_vgrid_layers,' + str(which_layer) + ' ' + inputfile + ' ' + outputfile
@@ -251,6 +251,7 @@ if(suffix == "_1.nc"):
     #write a file with list of names for R to make plots
     filename = os.path.join(outdir,'ncfiles.txt')
     file = open(filename,'w')
+    file.write("Var\n")
     for var in outputfiles:
         file.write("%s\n" % var)
     file.close()

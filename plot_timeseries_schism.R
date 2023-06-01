@@ -1,6 +1,6 @@
 library(ncdf4)
 
-setwd("~/CGEM")
+#setwd("~/CGEM")
 
 #How many separate files?
 numfiles <- 13
