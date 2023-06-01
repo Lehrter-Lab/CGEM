@@ -21,7 +21,7 @@
 !---------------------------------------------------------------------------------------
 ! Local Variables
 !-----------------------------------------------------
-    integer        ::  k, isp, isz ! Loop indicies, isp/isz is for phytoplankton/zooplankton species
+    integer        ::  i, inum, k, isp, isz ! Loop indicies, isp/isz is for phytoplankton/zooplankton species
     integer        ::  Is_Day            ! Switch for day/night for phytoplankton nutrient uptake only, Is_Day=0 means night
 !------------------------------------ 
 ! Phytoplankton parameters
@@ -176,6 +176,25 @@ write(6,*) "Begin cgem, TC_8,istep",TC_8,istep
 
 
    optNP = ZQn/ZQp    ! Optimal nutrient ratio for zooplankton
+
+
+!SCHISM does the integration, so might be less than zeros
+
+inum = nf - 3*nospA - nospZ
+
+do k = 1, km
+  do isp = 1,nospA
+    ff(k,iA(isp))  = AMAX1(ff(k,iA(isp)),1.)
+    ff(k,iQn(isp)) = AMAX1(ff(k,iQn(isp)),QminN(isp))
+    ff(k,iQp(isp)) = AMAX1(ff(k,iQp(isp)),QminP(isp)) 
+  enddo
+  do isp = 1,nospZ
+    ff(k,iZ(isp))  = AMAX1(ff(k,iZ(isp)),1.)
+  enddo
+  do i = inum,nf
+    ff(k,i) = AMAX1(ff(k,i),0.)
+  enddo
+enddo
 
 !write(6,*) "istep=",istep
 !-----------------------------------------------------------------

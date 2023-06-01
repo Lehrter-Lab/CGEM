@@ -104,6 +104,28 @@ if(ierr.ne.0) write(6,*) "error in allocating:T"
 write(6,*) "End grid_allocate"
 #endif
 
+!EcoSim
+!! ----------------------------------------------------------------------
+!! Compute thickness and actual depths at RHO-points (in the middle of
+!! the volume of control)
+!! ----------------------------------------------------------------------
+!          DO k=kbe(i)+1, nvrt
+!              Hz(k)=ze(k,i)-ze(k-1,i)
+!          END DO
+!
+!          DO k=kbe(i)+1, nvrt
+!            zr(k)=((ze(k-1,i)-ze(k,i))/2)+ze(k,i)
+!          END DO
+
+!hydro Transport TVD
+!          do k=kbe(i)+1,nvrt
+!            vol=(ze(k,i)-ze(k-1,i))*area(i)
+!            psumtr(1:ntr)=psumtr(1:ntr)+vol*tr_el(1:ntr,k,i)
+!          enddo
+
+
+
+
 return
 end subroutine grid_allocate
 
@@ -169,6 +191,19 @@ write(6,*) "lat,lon,Rad",lat,lon,Rad
    d_sfc(k) = d_sfc(k-1) + dz(k)
    Vol(k) = dz(k)*area(k)
   enddo
+
+!do k=kbe(i)+1,nvrt
+!dz = ze(k,i)-ze(k-1,i)
+!Vol = (ze(k,i)-ze(k-1,i))*area(i)
+!enddo
+
+
+!hydro Transport TVD
+!          do k=kbe(i)+1,nvrt
+!            vol=(ze(k,i)-ze(k-1,i))*area(i)
+!            psumtr(1:ntr)=psumtr(1:ntr)+vol*tr_el(1:ntr,k,i)
+!          enddo
+
 
   !"Tracers"
   S = S_init

@@ -5,14 +5,25 @@ import os
 import sys
 import subprocess
 
+#sets the paths for outputs and images
+from setpaths import *
+
 #If there are **any** arguments, it will use debug mode
 debug = False
+debug = True
+
 iargs = len(sys.argv)
 if iargs > 1:
-    debug = True
+    suffix = sys.argv[1]
+else:
+    suffix = "_1.nc"
+print(suffix)
+#sys.exit()
 
 #Directory with original SCHISM nc output
-schismdir = "~/CHECK/outputs"
+#schismdir = "~/CHECK/outputs"
+#schismdir = "/rsstu/users/l/lllowe/cgem/sasj_bay_setup/outputs"
+schismdir = OUTPUTS
 
 #Directory to output timeseries files
 #will go to a .git-ignored directory in the current working directory
@@ -20,15 +31,21 @@ thisdir = os.getcwd()
 outdir = os.path.join(thisdir,"outputs")
 
 #Which year
+#The CGEM toy model is 2007
 which_year = '2007'
 
 #Which node and layer to extract timeseries
+#which_node = 41842 
+#which_layer = 19
 which_node = 7
 which_layer = 1
 
+#Which state variables to 'skip' (ignore) because they don't have GEN_ files:
+#Skip these state vars (GEN_X-1)
+skips = [14,15,18,19]
+
 #to make the files
 basename = "GEN_"
-suffix = "_1.nc"
 
 #read nml used by schism
 cgem = f90nml.read('cgem.nml')
@@ -173,13 +190,19 @@ if debug:
 
 #Start a list for output file names
 outputfiles = []
+
 #For all the state variables
 for i in range(nf):
+    if str(i) in str(skips):
+        print("skipping",str(i))
+        continue 
+
     base = basename + str(i+1)
     inputfile = os.path.join(schismdir,base + suffix)
     if debug : print('inputfile',inputfile,"\n")
-    outputfile = names[i] + '_ts_' + which_year + suffix 
+    outputfile = names[i] + '_ts_' + which_year + "_"
     outputfiles.append(outputfile)
+    outputfile = outputfile + which_year + suffix
     outputfile = os.path.join(outdir,outputfile)
     #Extract a time series to a file, which will be overwritten if it exists
     command = 'ncks -O -d nSCHISM_hgrid_node,' + str(which_node) + ' -d nSCHISM_vgrid_layers,' + str(which_layer) + ' ' + inputfile + ' ' + outputfile
@@ -224,15 +247,12 @@ for i in range(nf):
 #
 if debug : print(outputfiles,"\n")
 
-#write a file with list of names for R to make plots
-filename = os.path.join(outdir,'ncfiles.txt')
-file = open(filename,'w')
-file.write("Year,Var,File\n")
-for i in range(nf):
-    file.write(which_year + ",")
-    file.write(names[i] + ",")
-    file.write(outputfiles[i] + "\n")
-
-file.close()
+if(suffix == "_1.nc"):
+    #write a file with list of names for R to make plots
+    filename = os.path.join(outdir,'ncfiles.txt')
+    file = open(filename,'w')
+    for var in outputfiles:
+        file.write("%s\n" % var)
+    file.close()
 
 sys.exit()

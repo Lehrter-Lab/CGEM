@@ -6,8 +6,8 @@
 !==============================================================================
 subroutine cgem_run(istep,myrank)
   use schism_glbl, only : rkind,nea,idry_e,irange_tr,flx_sf,flx_bt,bdy_frc,&
-   & wsett,nvrt,kbe,tr_el,dt
-  use grid, only : T,S,km
+   & wsett,nvrt,kbe,tr_el,dt,srad,windx,windy,area,ze
+  use grid, only : T,S,km,dz,Vol
   use cgem, only: ws,ff,ff_new,nf
 
   implicit none
@@ -17,7 +17,7 @@ subroutine cgem_run(istep,myrank)
   real :: SDay
 !  if(myrank==0) write(16,*) "In cgem_run: istep,dt=",istep,dt
 
-!  if(myrank==0) write(16,*) "From grid: km=",km
+  if(myrank==0) write(16,*) "From grid: km=",km
 
 
   SDay = 1./86400.
@@ -25,7 +25,7 @@ subroutine cgem_run(istep,myrank)
 !    is iterations times timestep
   TC_8 = istep*int(dt)
 
-!  if(myrank==0) write(16,*) "Then, TC_8=",TC_8
+  if(myrank==0) write(16,*) "Then, TC_8=",TC_8
 
   itmp1=irange_tr(1,3)
   itmp2=irange_tr(2,3)
@@ -56,7 +56,7 @@ subroutine cgem_run(istep,myrank)
    !write(6,*) "dump tr_el",tr_el(:,:,i)
 
 
-!  if(myrank==0) write(16,*) "set sinking",i,nea
+  if(myrank==0) write(16,*) "set sinking",i,nea
 
 
 !Set previous values
@@ -73,7 +73,7 @@ subroutine cgem_run(istep,myrank)
      mm = mm+1
     enddo !m
 
-!  if(myrank==0) write(16,*) "previous ff calculated",i
+  if(myrank==0) write(16,*) "previous ff calculated",i
 
 !Set temperature and salinity
     im = km
@@ -83,12 +83,15 @@ subroutine cgem_run(istep,myrank)
     !  write(6,*) "tr_el(2,k,i)",tr_el(2,k,i)
       T(im)= tr_el(1,k,i)
       S(im)= tr_el(2,k,i)
+      dz(im) = ze(k,i)-ze(k-1,i)
+      Vol(im) = (ze(k,i)-ze(k-1,i))*area(i)
+
     !if(myrank==0) write(16,*) "im,T(k)",T(im)
     !if(myrank==0) write(16,*) "im,S(k)",S(im)
       im = im-1
     enddo
 
-!  if(myrank==0) write(16,*) "set T and S",i
+  if(myrank==0) write(16,*) "set T and S",i
 
 
 !Call CGEM for a column
@@ -106,7 +109,7 @@ subroutine cgem_run(istep,myrank)
     !write(6,*) "after cgem_step, ff_new",ff_new(:,2)
     !write(6,*) 
 
-!  if(myrank==0) write(16,*) "after cgem_step",i
+  if(myrank==0) write(16,*) "after cgem_step",i
 
 
 !Set source
@@ -122,7 +125,7 @@ subroutine cgem_run(istep,myrank)
      mm = mm+1
     enddo !m
 
-!  if(myrank==0) write(16,*) "after bdy_frc",i
+  if(myrank==0) write(16,*) "after bdy_frc",i
 
 
   enddo !i

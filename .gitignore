@@ -1,6 +1,8 @@
 #post-processing output
 outputs/*
 
+#python crap
+__pycache__
 
 # executables
 pschism_*
