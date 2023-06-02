@@ -7,7 +7,7 @@
 subroutine cgem_run(istep,myrank)
   use schism_glbl, only : rkind,nea,idry_e,irange_tr,flx_sf,flx_bt,bdy_frc,&
    & wsett,nvrt,kbe,tr_el,dt,srad,windx,windy,area,ze
-  use grid, only : T,S,km,dz,Vol
+  use grid, only : T,S,km,dz,Vol,d,d_sfc
   use cgem, only: ws,ff,ff_new,nf
 
   implicit none
@@ -75,7 +75,8 @@ subroutine cgem_run(istep,myrank)
 
   if(myrank==0) write(16,*) "previous ff calculated",i
 
-!Set temperature and salinity
+
+!Set temperature and salinity, depth and volume
     im = km
     do k=kbe(i)+1,nvrt
     !  write(6,*) "inea, k in ts loop",i,k
@@ -85,10 +86,17 @@ subroutine cgem_run(istep,myrank)
       S(im)= tr_el(2,k,i)
       dz(im) = ze(k,i)-ze(k-1,i)
       Vol(im) = (ze(k,i)-ze(k-1,i))*area(i)
-
     !if(myrank==0) write(16,*) "im,T(k)",T(im)
     !if(myrank==0) write(16,*) "im,S(k)",S(im)
       im = im-1
+    enddo
+
+    d(1) = dz(1) !Distance from surface to bottom of cell
+    d_sfc(1) = dz(1)/2. !First cell is half of total thickness of first cell
+    do k=2,km
+      d(k) = d(k-1) + dz(k)
+      d_sfc(k) = d_sfc(k-1) + dz(k)
+      Vol(k) = dz(k)*area(k)
     enddo
 
   if(myrank==0) write(16,*) "set T and S",i
