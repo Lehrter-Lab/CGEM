@@ -19,9 +19,15 @@ Describes the workflow for extracting and plotting timeseries data for CGEM vari
 
 ### Extracting timeseries data
 
-Modify `setvars.py` to include outputfile paths, script settings, nodes, layers, and starting year.  Setting `debug=True` will turn on additional write statements for Python, and Rdebug is the R equivalent.
+First, get this repo if you haven't already:
+```
+git clone https://github.com/OyBcSt/CGEM.git
+cd CGEM
+```
 
-Run the script to create a text file that lists the Python commands required to loop over outputfiles, nodes, and layers:
+Modify `setvars.py` to include outputfile paths, script settings, nodes, layers, number of output chunks, and starting year.  Setting `debug=True` will turn on additional write statements for Python, and `Rdebug=TRUE` is the R equivalent.
+
+Run the script to create a text file that lists the Python commands required to loop over variables, outputfiles, nodes, and layers:
 ```
 python cgem_ts_commands.py
 ```
@@ -31,7 +37,7 @@ Sourcing the resulting file calls the Python commands.  On HPC, either submit as
 source cgem_extract.sh
 ```
 
-This will write netCDF timeseries files to the `outputs` directory.  The directory is ignored by git, so outputs may be written to the current working directory.
+This will write netCDF timeseries files to the `outputs` directory.  The directory is ignored by git, so outputs may be written to the current working directory.  A file `cgem_ts.txt` is created, and that passes the variables to the R script.
 
 
 ### Creating the plots
