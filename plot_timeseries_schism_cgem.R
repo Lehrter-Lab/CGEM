@@ -6,8 +6,16 @@ thisdir <- getwd()
 outdir <- file.path(thisdir,"outputs")
 pdfdir <- file.path(thisdir,"pdfs")
 
-#Read parameters used to create timeseries
+if (!dir.exists("output")){
+  stop("No output directory found.  Please see instructions for Extracting Timeseries at https://github.com/OyBcSt/CGEM.") 
+}
+
+if (!dir.exists("pdfs")){
+  dir.create("pdfs") 
+}
+
 con <- file(file.path(outdir,"cgem_ts.txt"),"r")
+
 #Extra write statements if debug is TRUE
 debug <- as.logical(readLines(con,n=1))
 #Starting year

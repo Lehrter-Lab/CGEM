@@ -27,6 +27,15 @@ schismdir = OUTPUTS
 thisdir = os.getcwd()
 outdir = os.path.join(thisdir,"outputs")
 
+#Check that output directory exists
+if not os.path.exists(schismdir):
+    sys.exit("SCHISM output directory " + schismdir + " does not exist. Exiting.")
+
+#Create a directory for output if one doesn't exist.
+#Note, existing files will be overwritten
+if not os.path.exists(outdir):
+    os.makedirs(outdir)
+
 #Which year
 which_year = iYr0 
 
