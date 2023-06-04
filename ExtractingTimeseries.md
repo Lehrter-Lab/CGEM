@@ -1,37 +1,66 @@
 # Extracting Timeseries
 
-** Requirements **
+Author: Lisa L. Lowe, lllowe@ncsu.edu 
+
+Describes the workflow for extracting and plotting timeseries data for CGEM variables from SCHISM outputs.
+
+## Requirements
+
 - System: ncks, ncatted, ncrename
 - Python: f90nml, os, sys, subprocess
 - R: ncdf4
 
-To extract timeseries:
+## Instructions
 
-Modify `setvars.py` to include outputfile paths, script settings, nodes, layers, and starting year.  Setting `debug=True` will turn on additional write statements.
+### First, a warning
 
-Run the script to create a file that lists the Python commands required to loop over outputfiles, nodes, and layers:
+1. There is little to no error checking.
+2. All existing files will be overwritten.
+
+### Extracting timeseries data
+
+Modify `setvars.py` to include outputfile paths, script settings, nodes, layers, and starting year.  Setting `debug=True` will turn on additional write statements for Python, and Rdebug is the R equivalent.
+
+Run the script to create a text file that lists the Python commands required to loop over outputfiles, nodes, and layers:
 ```
 python cgem_ts_commands.py
 ```
 
-Source the resulting file:
+Sourcing the resulting file calls the Python commands.  On HPC, either submit as a batch job or request an interactive session:
 ```
-source cgem.extract.csh
+source cgem_extract.sh
 ```
 
 This will write netCDF timeseries files to the `outputs` directory.  The directory is ignored by git, so outputs may be written to the current working directory.
 
-In the R script `plot_timeseries_schism_cgem.R`, modify the number of files, nodes, layers, colors, and year.
 
-Run the R script to create timeseries plots.  They will be written to the directory `pdfs`, which is also git-ignored.
+### Creating the plots
+Run the R script to create timeseries plots.  They will be written to the directory `pdfs`, which is also git-ignored.  One plot is created for each node and will contain 4x4 layout PDF for each state variable, with multiple plotlines for each layer.
 ```
-Rscript plot_timeseries_schism.R
+Rscript plot_timeseries_schism_cgem.R
 ```
 
 The file `plot_timeseries_schism_cgem.R` sources the file `timeseries_plot.R`, located in the same directory.
 
+### Running in parallel
+The file `cgem_extract.sh` is a text file containing a single, serial task on each line.  You can use [ser2launch](https://github.com/lisalenorelowe/ser2launch) to run in parallel by following the instructions and replacing 'commands.txt' with 'cgem_extract.sh'. 
 
-## Notes
+To use, compile ser2launch in a different directory from this git repo, then copy the executable to this repo.  For example, if this repo is in your home directory, `~/CGEM`, do: 
+```
+cd ~
+git clone https://github.com/lisalenorelowe/ser2launch
+cd ser2launch
+source makeit.sh
+cp launch ~/CGEM
+cp launch.csh ~/CGEM
+cd ~/CGEM
+```
+Then, modify `launch.csh` according to your compiler, scheduler, and number of MPI tasks and change the last line to:
+```
+mpirun ./launch cgem_extract.sh 
+```
+
+## NetCDF Notes
 
 SCHISM metadata for a cgem file
 ```
@@ -53,3 +82,9 @@ ncatted -O -a units,GEN_1,c,c,"number" A1_ts_2019_1.nc
 ncatted -O -a description,GEN_1,c,c,"Phytoplankton" A1_ts_2019_1.nc
 ncrename -v GEN_1,A1 A1_ts_2019_1.nc
 ```
+
+---
+
+DISCLAIMER:
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
