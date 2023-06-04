@@ -29,7 +29,7 @@ Modify `setvars.py` to include outputfile paths, script settings, nodes, layers,
 
 Run the script to create a text file that lists the Python commands required to loop over variables, outputfiles, nodes, and layers:
 ```
-python cgem_ts_commands.py
+python cgem.ts_commands.py
 ```
 
 Sourcing the resulting file calls the Python commands.  On HPC, either submit as a batch job or request an interactive session:
