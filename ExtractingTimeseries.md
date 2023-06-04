@@ -14,7 +14,7 @@ Describes the workflow for extracting and plotting timeseries data for CGEM vari
 
 ### First, a warning
 
-1. There is little to no error checking.  The commenting is decent.
+1. There is little to no error checking.
 2. All existing files will be overwritten.
 
 ### Extracting timeseries data
