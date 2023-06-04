@@ -65,6 +65,10 @@ Then, modify `launch.csh` according to your compiler, scheduler, and number of M
 ```
 mpirun ./launch cgem_extract.sh 
 ```
+Also remember to add the Python/R/NCO environment, e.g.,
+```
+module load pylibs
+```
 
 ## NetCDF Notes
 
