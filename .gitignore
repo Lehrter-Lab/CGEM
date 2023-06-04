@@ -2,8 +2,8 @@
 outputs/*
 pdfs/*
 saveoutputs*/*
-cgem.extract.csh
-
+cgem_extract.csh
+launch.csh
 
 #python crap
 __pycache__

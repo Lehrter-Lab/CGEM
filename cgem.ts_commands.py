@@ -8,7 +8,7 @@ outdir = os.getcwd()
 #outdir = os.path.join(thisdir,"outputs")
 
 #write a file with list of names for R to make plots
-filename = os.path.join(outdir,'cgem.extract.csh')
+filename = os.path.join(outdir,'cgem_extract.sh')
 file = open(filename,'w')
 #file.write("Var\n")
 do_write = '1'
