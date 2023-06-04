@@ -61,7 +61,7 @@ cp launch ~/CGEM
 cp launch.csh ~/CGEM
 cd ~/CGEM
 ```
-Then, modify `launch.csh` according to your compiler, scheduler, and number of MPI tasks and change the last line to:
+Then, modify `launch.csh` according to your compiler, scheduler, and number of MPI tasks, increase the time limit, and change the last line to:
 ```
 mpirun ./launch cgem_extract.sh 
 ```
