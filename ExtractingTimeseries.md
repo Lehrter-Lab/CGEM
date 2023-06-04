@@ -7,7 +7,7 @@
 
 To extract timeseries:
 
-Modify `setvars.py` to include outputfile paths, script settings, nodes, layers, and starting year.  Setting debug=True will turn on write statements.
+Modify `setvars.py` to include outputfile paths, script settings, nodes, layers, and starting year.  Setting `debug=True` will turn on additional write statements.
 
 Run the script to create a file that lists the Python commands required to loop over outputfiles, nodes, and layers:
 ```
