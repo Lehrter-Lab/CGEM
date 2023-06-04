@@ -1,15 +1,23 @@
 #post-processing output
 outputs/*
+pdfs/*
+saveoutputs*/*
 
 #python crap
 __pycache__
 
 # executables
 pschism_*
+launch
+ser2par
+
+#scheduler output
 out
 err
 out.*
 err.*
+*.out.*
+*.err.*
 
 # Prerequisites
 *.d

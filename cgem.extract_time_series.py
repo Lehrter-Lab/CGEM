@@ -5,24 +5,21 @@ import os
 import sys
 import subprocess
 
-#sets the paths for outputs and images
-from setpaths import *
-
-#If there are **any** arguments, it will use debug mode
-debug = False
-debug = True
+#sets the paths for outputs, debug, and year
+from setvars import * 
 
 iargs = len(sys.argv)
-if iargs > 1:
-    suffix = sys.argv[1]
+if iargs < 3:
+    sys.exit("Usage: python extract_time_series.py suffix which_node which_layer do_write") 
 else:
-    suffix = "_1.nc"
-print(suffix)
+    suffix = sys.argv[1]
+    which_node = sys.argv[2]
+    which_layer = sys.argv[3]
+    do_write = int(sys.argv[4])
+print(suffix, which_node, which_layer, do_write)
 #sys.exit()
 
 #Directory with original SCHISM nc output
-#schismdir = "~/CHECK/outputs"
-#schismdir = "/rsstu/users/l/lllowe/cgem/sasj_bay_setup/outputs"
 schismdir = OUTPUTS
 
 #Directory to output timeseries files
@@ -31,18 +28,12 @@ thisdir = os.getcwd()
 outdir = os.path.join(thisdir,"outputs")
 
 #Which year
-#The CGEM toy model is 2007
-which_year = '2007'
-
-#Which node and layer to extract timeseries
-#which_node = 41842 
-#which_layer = 19
-which_node = 7
-which_layer = 1
+which_year = iYr0 
 
 #Which state variables to 'skip' (ignore) because they don't have GEN_ files:
 #Skip these state vars (GEN_X-1)
-skips = [14,15,18,19]
+#skips = [14,15,18,19]
+skips = []
 
 #to make the files
 basename = "GEN_"
@@ -201,8 +192,9 @@ for i in range(nf):
     inputfile = os.path.join(schismdir,base + suffix)
     if debug : print('inputfile',inputfile,"\n")
     outputfile = names[i]
-    outputfiles.append(outputfile)
-    outputfile = outputfile + '_ts_' + which_year + suffix
+    outname = outputfile + '_ts_' + which_year + '_' + which_node + '_' + which_layer
+    outputfiles.append(outname)
+    outputfile = outputfile + '_ts_' + which_year + '_' + which_node + '_' + which_layer + suffix
     outputfile = os.path.join(outdir,outputfile)
     #Extract a time series to a file, which will be overwritten if it exists
     command = 'ncks -O -d nSCHISM_hgrid_node,' + str(which_node) + ' -d nSCHISM_vgrid_layers,' + str(which_layer) + ' ' + inputfile + ' ' + outputfile
@@ -247,13 +239,27 @@ for i in range(nf):
 #
 if debug : print(outputfiles,"\n")
 
-if(suffix == "_1.nc"):
+#Only write this file once per batch
+if (do_write==1):
     #write a file with list of names for R to make plots
-    filename = os.path.join(outdir,'ncfiles.txt')
+    filename = os.path.join(outdir,'cgem_ts.txt')
     file = open(filename,'w')
+    file.write("%s\n" % Rdebug)
+    file.write("%s\n" % iYr0)
+    file.write("%s\n" % numfiles)
+    for node in which_nodes:
+        file.write("%s " % node)
+    file.write("\n")
+    #SCHISM output is bottom to top...reverse it to make the plots
+    wlsort = which_layers
+    wlsort.reverse()
+    for layer in wlsort:
+        file.write("%s " % layer)
+    file.write("\n")
+    #write a dataframe of variables
     file.write("Var\n")
-    for var in outputfiles:
-        file.write("%s\n" % var)
+    for name in names:
+        file.write("%s\n" % name)
     file.close()
 
 sys.exit()
