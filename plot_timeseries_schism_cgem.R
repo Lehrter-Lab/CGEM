@@ -6,12 +6,12 @@ thisdir <- getwd()
 outdir <- file.path(thisdir,"outputs")
 pdfdir <- file.path(thisdir,"pdfs")
 
-if (!dir.exists("output")){
+if (!dir.exists(outdir)){
   stop("No output directory found.  Please see instructions for Extracting Timeseries at https://github.com/OyBcSt/CGEM.") 
 }
 
-if (!dir.exists("pdfs")){
-  dir.create("pdfs") 
+if (!dir.exists(pdfdir)){
+  dir.create(pdfdir) 
 }
 
 con <- file(file.path(outdir,"cgem_ts.txt"),"r")
