@@ -4,6 +4,7 @@ pdfs/*
 saveoutputs*/*
 cgem_extract.csh
 launch.csh
+hydro_extract.sh
 
 #python crap
 __pycache__

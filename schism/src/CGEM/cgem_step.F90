@@ -190,6 +190,7 @@ do k = 1, km
   enddo
   do isp = 1,nospZ
     ff(k,iZ(isp))  = AMAX1(ff(k,iZ(isp)),1.)
+    if(ff(k,iZ(isp)).lt.1) write(6,*) "Z<1,isp,Z",isp,ff(k,iZ(isp))
   enddo
   do i = inum,nf
     ff(k,i) = AMAX1(ff(k,i),0.)

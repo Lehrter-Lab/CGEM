@@ -37,8 +37,8 @@ get_ylim <- function(indata,range) {
 }
 
 get_ylim_for2 <- function(indata,indata2,range) {
-  ymin <- (min( min(indata), min(indata2) ));
-  ymax <- (max( max(indata), max(indata2) ));
+  ymin <- (min( min(indata,na.rm=TRUE), min(indata2,na.rm=TRUE) ));
+  ymax <- (max( max(indata,na.rm=TRUE), max(indata2,na.rm=TRUE) ));
   if(!is.null(range)){
     ymin <- range[1]
     ymax <- range[2]
@@ -50,8 +50,8 @@ get_lab <- function(ylimit){
   ymin <- ylimit[1]
   ymax <- ylimit[2]
   ymid <- ymin + (ymax-ymin)/2.
-  ymin <- signif(ymin,digits=4)
-  ymax <- signif(ymax,digits=4)
-  ymid <- signif(ymid,digits=4)
+  ymin <- signif(ymin,digits=2)
+  ymax <- signif(ymax,digits=2)
+  ymid <- signif(ymid,digits=2)
   c(ymin,ymid,ymax)
 }

@@ -14,7 +14,7 @@ if (!dir.exists(pdfdir)){
   dir.create(pdfdir) 
 }
 
-con <- file(file.path(outdir,"cgem_ts.txt"),"r")
+con <- file(file.path(outdir,"hydro_ts.txt"),"r")
 
 #Extra write statements if debug is TRUE
 debug <- as.logical(readLines(con,n=1))
@@ -33,7 +33,7 @@ close(con)
 #Reopen the file as dataframe with variables
 #open file created by extract_time_series.py
 #skip above 5 lines
-df <- read.csv(file.path(outdir,"cgem_ts.txt"),skip=5)
+df <- read.csv(file.path(outdir,"hydro_ts.txt"),skip=5)
 #number of files
 numvars <- length(df$Var)
 
@@ -42,8 +42,7 @@ numvars <- length(df$Var)
 #numfiles <- 13
 #which_nodes = c('1','4','7')
 #which_layers = c('7','4','1')
-which_colors = c('red','orange','yellow','green','blue','purple','black')
-#magenta','blue','black','red','green','purple','magenta','blue','black','red','green','purple')
+which_colors = c('black','purple','blue','green','red','darkgreen', 'magenta','blue','black','red','green','purple','magenta','blue','black','red','green','purple','black','purple','blue','green','red','darkgreen', 'magenta','blue','black','red','green','purple','magenta','blue','black','red','green','purple')
 
 #numfiles <- 1
 #The year
@@ -53,16 +52,18 @@ which_colors = c('red','orange','yellow','green','blue','purple','black')
 #plotting functions
 source(file.path(thisdir, "timeseries_plot.R"))
 
+#setup pdf file in 4x4 layout
+pdfname <- file.path(pdfdir,paste("timeseries_hydro",iYr0,'sasj',".pdf", sep='_'))
+pdf(file=pdfname)
+pdf_layout <- c(4,4)
+#pdf_layout <- c(2,1)
+which_mod <- pdf_layout[1] * pdf_layout[2]
+par(mfrow=pdf_layout)
 
+inode=0
 for (node in which_nodes){
-  #setup pdf file in 4x4 layout
-  pdfname <- file.path(pdfdir,paste("timeseries_cgem",iYr0,node,".pdf", sep='_'))
-  pdf(file=pdfname)
-  pdf_layout <- c(4,4)
-#  pdf_layout <- c(2,1)
-  which_mod <- pdf_layout[1] * pdf_layout[2]
-  par(mfrow=pdf_layout)
   #go through files
+  inode = inode+1
   for (i in 1:numvars) {
     first = TRUE
     for (layer in which_layers){
@@ -82,11 +83,14 @@ for (node in which_nodes){
       nc_close(nc)
   }
   time <- as.POSIXct(time, origin=paste(iYr0,"-01-01",sep=""), tz="GMT")
-  cat("var,layer,node,min,max",df$Var[i],layer,node,min(rdata),max(rdata),"\n")
+  cat("minmax time",min(time),max(time),"\n")
+  cat("var,layer,node,min,max",df$Var[i],layer,node,min(rdata,na.rm=TRUE),max(rdata,na.rm=TRUE),"\n")
+  cat("length rdata time",length(rdata),length(time),"\n")
   if(first){
     if(debug) cat("timeseries plot, first, var, layer, node",first,df$Var[i],layer,node,"\n")
     iwc = 1
-    timeseries_plot(Var,time,rdata,unit,color=which_colors[iwc])
+    title = paste(Var,node)
+    timeseries_plot(title,time,rdata,unit,color=which_colors[iwc],range=c(0,35))
     iwc = iwc + 1
     first = FALSE
    } else{
@@ -94,11 +98,15 @@ for (node in which_nodes){
     timeseries_addlines(Var,time,rdata,color=which_colors[iwc],linewidth=1,linetype="solid")
     iwc = iwc + 1
    }
-  if (i%%which_mod == 0) {
-    par(mfrow=pdf_layout)
-    }
   }
  }
-  dev.off()
  
 }
+
+  if (inode%%which_mod == 0) {
+    par(mfrow=pdf_layout)
+    }
+
+
+  dev.off()
+
