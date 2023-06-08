@@ -498,7 +498,7 @@
   ! Note that the time units are in years, not days.
   !---------------------------------------------------------- 
     IMPLICIT NONE
-    
+   
     REAL, INTENT(IN) :: OM1
     REAL, INTENT(IN) :: OM2
     REAL, INTENT(IN) :: O2
@@ -558,7 +558,9 @@
 #ifdef DEBUG
 write(6,*) "In reaction"
 #endif
-    
+   
+
+!write(6,*) "Reaction: OM1, OM2, O2, NO3,  X1, Y1, Z1, X2, Y2, Z2",myrank,inea,OM1,OM2,O2,NO3,X1,Y1,Z1
 
     ! Use the Q10 relationship to determine the rates.
     ! Assume that TEMP is the maximum temperature.

@@ -29,8 +29,6 @@
       use schism_io
       use netcdf
       use misc_modules
-      use gen_modules_clock
-
 
 #ifdef USE_PAHM
       use ParWind, only : ReadCsvBestTrackFile
@@ -46,6 +44,10 @@
       USE bio_param
       USE biology
       USE eclight
+#endif
+
+#ifdef USE_GEN
+     USE grid, only: iYrS,iMonS,iDayS,iHrS,iMinS,iSecS   
 #endif
 
 #ifdef USE_ICM
@@ -92,6 +94,7 @@
       USE hydraulic_structures
 
 #ifdef USE_MICE
+      use gen_modules_clock
       use mice_module, only: ntr_ice,u_ice,v_ice,ice_tr,delta_ice,sigma11, &
    &sigma12,sigma22
       use mice_therm_mod, only: t_oi
@@ -210,7 +213,7 @@
      &level_age,vclose_surf_frac,iadjust_mass_consv0,ipre2, &
      &ielm_transport,max_subcyc,i_hmin_airsea_ex,hmin_airsea_ex,itransport_only,meth_sink, &
      &iloadtide,loadtide_coef,nu_sum_mult,i_hmin_salt_ex,hmin_salt_ex,h_massconsv,lev_tr_source, &
-     &rinflation_icm,iprecip_off_bnd
+     &rinflation_icm,iprecip_off_bnd,model_type_pahm
 
      namelist /SCHOUT/nc_out,iof_hydro,iof_wwm,iof_gen,iof_age,iof_sed,iof_eco,iof_icm_core, &
      &iof_icm_silica,iof_icm_zb,iof_icm_ph,iof_icm_cbp,iof_icm_sav,iof_icm_veg,iof_icm_sed, &
@@ -347,10 +350,10 @@
 !      call get_param('param.in','ntracer_gen',1,ntrs(3),tmp,stringvalue)
       ntrs(3)=ntracer_gen
       if(ntrs(3)<=0) call parallel_abort('INIT: ntrs(3)<=0')
-      if(myrank==0) write(16,*) 'ntrs(3)=',ntrs(3)
       !settling vel
 !      call get_param('param.in','gen_wsett',2,itmp,gen_wsett,stringvalue)
       tr_mname(3)='GEN'
+       if(myrank==0) write(16,*) 'In schism_init, gen_wsett=',gen_wsett
 #endif
 #ifdef USE_AGE
 !      call get_param('param.in','ntracer_age',1,ntrs(4),tmp,stringvalue)
@@ -481,7 +484,7 @@
       s1_mxnbt=0.5_rkind; s2_mxnbt=3.5_rkind;
       iharind=0; icou_elfe_wwm=0; drampwafo=0.d0; nstep_wwm=1; hmin_radstress=1._rkind; turbinj=0.15_rkind;
       alphaw=1.0_rkind; fwvor_advxy_stokes=1; fwvor_advz_stokes=1;
-      fwvor_gradpress=1; fwvor_breaking=1; fwvor_streaming=1; fwvor_wveg=1; fwvor_wveg_NL=1; wafo_obcramp=0;
+      fwvor_gradpress=1; fwvor_breaking=1; fwvor_streaming=1; fwvor_wveg=0; fwvor_wveg_NL=0; wafo_obcramp=0;
       fwvor_advxy_stokes=1; fwvor_advz_stokes=1; fwvor_gradpress=1; fwvor_breaking=1; wafo_obcramp=0;
       iwbl=0; cur_wwm=0; if_source=0; dramp_ss=2._rkind; ieos_type=0; ieos_pres=0; eos_a=-0.1_rkind; eos_b=1001._rkind;
       slr_rate=120._rkind; rho0=1000._rkind; shw=4184._rkind; isav=0; nstep_ice=1; h1_bcc=50._rkind; h2_bcc=100._rkind
@@ -498,6 +501,7 @@
       h_massconsv=2.d0; rinflation_icm=1.d-3
       lev_tr_source=-9 !bottom
       iprecip_off_bnd=0
+      model_type_pahm=10
 
       !Output elev, hvel by detault
       nc_out=1
@@ -707,8 +711,8 @@
 !        call get_param('param.in','coriolis',2,itmp,coricoef,stringvalue)
       endif
 
-!     Wind (nws=3: for coupling directly to atmos model; otherwise same as nws=2)
-      if(nws<-1.or.nws>6) then
+!     Wind (use nws=2 and USE_ATMOS for coupling directly to atmos model)
+      if(nws<-1.or.nws>6.or.nws==3) then
         write(errmsg,*)'Unknown nws',nws
         call parallel_abort(errmsg)
       endif
@@ -721,20 +725,16 @@
 !        call parallel_abort(errmsg)
 !      endif
 
-      if(nws<0) then
+      if(nws==-1) then
 #ifndef USE_PAHM 
-        call parallel_abort('INIT: nws<0 requires USE_PAHM')
+        call parallel_abort('INIT: nws=-1 requires USE_PAHM')
 #endif
+        if(model_type_pahm/=1.and.model_type_pahm/=10) call parallel_abort('INIT: check model_type_pahm')
       endif
 
-      if(nws==3) then
-!#ifndef USE_ESMF
-        !> @todo the USE_ESMF macro is not yet implemented in CMake, thus the 
-        !> following check is disabled
-        !call parallel_abort('nws=3 requires coupler')
-!#endif        
+!      if(nws==3) then
         !Error:overwrite wtiminc by coupling step
-      endif !nws==3
+!      endif !nws==3
 
 !      iwind_form=0 !init.
       if(nws/=0) then
@@ -751,12 +751,17 @@
       endif
       if(isconsv/=0.and.ihconsv==0) call parallel_abort('Evap/precip model must be used with heat exchnage model')
 !'
-      if(ihconsv/=0.and.(nws<2.or.nws>3)) call parallel_abort('Heat budge model must have nws>=2')
+      if(ihconsv/=0.and.nws/=2.and.nws/=4) call parallel_abort('Heat budge model must have nws>=2')
 
 #ifdef USE_BULK_FAIRALL
       if(ihconsv/=0.and.nws==2.and.myrank==0) write(16,*)'Turb. Fluxes: Fairall et al.(03)'
 #else
       if(ihconsv/=0.and.nws==2.and.myrank==0) write(16,*)'Turb. Fluxes: Zeng et al.(98)'
+#endif
+
+#ifdef USE_ATMOS
+      if(nws/=2) call parallel_abort('INIT: USE_ATMOS must use nws=2')
+      if(iwind_form==0) call parallel_abort('INIT: USE_ATMOS must not have iwind_form==0')
 #endif
 
       if(ihconsv/=0) then
@@ -781,8 +786,6 @@
 !       isconsv=1
 #endif
       endif
-
-!      if(nws==3.and.isconsv==0) call parallel_abort('INIT: nws=3.and.isconsv=0')
 
 !...  Turbulence closure options
 !      call get_param('param.in','itur',1,itur,tmp,stringvalue)
@@ -830,11 +833,21 @@
 !     Pass time info to EcoSim and ICM
 #ifdef USE_ECO
       year=start_year
-      month=start_month
+!      month=start_month !not needed by ECO
       day=start_day
       hour=start_hour
       minutes=0 !sim_minute
       seconds=0 !sim_second
+#endif
+
+#ifdef USE_GEN
+!iYrS,iMonS,iDayS,iHrS,iMinS,iSecS
+      iYrS = start_year
+      iMonS=start_month
+      iDayS=start_day
+      iHrS=start_hour
+      iMinS=0 !sim_minute
+      iSecS=0 !sim_second
 #endif
      
 !...  Transport method for all tracers including T,S
@@ -851,7 +864,7 @@
           call parallel_abort(errmsg)
         endif
 
-        if(courant_weno<=0._rkind) then
+        if(courant_weno<=0._rkind.or.courant_weno>1._rkind) then
           write(errmsg,*)'Illegal courant_weno:',courant_weno
           call parallel_abort(errmsg)
         endif
@@ -1140,7 +1153,10 @@
       endif
 
 !     Volume and mass sources/sinks option (-1:nc; 1:ASCII)
-      if(iabs(if_source)>1) call parallel_abort('Wrong if_source')
+      if(iabs(if_source)>1) call parallel_abort('INIT: wrong if_source')
+#ifdef USE_NWM_BMI
+      if(if_source==0) call parallel_abort('INIT: USE_NWM_BMI cannot go with if_source=0')
+#endif
 
 !     Check all ramp periods
 !      if(if_source/=0.and.nramp_ss/=0.and.dramp_ss<=0.d0) call parallel_abort('INIT: wrong dramp_ss')
@@ -1439,16 +1455,15 @@
         if(istat/=0) call parallel_abort('INIT: failed to alloc ts_offline')
       endif
    
-      if(nws<0) then
+      if(nws==-1) then
         allocate(xlon_gb(np_global),ylat_gb(np_global),stat=istat)
         if(istat/=0) call parallel_abort('INIT: alloc xlon_gb failure')
       endif !nws
 
-
 #ifdef USE_GEN
 !Now it has nvrt, you can initialize arrays
       if(myrank==0) write(16,*) 'Initialize CGEM: nvrt=',nvrt
-      call grid_setup(nvrt)
+      call grid_setup(nvrt,start_year)
       call cgem_setup(ntrs(3))
       !if(myrank==0) write(16,*) "After cgem_setup"
 
@@ -3195,14 +3210,14 @@
       endif !ncor
 
 !     Wind 
-      if(nws<0.or.(nws>=2.and.nws<=3)) then !CORIE mode; read in hgrid.ll and open debug outputs
+      if(nws==-1.or.nws==2) then !read in hgrid.ll and open debug outputs
         if(myrank==0) then
           open(32,file=in_dir(1:len_in_dir)//'hgrid.ll',status='old')
           read(32,*)
           read(32,*) !ne,np
           do i=1,np_global
             read(32,*)j,buf3(i),buf4(i) !tmp1,tmp2
-            if(nws<0) then !save only on rank 0
+            if(nws==-1) then !save only on rank 0
               xlon_gb(i)=buf3(i) !degr
               ylat_gb(i)=buf4(i)
             endif
@@ -4610,94 +4625,6 @@
 !      endif
 !      call parallel_finalize
 !      stop
-
-!...  initialize wind for nws=1,2 (first two lines)
-!...  Wind vector always in lat/lon frame and so will have problem at poles
-!      if(nws==0) then
-!        windx1 = 0
-!        windy1 = 0
-!        windy2 = 0
-!        windx2 = 0  
-!        windx  = 0
-!        windy  = 0 
-!      endif
-!
-!      if(nws==1) then
-!        open(22,file=in_dir(1:len_in_dir)//'wind.th',status='old')
-!        read(22,*)tmp1,wx1,wy1
-!        read(22,*)tmp2,wx2,wy2
-!        if(abs(tmp1)>1.e-4.or.abs(tmp2-wtiminc)>1.e-4) &
-!     &call parallel_abort('check time stamp in wind.th')
-!        do i=1,npa
-!          windx1(i)=wx1
-!          windy1(i)=wy1
-!          windx2(i)=wx2
-!          windy2(i)=wy2
-!        enddo
-!        wtime1=0
-!        wtime2=wtiminc 
-!      endif
-!
-!      if(nws==4) then
-!        open(22,file=in_dir(1:len_in_dir)//'wind.th',status='old')
-!        read(22,*)tmp1,rwild(:,:)
-!        do i=1,np_global
-!          if(ipgl(i)%rank==myrank) then
-!            nd=ipgl(i)%id
-!            windx1(nd)=rwild(i,1)
-!            windy1(nd)=rwild(i,2)
-!            pr1(nd)=rwild(i,3)
-!          endif
-!        enddo !i
-!
-!        read(22,*)tmp2,rwild(:,:)
-!        do i=1,np_global
-!          if(ipgl(i)%rank==myrank) then
-!            nd=ipgl(i)%id
-!            windx2(nd)=rwild(i,1)
-!            windy2(nd)=rwild(i,2)
-!            pr2(nd)=rwild(i,3)
-!          endif
-!        enddo !i
-!        if(abs(tmp1)>1.e-4.or.abs(tmp2-wtiminc)>1.e-4) &
-!     &call parallel_abort('check time stamp in wind.th (4)')
-!
-!        wtime1=0
-!        wtime2=wtiminc
-!      endif !nws=4
-!
-!#ifdef USE_SIMPLE_WIND
-!      if(nws==5.or.nws==6) then
-!        itmp1=1
-!        wtime1=0
-!        wtime2=wtiminc 
-!        if(nws==5) then 
-!          CALL READ_REC_ATMO_FD(itmp1,   windx1, windy1, pr1)
-!          CALL READ_REC_ATMO_FD(itmp1+1, windx2, windy2, pr2)
-!        endif
-!        if(nws==6)  then
-!          CALL READ_REC_ATMO_FEM(itmp1,   windx1, windy1, pr1)
-!          CALL READ_REC_ATMO_FEM(itmp1+1, windx2, windy2, pr2)
-!        endif
-!      endif !5|6
-!#endif
-!
-!!     CORIE mode
-!      if(nws>=2.and.nws<=3) then
-!        wtime1=0
-!        wtime2=wtiminc 
-!!       wind speed upon output is rotated to the map projection
-!!       For ics=2, make sure windrot* =0 (i.e. true east/north direction)
-!        if(nws==2) then
-!          call get_wind(wtime1,windx1,windy1,pr1,airt1,shum1)
-!          call get_wind(wtime2,windx2,windy2,pr2,airt2,shum2)
-!        else
-!          windx1=0; windy1=0; windx2=0; windy2=0
-!          pr1=1.e5; pr2=1.e5 
-!          airt1=20; airt2=20
-!          shum1=0; shum2=0
-!        endif
-!      endif !nws>=2
 !------------------------------------------------------------------
       endif !ihot=0
 
@@ -4772,27 +4699,27 @@
       if(myrank==0) write(16,*)'Numbert of Biological Tracers (NBIT)=', NBIT
 
       !converts to Julian day 
-      if(month==1)then
+      if(start_month==1)then
         yday = day
-      else if(month==2)then
+      else if(start_month==2)then
         yday = day + 31
-      else if(month==3)then
+      else if(start_month==3)then
         yday = day + 59
-      else if(month==4)then
+      else if(start_month==4)then
         yday = day + 90
-      else if(month==5)then
+      else if(start_month==5)then
         yday = day + 120
-      else if(month==6)then
+      else if(start_month==6)then
         yday = day + 151
-      else if(month==7)then
+      else if(start_month==7)then
         yday = day + 181
-      else if(month==8)then
+      else if(start_month==8)then
         yday = day + 212
-      else if(month==9)then
+      else if(start_month==9)then
         yday = day + 243
-      else if(month==10)then
+      else if(start_month==10)then
         yday = day + 273
-      else if(month==11)then
+      else if(start_month==11)then
         yday = day + 304
       else
         yday = day + 334
@@ -5117,10 +5044,10 @@
 #ifdef USE_AGE
           !AGE: deal with first half of tracers only (2nd half=0). Mark non-0 elem
           indx2=m-irange_tr(1,mm)+1 !local tracer index
-          !If level_age=-999, the init from .ic is good (1 for all levels)
+          !If level_age=-999, the init from .ic is good (inject 1 at all levels)
           if(mm==4.and.indx2<=ntrs(4)/2) then !.and.level_age(indx2)/=-999) then
             do i=1,nea
-              if(abs(tr_el(m,nvrt,i)-1)<1.d-4) then
+              if(abs(tr_el(m,nvrt,i)-1)<1.d-4) then !non-0 elem initially
                 nelem_age(indx2)=nelem_age(indx2)+1
                 if(nelem_age(indx2)>nea) call parallel_abort('INIT: increase dim of ielem_age')
                 ielem_age(nelem_age(indx2),indx2)=i
@@ -7099,19 +7026,21 @@
       if(myrank==0) write(16,*)'start init multi ice...'
       call ice_init
       if(myrank==0) write(16,*)'done init multi ice...'
+      call clock_init(time) !by wq
+      if(myrank==0) write(16,*) yearnew,month_mice,day_in_month,timeold
 #endif
 
 
 !...  Init PaHM on rank 0 only
 #ifdef USE_PAHM
-      if(nws<0) then
+      if(nws==-1) then
         if(myrank==0) then
           write(16,*)'reading PaHM inputs...'
           call ReadControlFile !('pahm_control.in') !TRIM(controlFileName))
           call ReadCsvBestTrackFile()
           write(16,*)'done pre-proc PaHM...'
         endif
-      endif !nws<0
+      endif !nws
 #endif /*USE_PAHM*/
 
       difnum_max_l2=0.d0 !max. horizontal diffusion number reached by each process (check stability)

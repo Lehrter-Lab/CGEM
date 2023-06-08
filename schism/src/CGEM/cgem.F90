@@ -2,7 +2,8 @@ module cgem
 
 !CGEM STATE VARIABLES
 use, intrinsic :: iso_fortran_env, only: stderr => error_unit
-use grid, only: km,dT
+use grid, only: km
+use schism_glbl, only : nea
 !use schism_glbl, only: rkind
 
 implicit none
@@ -16,10 +17,6 @@ integer :: nospZ
 !misc
 real :: eps
 
-!time
-real :: dTd
-integer :: StepsPerDay
-
 !Sinking
 real, dimension(:), allocatable :: ws
 
@@ -28,10 +25,10 @@ real, allocatable :: aDailyRad(:)  ! Previous day's irradiance per layer
 real, allocatable :: aRadSum(:) 
 
 !Stoichiometry
-real, dimension(:), allocatable :: s_x1A,s_y1A,s_z1A
-real, dimension(:), allocatable :: s_x2A,s_y2A,s_z2A
-real, dimension(:), allocatable :: s_x1Z,s_y1Z,s_z1Z
-real, dimension(:), allocatable :: s_x2Z,s_y2Z,s_z2Z
+real, dimension(:,:), allocatable :: s_x1A,s_y1A,s_z1A
+real, dimension(:,:), allocatable :: s_x2A,s_y2A,s_z2A
+real, dimension(:,:), allocatable :: s_x1Z,s_y1Z,s_z1Z
+real, dimension(:,:), allocatable :: s_x2Z,s_y2Z,s_z2Z
 real :: stoich_x1R,stoich_y1R,stoich_z1R
 real :: stoich_x2R,stoich_y2R,stoich_z2R
 real :: stoich_x1BC,stoich_y1BC,stoich_z1BC
@@ -662,8 +659,8 @@ aDailyRad = 1.
 aRadSum = 0.
 
 !Stoichiometry
-allocate(s_x1A(km),s_x2A(km),s_y1A(km),s_y2A(km),s_z1A(km),s_z2A(km),&
-         s_x1Z(km),s_x2Z(km),s_y1Z(km),s_y2Z(km),s_z1Z(km),s_z2Z(km),stat=ierr)
+allocate(s_x1A(km,nea),s_x2A(km,nea),s_y1A(km,nea),s_y2A(km,nea),s_z1A(km,nea),s_z2A(km,nea),&
+         s_x1Z(km,nea),s_x2Z(km,nea),s_y1Z(km,nea),s_y2Z(km,nea),s_z1Z(km,nea),s_z2Z(km,nea),stat=ierr)
 if(ierr.ne.0) write(6,*) "error in allocating:stoichiometry"
 
 !Flux
@@ -705,12 +702,6 @@ real tot
 #ifdef DEBUG
 write(6,*) "Begin cgem_init"
 #endif
-
- !Initialize Time stuff
-  dTd = dT/86400.         ! Timestep length in units of days
-  !StepsPerDay = SDay / dT ! Time steps in a day
-  StepsPerDay = 86400 / dT
-
 
 
 Athresh = Athresh*volcell   ! Threshold for grazing, um^3/m3
@@ -837,8 +828,12 @@ write(6,*) "ws(iOM2_BC) = sinkOM2_BC",ws(iOM2_BC)
 write(6,*) "ws",ws
 #endif
 
+
 !Convert to negative per seconds
-ws = -ws / 86400.
+!ws = -ws / 86400.
+!For SCHISM, should be positive
+ws = ws / 86400.
+
 
 #ifdef DEBUG
 write(6,*) "ff(1)",ff(:,1)

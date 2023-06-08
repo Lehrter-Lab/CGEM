@@ -4,13 +4,13 @@ subroutine grid_setup(nvrts)
   implicit none
 
   integer, intent(in) :: nvrts
-  real :: S_init,T_init,depth_in,lat_in,lon_in
+  real :: lat_in,lon_in
 
-  km=nvrts
+  km=nvrts-1
 
-  call grid_read(S_init,T_init,depth_in,lat_in,lon_in)
+  call grid_read(lat_in,lon_in)
   call grid_allocate
-  call grid_init(S_init,T_init,depth_in,lat_in,lon_in)
+  call grid_init(lat_in,lon_in)
 
 return
 end subroutine

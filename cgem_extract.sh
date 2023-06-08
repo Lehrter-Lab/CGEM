@@ -1,0 +1,10 @@
+python cgem.extract_time_series.py _1.nc 7 1 1
+python cgem.extract_time_series.py _1.nc 7 2 0
+python cgem.extract_time_series.py _1.nc 7 3 0
+python cgem.extract_time_series.py _1.nc 7 4 0
+python cgem.extract_time_series.py _1.nc 7 5 0
+python cgem.extract_time_series.py _1.nc 7 6 0
+python cgem.extract_time_series.py _1.nc 7 7 0
+python cgem.extract_time_series.py _1.nc 7 8 0
+python cgem.extract_time_series.py _1.nc 7 9 0
+python cgem.extract_time_series.py _1.nc 7 10 0

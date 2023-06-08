@@ -70,7 +70,7 @@ write(6,*) "In calc_Agrow: Begin calc_Agrow"
     uSi_k(k,:)  = f_Si(:) * umax(:) * Tadj(1:nospA)
 
 #ifdef DEBUG
-  if(k.eq.1) write(6,*) f_E,umax,uE_k
+  if(k.eq.1) write(6,*) "f_E,umax,uE_k", f_E,umax,uE_k(k,:)
 #endif
 
     if(which_growth.eq.1) then

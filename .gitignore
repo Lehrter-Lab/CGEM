@@ -5,6 +5,7 @@ saveoutputs*/*
 cgem_extract.csh
 launch.csh
 hydro_extract.sh
+s2p_*
 
 #python crap
 __pycache__

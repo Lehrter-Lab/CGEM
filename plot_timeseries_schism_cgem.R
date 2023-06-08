@@ -42,7 +42,7 @@ numvars <- length(df$Var)
 #numfiles <- 13
 #which_nodes = c('1','4','7')
 #which_layers = c('7','4','1')
-which_colors = c('red','orange','yellow','green','blue','purple','black')
+which_colors = c('magenta','red','orange','yellow','green','darkgreen','blue','darkblue','purple','black')
 #magenta','blue','black','red','green','purple','magenta','blue','black','red','green','purple')
 
 #numfiles <- 1
@@ -54,17 +54,47 @@ which_colors = c('red','orange','yellow','green','blue','purple','black')
 source(file.path(thisdir, "timeseries_plot.R"))
 
 
+
+
+
 for (node in which_nodes){
   #setup pdf file in 4x4 layout
   pdfname <- file.path(pdfdir,paste("timeseries_cgem",iYr0,node,".pdf", sep='_'))
   pdf(file=pdfname)
-  pdf_layout <- c(4,4)
-#  pdf_layout <- c(2,1)
+#  pdf_layout <- c(4,4)
+  pdf_layout <- c(2,1)
   which_mod <- pdf_layout[1] * pdf_layout[2]
   par(mfrow=pdf_layout)
+
+  #get ranges first
+  varmin <- c(1:numvars)*0.
+  varmax <- c(1:numvars)*0.
+  for (i in 1:numvars) {
+    for (layer in which_layers){
+      rdata <- c()
+      time  <- c()
+     for (j in 1:numfiles){
+      basename <- paste(df$Var[i],"ts",iYr0,node,layer,j,sep='_')
+      basename <- paste0(basename,".nc")
+      filename <- file.path(outdir,basename)
+      nc <- nc_open(filename)
+      Var <- df$Var[i]
+      rdata <- append(rdata,ncvar_get(nc, df$Var[i]))
+      nc_close(nc)
+     }
+    }
+     varmin[i] <- min(rdata)
+     varmax[i] <- max(rdata)
+
+    cat(varmin[i],varmax[i],"\n")
+  }
+
+
   #go through files
   for (i in 1:numvars) {
-    first = TRUE
+    first <- TRUE
+    var_range <- c(varmin[i],varmax[i])
+    cat("var_range",var_range,"\n")
     for (layer in which_layers){
       rdata <- c()
       time  <- c()
@@ -80,13 +110,13 @@ for (node in which_nodes){
       #assumes units are the same, but we need to get it before closing the nc file
       unit <- ncatt_get(nc,df$Var[i],attname="units")$value
       nc_close(nc)
-  }
+     }
   time <- as.POSIXct(time, origin=paste(iYr0,"-01-01",sep=""), tz="GMT")
   cat("var,layer,node,min,max",df$Var[i],layer,node,min(rdata),max(rdata),"\n")
   if(first){
     if(debug) cat("timeseries plot, first, var, layer, node",first,df$Var[i],layer,node,"\n")
     iwc = 1
-    timeseries_plot(Var,time,rdata,unit,color=which_colors[iwc])
+    timeseries_plot(Var,time,rdata,unit,color=which_colors[iwc],range=var_range)
     iwc = iwc + 1
     first = FALSE
    } else{

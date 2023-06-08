@@ -262,7 +262,7 @@ if (do_write==1):
     #SCHISM output is bottom to top...reverse it to make the plots
     wlsort = which_layers
     wlsort.reverse()
-    for layer in wlsort:
+    for layer in which_layers:
         file.write("%s " % layer)
     file.write("\n")
     #write a dataframe of variables

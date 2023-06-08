@@ -3,9 +3,7 @@ add_library(cgem grid.F90 grid_setup.F90 cgem.F90 cgem_setup.F90 cgem_run.F90 cg
 calc_solar_zenith.F90
 cgem_growth.F90
 cgem_light.F90
-cgem_misc.F90
 cgem_utils.F90
-DailyRad_init.F90
 date_time.F90
 Model_Diagenesis.F90
 SDM.F90

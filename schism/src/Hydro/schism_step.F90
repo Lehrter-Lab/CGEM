@@ -24,7 +24,6 @@
       use schism_io
       use netcdf
       use misc_modules
-      use gen_modules_clock
 
 #ifdef USE_PAHM
       use PaHM_Global, only: modelType
@@ -84,6 +83,7 @@
 #endif
 
 #ifdef USE_MICE
+      use gen_modules_clock
       use icedrv_main, only:io_icepack,restart_icepack,step_icepack
       use mice_module, only: ntr_ice,u_ice,v_ice,ice_tr,delta_ice,sigma11, &
    &sigma12,sigma22
@@ -157,8 +157,8 @@
                      &tmpxs,tmpys,tmpx1,tmpy1,tmpx2,tmpy2,tmpx3,tmpy3, &
                      &tmpx1s,tmpy1s,tmpx2s,tmpy2s,tmpx3s,tmpy3s,taux2,tauy2, &
                      &taux2s,tauy2s,uths,vths,vtan,suru,surv,dhdx,dhdy,ubar1, &
-                     &ubar2,vbar1,vbar2,ubar,vbar,eta1_bar,eta2_bar, &
-                     &xcon,ycon,zcon,vnor1,vnor2,bflux,bflux0,top, &
+                     &ubar2,vbar1,vbar2,ubar,vbar,ubar3,vbar3,eta1_bar,eta2_bar, &
+                     &xcon,ycon,zcon,vnor1,vnor2,bflux,bflux0,bflux2,top, &
                      &deta_dx,deta_dy,hmin,dzds_av,css,dsigma,dgam0,dgam1, &
                      &hat_i0,dzds,dsdx,dsdy,dsig2,hat_ir,vol,dz,tmp_max, &
                      &tmp_max_gb,dia_min,dia_min_gb,df_max,qhat_e1,qhat_e2,dqdz,uvnu, &
@@ -227,6 +227,7 @@
 !#endif
       
       real(4),allocatable :: swild9(:,:) !used in tracer nudging
+      real(4),allocatable :: rwild6(:,:) !nws=4 only
       real(rkind),allocatable :: rwild(:,:),uth(:,:),vth(:,:),d2uv(:,:,:),dr_dxy(:,:,:),bcc(:,:,:)
       real(rkind),allocatable :: swild99(:,:),swild98(:,:,:) !used for exchange (deallocate immediately afterwards)
       real(rkind),allocatable :: swild96(:,:,:),swild97(:,:,:) !used in ELAD (deallocate immediately afterwards)
@@ -271,9 +272,8 @@
       tau_bottom_nodes(:)=0.0d0
 #endif
 
-
 #ifdef USE_GEN
-if(myrank==0) write(16,*) "CGEM: made it to schism_run"
+!if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 #endif
 
 !     SAL option: scale gravity
@@ -297,11 +297,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
       else !iloadtide=0,1
         grav2=grav
       endif
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before allocate"
-#endif
-
 
 !     Alloc
       allocate(hp_int(nvrt,nea,2),uth(nvrt,nsa),vth(nvrt,nsa),d2uv(2,nvrt,nsa), &
@@ -348,10 +343,14 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
       if(istat/=0) call parallel_abort('STEP: analysis allocation error')
 #endif
 
-!'    Alloc. the large array for nws=4,-1 option (may consider changing
-!     to unformatted binary read)
-      if(nws==4.or.nws<0) then
+!'    Alloc. the large array for nws=4,-1 option 
+      if(nws==-1) then
         allocate(rwild(np_global,3),stat=istat)
+        if(istat/=0) call parallel_abort('MAIN: failed to alloc. (70)')
+      endif 
+
+      if(nws==4) then
+        allocate(rwild6(7,np_global),stat=istat)
         if(istat/=0) call parallel_abort('MAIN: failed to alloc. (71)')
       endif !nws=4
 
@@ -359,11 +358,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         allocate(fluxes_tr(max_flreg,3+2*ntracers),fluxes_tr_gb(max_flreg,3+2*ntracers),stat=istat)
         if(istat/=0) call parallel_abort('STEP: fluxes_tr alloc')
       endif
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, after second allocate"
-#endif
-
 !     End alloc.
 
 !     Offline transport
@@ -396,7 +390,7 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 #ifdef USE_MICE
       call clock_newyear                        ! check if it is a new year
       call clock
-      if(myrank==0) write(16,*) yearold,month,day_in_month,timeold/3600
+      if(myrank==0) write(16,*) yearold,month_mice,day_in_month,timeold/3600
 #endif
 
 !...  define ramp function for boundary elevation forcing, wind and pressure
@@ -411,14 +405,12 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         endif
       endif
 
-!      if(nws>0.and.nrampwind/=0) then
       if(nws/=0.and.drampwind>0.d0) then
         rampwind=tanh(2.d0*time/86400.d0/drampwind)
       else
         rampwind=1.d0
       endif
 
-!      if(nrampwafo/=0) then
       if(drampwafo>0.d0) then
         rampwafo=tanh(2.d0*time/86400.d0/drampwafo)
       else
@@ -427,7 +419,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 
       !For source/sinks
       if(if_source/=0) then
-        !if(nramp_ss==1) then
         if(dramp_ss>0.d0) then
           ramp_ss=tanh(2.d0*time/86400.d0/dramp_ss)
         else
@@ -435,7 +426,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         endif
       endif
 
-      !if(nramp==1) then
       if(dramp>0.d0) then
         ramp=tanh(2.d0*time/86400.d0/dramp)
       else
@@ -450,10 +440,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         bdef2(i)=bdef(i)/real(ibdef,rkind)*real(min0(it,ibdef),rkind)
       enddo !i
 !$OMP end do
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, after bed deformation"
-#endif
 
 !...  Earth tidal potential and loading tide at nodes: pre-compute to save time
 !... 
@@ -485,12 +471,8 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !$OMP   end workshare
       endif
 
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, after wind"
-#endif
-
 #ifdef USE_PAHM
-      if(nws<0) then 
+      if(nws==-1) then 
         !PaHM: rank 0 returns wind and air pressure only for global nodes
         if(myrank==0) then
           if (modelType==1) then       
@@ -515,7 +497,7 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
             pr(nd)=rwild(i,3)
           endif
         enddo !i
-      endif !nws<0
+      endif !nws=-1
 #endif /*USE_PAHM*/
 
       if(nws==1) then
@@ -551,31 +533,67 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !$OMP end parallel
 
       if(nws==4) then
-        if(time>=wtime2) then
+        if(time>wtime2) then
           wtime1=wtime2
           wtime2=wtime2+wtiminc
           windx1=windx2
           windy1=windy2
           pr1=pr2
-!          The large array for nws=4 option (may consider changing to
-!          unformatted binary read)
-          if(myrank==0) read(22,*)tmp,rwild(:,:) 
-          call mpi_bcast(rwild,3*np_global,rtype,0,comm,istat)
+
+          !Read in next record
+          itmp2=wtime2/wtiminc+1
+          j=nf90_inq_varid(ncid_atmos, "uwind",mm)
+          if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc uwind')
+          j=nf90_get_var(ncid_atmos,mm,rwild6(1,:),(/1,itmp2/),(/np_global,1/))
+          if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc uwind(2)')
+          j=nf90_inq_varid(ncid_atmos, "vwind",mm)
+          if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc vwind')
+          j=nf90_get_var(ncid_atmos,mm,rwild6(2,:),(/1,itmp2/),(/np_global,1/))
+          if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc vwind(2)')
+          j=nf90_inq_varid(ncid_atmos, "prmsl",mm)
+          if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc prmsl')
+          j=nf90_get_var(ncid_atmos,mm,rwild6(3,:),(/1,itmp2/),(/np_global,1/))
+          if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc prmsl(2)')
+          if(ihconsv/=0) then
+            j=nf90_inq_varid(ncid_atmos, "downwardNetFlux",mm)
+            if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc netflux')
+            j=nf90_get_var(ncid_atmos,mm,rwild6(4,:),(/1,itmp2/),(/np_global,1/))
+            if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc netflux(2)')
+            j=nf90_inq_varid(ncid_atmos, "solar",mm)
+            if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc solar')
+            j=nf90_get_var(ncid_atmos,mm,rwild6(5,:),(/1,itmp2/),(/np_global,1/))
+            if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc solar(2)')
+          endif !ihconsv/
+          if(isconsv/=0) then
+            j=nf90_inq_varid(ncid_atmos, "prate",mm)
+            if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc prate')
+            j=nf90_get_var(ncid_atmos,mm,rwild6(6,:),(/1,itmp2/),(/np_global,1/))
+            if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc prate(2)')
+            j=nf90_inq_varid(ncid_atmos, "evap",mm)
+            if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc evap')
+            j=nf90_get_var(ncid_atmos,mm,rwild6(7,:),(/1,itmp2/),(/np_global,1/))
+            if(j/=NF90_NOERR) call parallel_abort('STEP: atmos.nc evap(2)')
+          endif !isconsv/
+          call mpi_bcast(rwild6,7*np_global,MPI_REAL4,0,comm,istat)
 
           do i=1,np_global
             if(ipgl(i)%rank==myrank) then
               nd=ipgl(i)%id
-              windx2(nd)=rwild(i,1)
-              windy2(nd)=rwild(i,2)
-              pr2(nd)=rwild(i,3)
-            endif
+              windx2(nd)=rwild6(1,i)
+              windy2(nd)=rwild6(2,i)
+              pr2(nd)=rwild6(3,i)
+
+              if(ihconsv/=0) then
+                sflux(nd)=rwild6(4,i)
+                srad(nd)=rwild6(5,i)
+              endif !ihconsv/
+              if(isconsv/=0) then
+                fluxprc(nd)=rwild6(6,i)
+                fluxevp(nd)=rwild6(7,i)
+              endif !isconsv/
+            endif !ipgl
           enddo !i
         endif !time
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before wtratio"
-#endif
-
 
         wtratio=(time-wtime1)/wtiminc
 !$OMP parallel do default(shared) private(i)
@@ -615,21 +633,18 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 #endif
 
 !     CORIE mode
-      if(nws>=2.and.nws<=3) then
+      if(nws==2) then
         if(time>=wtime2) then
 !...      Heat budget & wind stresses
           if(ihconsv/=0) then
-            if(nws==2) call surf_fluxes(wtime2,windx2,windy2,pr2,airt2, &
+#ifndef     USE_ATMOS
+            call surf_fluxes(wtime2,windx2,windy2,pr2,airt2, &
      &shum2,srad,fluxsu,fluxlu,hradu,hradd,tauxz,tauyz, &
 #ifdef PREC_EVAP
      &                       fluxprc,fluxevp,prec_snow, &
 #endif
      &                       nws ) 
-
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before sflux"
-#endif
+#endif /*USE_ATMOS*/
 
 !$OMP parallel default(shared) private(i,j)
 !$OMP       do
@@ -686,14 +701,15 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
             shum1(i)=shum2(i)
           enddo
 !$OMP end parallel do
-          if(nws==2) call get_wind(wtime2,windx2,windy2,pr2,airt2,shum2)
 
-          if(nws==3) then !via ESMF
-            !ESMF may not extend to ghosts
-            call exchange_p2d(windx2)
-            call exchange_p2d(windy2)
-            call exchange_p2d(pr2)
-          endif !nws==3
+#ifdef    USE_ATMOS
+          !ESMF may not extend to ghosts
+          call exchange_p2d(windx2)
+          call exchange_p2d(windy2)
+          call exchange_p2d(pr2)
+#else
+          call get_wind(wtime2,windx2,windy2,pr2,airt2,shum2)
+#endif
         endif !time>=wtime2
 
         wtratio=(time-wtime1)/wtiminc
@@ -711,7 +727,7 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !        windx2=wx2; windy2=wy2
 !        windx=wx2; windy=wy2
 !       End
-      endif !nws>=2
+      endif !nws=2
 
 !...  Re-scale wind
       if(nws/=0) then; if(iwindoff/=0) then
@@ -720,10 +736,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           windy(i)=windy(i)*windfactor(i)
         enddo !i
       endif; endif
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before WWM"
-#endif
 
 !-------------------------------------------------------------------------------
 !   Wind wave model (WWM)
@@ -871,7 +883,7 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         if(nws==0) then
           tau(1,i)=0.d0
           tau(2,i)=0.d0
-        else if(nws==2.and.ihconsv==1.and.iwind_form==0) then !tauxz and tauyz defined
+        else if(nws==2.and.ihconsv==1.and.iwind_form==0) then !tauxz and tauyz defined; USE_ATMOS not defined
           if(idry(i)==1) then
             tau(1,i)=0.d0
             tau(2,i)=0.d0
@@ -1575,6 +1587,29 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         !Exceptions
         msource(1:2,:)=-9999.d0 !junk so ambient values will be used
 
+#ifdef USE_NWM_BMI
+        !Update everything except time series at new time (need to coordinate
+        !with BMI on the timing of updates)
+        if(nsources>0) then
+          if(time>th_time3(2,1)) then
+            ath3(:,1,1,1)=ath3(:,1,2,1)
+            th_time3(1,1)=th_time3(2,1)
+            th_time3(2,1)=th_time3(2,1)+th_dt3(1)
+          endif
+          if(time>th_time3(2,3)) then
+            ath3(:,:,1,3)=ath3(:,:,2,3)
+            th_time3(1,3)=th_time3(2,3)
+            th_time3(2,3)=th_time3(2,3)+th_dt3(3)
+          endif
+        endif !nsources
+
+        if(nsinks>0.and.time>th_time3(2,2)) then !not '>=' to avoid last step
+          ath3(:,1,1,2)=ath3(:,1,2,2)
+          th_time3(1,2)=th_time3(2,2)
+          th_time3(2,2)=th_time3(2,2)+th_dt3(2)
+        endif
+
+#else
         !Reading by rank 0
         if(nsources>0.and.myrank==0) then
           if(time>th_time3(2,1)) then !not '>=' to avoid last step
@@ -1628,6 +1663,7 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !       Finished reading; bcast
         call mpi_bcast(th_time3,2*nthfiles3,rtype,0,comm,istat)
         call mpi_bcast(ath3,max(1,nsources,nsinks)*ntracers*2*nthfiles3,MPI_REAL4,0,comm,istat)
+#endif /*USE_NWM_BMI*/
 
         if(nsources>0) then
           rat=(time-th_time3(1,1))/th_dt3(1)
@@ -1687,7 +1723,7 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
       endif !if_source/=0
 
 !...  Volume sources from evap and precip
-!...  For nws=3, needs evap for atmos model 
+!...  For USE_ATMOS, needs evap from atmos model 
       if(isconsv/=0) then
 #ifdef  IMPOSE_NET_FLUX
 !        if(impose_net_flux/=0) then !impose net precip (nws=2)
@@ -1993,11 +2029,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         deallocate(swild13)
       endif !it==
 
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: swild11"
-#endif
-
-
       allocate(swild11(np_global),stat=istat)
       if(istat/=0) call parallel_abort('STEP: alloc swild11')
       if(myrank==0) then
@@ -2107,10 +2138,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         endif
       enddo !i
 
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, itransport only=2"
-#endif
-
       if(itransport_only==2) then
         !read saved sediment bed shear stress
         if(myrank==0) then
@@ -2181,11 +2208,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           su2(:,isd)=swild12(:,i)
         endif
       enddo !i
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, done reading su2"
-#endif
-
 
       if(myrank==0) then
 #ifdef OLDIO
@@ -2493,9 +2515,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         tau_bot_node(3,i)=prho(kbp(i)+1,i)*Cdp(i)*tmp
       enddo !i
 !$OMP end do
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run tau"
-#endif
 
 !
 !************************************************************************
@@ -2581,10 +2600,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           enddo !k      
         enddo !i=1,npa
 !$OMP   end do
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, done turbulence closure"
-#endif
 
 !$OMP   master
         if(myrank==0) write(16,*) 'done turbulence closure (PP)...'
@@ -2722,17 +2737,7 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !            write(98,*)nlev,dt,toth,u_taus,u_taub,z0s,z0b
 !          endif
 
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before do turbulence"
-#endif
-
-
           call do_turbulence(nlev,dt,toth,u_taus,u_taub,z0s,z0b,h1d,NN1d,SS1d)
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, after do turbulence"
-#endif    
-
 
 #ifdef USE_TIMOR
           call flmud(j,dt,rough_p(j),SS1d,NN1d,tke1d,eps1d,L1d,num1d,nuh1d)
@@ -2772,11 +2777,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !$OMP   end do
 #endif /*USE_GOTM*/
       endif !itur==4
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before scheme 3, itur,npa=",itur,npa
-#endif    
-
  
 !... Scheme 3: Mellor-Yamada-Galperin & Umlauf-Burchard scheme
       if(itur==3) then
@@ -2887,7 +2887,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           endif
         enddo !k
 
-
 !	b.c. (computed using values from previous time except wind)
         ! At the surface
         q2fs  = 0.5d0*16.6d0**(2.d0/3.d0)*sqrt(tau(1,j)**2.d0+tau(2,j)**2.d0) !Eq. (10) of Zhang & Baptista (2008)
@@ -2968,7 +2967,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           endif
         enddo !k=kbp(j)+1,nvrt
 
-
 !	Soln for q2 at new level
         call tridag(nvrt,1,nqdim,1,alow,bdia,cupp,gam2,soln2,gam)
         q2tmp(nvrt)=q2fs
@@ -2984,7 +2982,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           q2tmp(k)=max(soln2(kin),q2min)
 !          endif
         enddo !k
-
 
 !        write(90,*)'WOW4',it,j,(q2tmp(k),k=1,nvrt)
 !        do k=1,nvrt
@@ -3053,7 +3050,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !	Soln for q2l and xl at new level
         call tridag(nvrt,1,nqdim,1,alow,bdia,cupp,gam2,soln2,gam)
 
-
 !        write(90,*)'WOW6',it,j
 
         do k=kbp(j)+1,nvrt
@@ -3101,7 +3097,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !          write(90,*)'No. ',k,xl(k,j),dfh(k,j),dfv(k,j),dfq1(k,j),dfq2(k,j)
         enddo !k=kbp(j)+1,nvrt
 
-
 !       Extend
         do k=1,kbp(j)-1
           q2(k,j)=q2(kbp(j),j)
@@ -3123,10 +3118,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !      close(32)
 !------------------------------------------------------------
       endif !itur=3
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, endif itur=3"
-#endif    
 
 !... Scheme 5: Two-phase Mixture Turbulence Model 0822
 !new21
@@ -3249,20 +3240,9 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 #else
         zsurf=dzz(nvrt)
 #endif
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, after zsurf and 2 endifs" 
-#endif    
-
         xlfs=max(xlmin2(j),xlsc0*zsurf*0.4_rkind)
         epsffs=max(cmiu0**3.d0*q2fs**1.5d0*xlfs**(-1.d0),psimin)
         epsfbot=max(cmiu0**3.d0*q2bot**1.5d0*xlbot**(-1.d0),psimin)
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run,before Matrix Q"
-#endif    
-
-
 !       Debug
 !        write(32,*)j,iplg(j),xlmin2(j),dzz(nvrt),xlfs
 !        write(90,*)'WOW2',it,j
@@ -3618,9 +3598,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           miuepsf(k,j)=min(diffmax(j),max(diffmin(j),1.d-6+miuft(k,j)/sigepsf))     !0924.2                           
         enddo !k=kbp(j),nvrt
 
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: blah" 
-#endif    
 
 !       Compute vertical diffusivities at new time 0825
         do k=kbp(j),nvrt
@@ -3719,11 +3696,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 
 !$OMP end parallel
 
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before timing,ihorcon=",ihorcon
-#endif    
-
-
 #ifdef INCLUDE_TIMING
 !     end turbulence
       wtmp2=mpi_wtime()
@@ -3820,10 +3792,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         enddo !j=1,ns
 !$OMP   end do
 
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before exchange"
-#endif    
-
 !$OMP   master
 !       Update ghost 
 #ifdef INCLUDE_TIMING
@@ -3912,10 +3880,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
             enddo !k=kbs(j)+1,nvrt
           enddo !j=1,ns
 !$OMP     end do
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, before second exchange,shapiro",ishapiro
-#endif    
 
 !$OMP     master
           call exchange_s3d_2(d2uv)
@@ -5284,11 +5248,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
             endif; endif; endif !-ze(kbe(i),i)
           enddo !j=1,i34
 
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, random"
-#endif    
-
           do k=kbe(i)+1,nvrt
 !           Maxtrix of i34 eqs.
             do j=1,i34(i) !eqs
@@ -5367,8 +5326,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           enddo !k=kbe(i)+1,nvrt
         enddo !i=1,ne
 !$OMP   end do
-
-
 
 !$OMP   master
 #ifdef INCLUDE_TIMING
@@ -5550,8 +5507,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
               endif
             endif !2/3D
           enddo !k
-
-
 
 !new37
           if(ics==1) then
@@ -6950,25 +6905,31 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
       endif !itransport_only==0
 
 !     Add Stokes drift to horizontal vel for wvel and transport; will restore
-!     after transport
+!     after transport. Temporarily save original Eulerian vel s[uv]2 as bcc for
+!     F.V. calculation below
 #ifdef USE_WWM
       if(RADFLAG.eq.'VOR') then
+        bcc(1,:,1:nsa)=su2
+        bcc(2,:,1:nsa)=sv2
         su2=su2+stokes_hvel_side(1,:,:)
         sv2=sv2+stokes_hvel_side(2,:,:)
       endif
 #endif
 
 !...  solve for vertical velocities using F.V.
-!...  For hydrostatic model, this is the vertical vel; for non-hydrostatic
-!...  model, this is only used in transport
+!...  For hydrostatic model, this is the total Lagrangian vertical vel
+!...  while dr_dxy(1,:,:) is used to temporarily save the Eulerian wvel in the vortex formalism
 
 !$OMP parallel default(shared) private(i,i34inv,n1,n2,n3,n4,av_bdef1,av_bdef2,l, &
 !$OMP xcon,ycon,zcon,area_e,sne,ubar,vbar,m,isd,dhdx,dhdy,dep,swild,ubed,vbed,wbed, &
-!$OMP bflux0,sum1,ubar1,vbar1,j,jsj,vnor1,vnor2,bflux,surface_flux_ratio, &
-!$OMP wflux_correct,vn1,vn2,tt1,ss1)
+!$OMP bflux0,sum1,sum2,ubar1,vbar1,j,jsj,vnor1,vnor2,bflux,surface_flux_ratio, &
+!$OMP wflux_correct,vn1,vn2,tt1,ss1,ubar2,vbar2,ubar3,vbar3,bflux2)
 
 !$OMP workshare
       we=0.d0 !for dry and below bottom levels; in eframe if ics=2
+#ifdef USE_WWM
+      dr_dxy=0.d0 !Eulerian wvel
+#endif
       flux_adv_vface=-1.d34 !used in transport; init. as flags
 !$OMP end workshare
 
@@ -7022,16 +6983,26 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 
 !       Rotate hvel. for sides at all levels
         ubar=0.d0; vbar=0.d0 !average bottom hvel
+        ubar2=0.d0; vbar2=0.d0 !average bottom Eulerian hvel
         do m=1,i34(i) !side
           isd=elside(m,i)
 !new37
           if(ics==1) then
             ubar=ubar+su2(kbs(isd),isd)*i34inv 
             vbar=vbar+sv2(kbs(isd),isd)*i34inv
+#ifdef USE_WWM
+            ubar2=ubar2+bcc(1,kbs(isd),isd)*i34inv
+            vbar2=vbar2+bcc(2,kbs(isd),isd)*i34inv
+#endif
           else
             call project_hvec(su2(kbs(isd),isd),sv2(kbs(isd),isd),sframe2(:,:,isd),eframe(:,:,i),vn1,vn2)
             ubar=ubar+vn1*i34inv
             vbar=vbar+vn2*i34inv
+#ifdef USE_WWM
+            call project_hvec(bcc(1,kbs(isd),isd),bcc(2,kbs(isd),isd),sframe2(:,:,isd),eframe(:,:,i),vn1,vn2)
+            ubar2=ubar2+vn1*i34inv
+            vbar2=vbar2+vn2*i34inv
+#endif
           endif !ics
 
         enddo !m
@@ -7044,22 +7015,38 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           ubed=swild(1); vbed=swild(2); wbed=swild(3)
           bflux0=ubed*sne(1,kbe(i))+vbed*sne(2,kbe(i))+wbed*sne(3,kbe(i)) !normal bed vel.
           we(kbe(i),i)=wbed
+#ifdef USE_WWM
+          dr_dxy(1,kbe(i),i)=wbed
+#endif
         else
           !Error: /=0 for 2D (but OK b/cos fluxes are 0 below for transport)
           we(kbe(i),i)=(av_bdef2-av_bdef1)/dt-dhdx*ubar-dhdy*vbar
+#ifdef USE_WWM
+          dr_dxy(1,kbe(i),i)=(av_bdef2-av_bdef1)/dt-dhdx*ubar2-dhdy*vbar2
+#endif
         endif
 
         do l=kbe(i),nvrt-1
           sum1=0.d0
+          sum2=0.d0
           ubar=0.d0
           vbar=0.d0
           ubar1=0.d0
           vbar1=0.d0
+          ubar2=0.d0
+          vbar2=0.d0
+          ubar3=0.d0
+          vbar3=0.d0
           do j=1,i34(i)
             jsj=elside(j,i)
             vnor1=su2(l,jsj)*snx(jsj)+sv2(l,jsj)*sny(jsj)
             vnor2=su2(l+1,jsj)*snx(jsj)+sv2(l+1,jsj)*sny(jsj)
             sum1=sum1+ssign(j,i)*(zs(max(l+1,kbs(jsj)),jsj)-zs(max(l,kbs(jsj)),jsj))*distj(jsj)*(vnor1+vnor2)/2.d0
+#ifdef USE_WWM
+            vnor1=bcc(1,l,jsj)*snx(jsj)+bcc(2,l,jsj)*sny(jsj)
+            vnor2=bcc(1,l+1,jsj)*snx(jsj)+bcc(2,l+1,jsj)*sny(jsj)
+            sum2=sum2+ssign(j,i)*(zs(max(l+1,kbs(jsj)),jsj)-zs(max(l,kbs(jsj)),jsj))*distj(jsj)*(vnor1+vnor2)/2.d0
+#endif
 
             !In eframe; new37
             if(ics==1) then
@@ -7067,6 +7054,12 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
               ubar1=ubar1+su2(l+1,jsj)*i34inv 
               vbar=vbar+sv2(l,jsj)*i34inv 
               vbar1=vbar1+sv2(l+1,jsj)*i34inv 
+#ifdef USE_WWM
+              ubar2=ubar2+bcc(1,l,jsj)*i34inv 
+              ubar3=ubar3+bcc(1,l+1,jsj)*i34inv 
+              vbar2=vbar2+bcc(2,l,jsj)*i34inv 
+              vbar3=vbar3+bcc(2,l+1,jsj)*i34inv 
+#endif
             else
               call project_hvec(su2(l,jsj),sv2(l,jsj),sframe2(:,:,jsj),eframe(:,:,i),vn1,vn2)
               call project_hvec(su2(l+1,jsj),sv2(l+1,jsj),sframe2(:,:,jsj),eframe(:,:,i),tt1,ss1)
@@ -7074,6 +7067,14 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
               vbar=vbar+vn2*i34inv
               ubar1=ubar1+tt1*i34inv
               vbar1=vbar1+ss1*i34inv
+#ifdef USE_WWM
+              call project_hvec(bcc(1,l,jsj),bcc(2,l,jsj),sframe2(:,:,jsj),eframe(:,:,i),vn1,vn2)
+              call project_hvec(bcc(1,l+1,jsj),bcc(2,l+1,jsj),sframe2(:,:,jsj),eframe(:,:,i),tt1,ss1)
+              ubar2=ubar2+vn1*i34inv
+              vbar2=vbar2+vn2*i34inv
+              ubar3=ubar3+tt1*i34inv
+              vbar3=vbar3+ss1*i34inv
+#endif
             endif !ics
           enddo !j
 
@@ -7081,16 +7082,26 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
           if(l==kbe(i)) then
             bflux=(av_bdef2-av_bdef1)/dt
             if(imm==2) bflux=bflux0
+#ifdef USE_WWM
+            bflux2=bflux
+#endif
           else
             !For mixed 2/3D prisms, the depth-av. 2D vel. applied at the
             !bottom (due to degenerate prism) may cause some
             !large w-vel, but flux balance is not affected (nor is
             !transport)
             bflux=ubar*sne(1,l)+vbar*sne(2,l)+we(l,i)*sne(3,l)
+#ifdef USE_WWM
+            bflux2=ubar2*sne(1,l)+vbar2*sne(2,l)+dr_dxy(1,l,i)*sne(3,l)
+#endif
           endif
 
           we(l+1,i)=(-sum1-(ubar1*sne(1,l+1)+vbar1*sne(2,l+1))*area_e(l+1) + &
      &bflux*area_e(l))/sne(3,l+1)/area_e(l+1)
+#ifdef USE_WWM
+          dr_dxy(1,l+1,i)=(-sum2-(ubar3*sne(1,l+1)+vbar3*sne(2,l+1))*area_e(l+1) + &
+     &bflux2*area_e(l))/sne(3,l+1)/area_e(l+1)
+#endif
 
           !Save flux_adv_vface for transport - not working for bed deformation
           flux_adv_vface(l,1:ntracers,i)=bflux*area_e(l) 
@@ -7165,11 +7176,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
       wtimer(8,1)=wtimer(8,1)+wtmp2-wtmp1
 !  start transport
       wtmp1=wtmp2
-#endif
-
-
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run, test backtrack"
 #endif
 
 !     Test backtracking alone with rotating Gausshill
@@ -7247,9 +7253,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !            tr_nd(1,k,i)=tr_nd(1,k,i)/sum1
 !          enddo !k
 !        enddo !i=1,np
-#ifdef USE_GEN
-!if(myrank==0) write(16,*) "CGEM: schism_run before exchange"
-#endif
        
         call exchange_p3d_tr(tr_nd)
       endif !ibtrack_test
@@ -7275,9 +7278,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !$OMP   workshare
         bdy_frc=0.d0; flx_sf=0.d0; flx_bt=0.d0
 !$OMP   end workshare
-#ifdef USE_GEN
-!write(6,*) "CGEM: schism_run, bdy_frc=0"
-#endif
 
 !       Salt exchange
         if(isconsv/=0) then
@@ -7380,14 +7380,12 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 !$OMP     end do
         endif !heat exchange
 
-
 #ifdef USE_GEN
-        if(myrank==0) write(16,*) "Before Run CGEM"
-        if(myrank==0) write(16,*) 'Entering cgem model...'
-        if(myrank==0) write(16,*) 'ntrs(3)=',ntrs(3)
+!        if(myrank==0) write(16,*) "Before Run CGEM"
+!        if(myrank==0) write(16,*) 'Entering cgem model...'
+!        if(myrank==0) write(16,*) 'ntrs(3)=',ntrs(3)
         call cgem_run(it,myrank)
 #endif /*USE_GEN*/
-
 
 #ifdef USE_AGE
 !$OMP   single
@@ -7932,11 +7930,12 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
 
       if(myrank==0) write(16,*)'done solving transport equation'
 
-!     Restore Eulerian vel
+!     Restore 3D Eulerian vel
 #ifdef USE_WWM
       if(RADFLAG.eq.'VOR') then
         su2=su2-stokes_hvel_side(1,:,:)
         sv2=sv2-stokes_hvel_side(2,:,:)
+        we=dr_dxy(1,:,1:nea)
       endif
 #endif
 
@@ -10371,15 +10370,11 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         j=nf90_def_var(ncid_hot,'dfq1',NF90_DOUBLE,var2d_dim,nwild(18))
         j=nf90_def_var(ncid_hot,'dfq2',NF90_DOUBLE,var2d_dim,nwild(19))
 
-        !var1d_dim(1)=side_dim
-        !j=nf90_def_var(ncid_hot,'xcj',NF90_DOUBLE,var1d_dim,nwild(20))
-        !j=nf90_def_var(ncid_hot,'ycj',NF90_DOUBLE,var1d_dim,nwild(21))
-        !var1d_dim(1)=node_dim
-        !j=nf90_def_var(ncid_hot,'xnd',NF90_DOUBLE,var1d_dim,nwild(22))
-        !j=nf90_def_var(ncid_hot,'ynd',NF90_DOUBLE,var1d_dim,nwild(23))
-        !var2d_dim(1)=nvrt_dim; var2d_dim(2)=node_dim
-        !j=nf90_def_var(ncid_hot,'uu2',NF90_DOUBLE,var2d_dim,nwild(24))
-        !j=nf90_def_var(ncid_hot,'vv2',NF90_DOUBLE,var2d_dim,nwild(25))
+        !Deflate some vars
+        do i=4,21
+          if(i==20) cycle !skip 20
+          j=nf90_def_var_deflate(ncid_hot,nwild(i),0,1,4) 
+        enddo !i
 
         j=nf90_enddef(ncid_hot)
 
@@ -10405,13 +10400,6 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
         j=nf90_put_var(ncid_hot,nwild(17),dfh(:,1:np),(/1,1/),(/nvrt,np/))
         j=nf90_put_var(ncid_hot,nwild(18),dfq1(:,1:np),(/1,1/),(/nvrt,np/))
         j=nf90_put_var(ncid_hot,nwild(19),dfq2(:,1:np),(/1,1/),(/nvrt,np/))
-
-        !j=nf90_put_var(ncid_hot,nwild(20),xcj,(/1/),(/ns/))
-        !j=nf90_put_var(ncid_hot,nwild(21),ycj,(/1/),(/ns/))
-        !j=nf90_put_var(ncid_hot,nwild(22),xnd,(/1/),(/np/))
-        !j=nf90_put_var(ncid_hot,nwild(23),ynd,(/1/),(/np/))
-        !j=nf90_put_var(ncid_hot,nwild(24),uu2(:,1:np),(/1,1/),(/nvrt,np/))
-        !j=nf90_put_var(ncid_hot,nwild(25),vv2(:,1:np),(/1,1/),(/nvrt,np/))
 
         nvars_hot=21 !record # of vars in nwild so far
         !Debug
@@ -10729,6 +10717,7 @@ if(myrank==0) write(16,*) "CGEM: made it to schism_run"
       if(if_source/=0) deallocate(msource)
       deallocate(hp_int,uth,vth,d2uv,dr_dxy,bcc)
       if(allocated(rwild)) deallocate(rwild)
+      if(allocated(rwild6)) deallocate(rwild6)
       deallocate(swild9)
       !if(allocated(ts_offline)) deallocate(ts_offline)
 

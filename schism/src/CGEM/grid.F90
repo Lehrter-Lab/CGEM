@@ -16,18 +16,10 @@ integer :: km
 !schism arrays  (to calculate number of tracers)
 
 !Simulation parameters
-integer :: START_SECONDS,END_SECONDS, nstep
+integer :: START_SECONDS
 
 !--Run Specifics---------------
 integer iYrS,iMonS,iDayS,iHrS,iMinS,iSecS
-integer iYrE,iMonE,iDayE,iHrE,iMinE,iSecE
-integer dT
-
-!Constants
-integer :: dT_out !Output timestep
-integer iout
-!-output
-integer istep_out
 
 !This should all be from SCHISM
 !Solar radiation
@@ -47,14 +39,12 @@ real, allocatable :: S(:),T(:)
 contains
 
 
-subroutine grid_read(Sal_init,Temp_init,depth_in,lat_in,lon_in)
-  real, intent(out) :: Sal_init,Temp_init,depth_in
+subroutine grid_read(lat_in,lon_in)
   real, intent(out) :: lat_in,lon_in
   integer           :: istat,iunit
   character(len=1000) :: line
   !http://degenerateconic.com/namelist-error-checking.html
-  namelist /hydro/ iYrS,iMonS,iDayS,iHrS,iMinS,iSecS,iYrE,iMonE,iDayE,&
-   iHrE,iMinE,iSecE,dT,dT_out,lon_in,lat_in,depth_in,Sal_init,Temp_init
+  namelist /hydro/ lon_in,lat_in 
 
 #ifdef DEBUG
 write(6,*) "Begin grid_init"
@@ -92,8 +82,6 @@ allocate(dz(km),stat=ierr) !Thickness of cell
 if(ierr.ne.0) write(6,*) "error in allocating:dz"
 allocate(Vol(km),stat=ierr) !Volume of cell
 if(ierr.ne.0) write(6,*) "error in allocating:Vol"
-allocate(area(km),stat=ierr) !Area of cell
-if(ierr.ne.0) write(6,*) "error in allocating:area"
 !SCHISM 'tracers'
 allocate(S(km),stat=ierr) ! Salinity (psu) 
 if(ierr.ne.0) write(6,*) "error in allocating:S"
@@ -104,36 +92,13 @@ if(ierr.ne.0) write(6,*) "error in allocating:T"
 write(6,*) "End grid_allocate"
 #endif
 
-!EcoSim
-!! ----------------------------------------------------------------------
-!! Compute thickness and actual depths at RHO-points (in the middle of
-!! the volume of control)
-!! ----------------------------------------------------------------------
-!          DO k=kbe(i)+1, nvrt
-!              Hz(k)=ze(k,i)-ze(k-1,i)
-!          END DO
-!
-!          DO k=kbe(i)+1, nvrt
-!            zr(k)=((ze(k-1,i)-ze(k,i))/2)+ze(k,i)
-!          END DO
-
-!hydro Transport TVD
-!          do k=kbe(i)+1,nvrt
-!            vol=(ze(k,i)-ze(k-1,i))*area(i)
-!            psumtr(1:ntr)=psumtr(1:ntr)+vol*tr_el(1:ntr,k,i)
-!          enddo
-
-
-
-
 return
 end subroutine grid_allocate
 
-subroutine grid_init(S_init,T_init,depth_in,lat_in,lon_in) 
+subroutine grid_init(lat_in,lon_in) 
 
   integer :: k
 
-  real, intent(in) :: S_init,T_init,depth_in
   real, intent(in) :: lat_in,lon_in
 
 
@@ -143,24 +108,6 @@ subroutine grid_init(S_init,T_init,depth_in,lat_in,lon_in)
 #ifdef DEBUG
 write(6,*) "In ReadInput"
 write(6,*) "StartSeconds",START_SECONDS
-#endif
-  END_SECONDS = &
-  TOTAL_SECONDS( iYrS, iYrE, iMonE, iDayE, iHrE, iMinE, iSecE )
-#ifdef DEBUG
-write(6,*) "In ReadInput"
-write(6,*) "EndSeconds,dT,dT_out",START_SECONDS,dT,dT_out
-#endif
-
-  nstep = ( END_SECONDS - START_SECONDS ) / dT !number of timesteps in a run
-  iout = dT_out/dT !output time-interval in timesteps
-  !nstep_sed = dT_sed / dT   ! number of steps in-between calls to sediment
-  !diagenesis
-
-  !Keep a counter for netCDF timesteps
-  istep_out = 0
-
-#ifdef DEBUG
-write(6,*) "nstep,iout",nstep,iout
 #endif
 
   !Set lat/lon
@@ -174,59 +121,9 @@ write(6,*) "nstep,iout",nstep,iout
 write(6,*) "lat,lon,Rad",lat,lon,Rad
 #endif
 
-  !Define depths
-  d = depth_in          !Depth of the water column
-  dz = depth_in/km      !Thickness of a cell (they are the same for now)
-
-  !Define area
-  area = 1   !This is for testing sinking...SCHISM will give area and/or volume
-
-  !Distance from surface to bottom of cell
-  d(1) = dz(1)
-  Vol(1) = dz(1)*area(1)
-  !Distance from surface to center of cell
-  d_sfc(1) = dz(1)/2.   !First cell is half of total thickness of first cell
-  do k=2,km   !Okay, this is stupid and only works for this case...fix later
-   d(k) = d(k-1) + dz(k)
-   d_sfc(k) = d_sfc(k-1) + dz(k)
-   Vol(k) = dz(k)*area(k)
-  enddo
-
-!do k=kbe(i)+1,nvrt
-!dz = ze(k,i)-ze(k-1,i)
-!Vol = (ze(k,i)-ze(k-1,i))*area(i)
-!enddo
-
-
-!hydro Transport TVD
-!          do k=kbe(i)+1,nvrt
-!            vol=(ze(k,i)-ze(k-1,i))*area(i)
-!            psumtr(1:ntr)=psumtr(1:ntr)+vol*tr_el(1:ntr,k,i)
-!          enddo
-
-
-  !"Tracers"
-  S = S_init
-  T = T_init
-
-#ifdef DEBUG
-write(6,*) "S,T",S(1),T(1)
-write(6,*) "End grid_init"
-#endif
 
 end subroutine grid_init
 
-
-subroutine grid_update(TC_8)
-!Update outside vars - rad, T, S, wind
-
-integer, intent(in) :: TC_8  !Integer seconds
-
-!Update Rad - solar radiation
-call getSolar( iYrS, TC_8, lon, lat, Rad)
-
-return
-end subroutine grid_update 
 
 
 !----------------------------------------------------------------------
