@@ -6,26 +6,19 @@
 !==============================================================================
 subroutine cgem_run(istep,myrank)
   use schism_glbl, only : rkind,nea,idry_e,irange_tr,flx_sf,flx_bt,bdy_frc,&
-   & wsett,nvrt,kbe,tr_el,dt,srad,elnode,i34,windx,windy,area,ze
-  use grid, only : T,S,km,dz,Vol,d,d_sfc,START_SECONDS,Wind,Rad
+   & wsett,nvrt,kbe,tr_el,dt,srad,windx,windy,area,ze
+  use grid, only : T,S,km,dz,Vol,d,d_sfc,START_SECONDS
   use cgem, only: ws,ff,ff_new
 
   implicit none
 
   integer, intent(in) :: istep,myrank
   integer :: itmp1,itmp2,i,ierr,m,im,mm,k,TC_8
-  real :: cgemdt,SDay
-  real, parameter :: cv        = 2.77e14 ! multiplicative factor used
-                                             ! to convert from watts/m2 
-                                             ! to photons/cm2/sec
-                                             ! Morel and Smith (1974)
-
+  real :: cgemdt
 
   if(myrank==0) write(16,*) "In cgem_run: istep,dt=",istep,dt
-  !dt does not pass through cgem_step function
   cgemdt = dt
-  !Seconds per day
-  SDay = 1./86400.
+
 !  Time since start, pretend it starts at zero
 !    is iterations times timestep
   TC_8 = START_SECONDS + istep*int(dt)
@@ -77,19 +70,10 @@ subroutine cgem_run(istep,myrank)
       d_sfc(k) = d_sfc(k-1) + dz(k)
     enddo
 
-    !Wind taken from cosine.F90
-Wind=sqrt((sum(windx(elnode(1:i34(i),i)))/real(i34(i),rkind))**2.0+(sum(windy(elnode(1:i34(i),i)))/real(i34(i),rkind))**2.0)
-
-Rad = max(sum(srad(elnode(1:i34(i),i)))/i34(i),0.d0)*cv
-
 
 !Call CGEM for a column
     call cgem_step(TC_8,cgemdt,istep,i,myrank)
 
-!Call fluxes
-    call cgem_flux(cgemdt)
-
-    
 !Set source
     mm = 1
     do m=itmp1,itmp2

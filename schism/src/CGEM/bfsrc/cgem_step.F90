@@ -26,6 +26,8 @@
     integer        ::  i, inum, k, isp, isz ! Loop indicies, isp/isz is for phytoplankton/zooplankton species
     integer        ::  Is_Day            ! Switch for day/night for phytoplankton nutrient uptake only, Is_Day=0 means night
 !------------------------------------ 
+! Check integration
+    real :: ff_check
 ! Phytoplankton parameters
 ! Phytoplankton uptake and growth
     real, dimension(nospA,km) :: A_k      ! Phytoplankton number density (cells/m3)
@@ -181,7 +183,7 @@
 
 ! write(6,*) "SPD,dTd,dt",StepsPerDay,dTd,dt
 
-!  call getSolar( iYrS, TC_8, lon, lat, Rad)
+  call getSolar( iYrS, TC_8, lon, lat, Rad)
 
 !write(6,*) "iYrS,TC_8,lon,lat,Rad",iYrS,TC_8,lon,lat,Rad
 
@@ -191,13 +193,13 @@ write(6,*) "Begin cgem, TC_8,istep",TC_8,istep
 
    optNP = ZQn/ZQp    ! Optimal nutrient ratio for zooplankton
 
-    if(istep.ne.1) then
-       ! After Advection and VMixing, return to Q's
-       do k=1,km
-        ff(k,iQn(:)) = ff(k,iQn(:)) / ff(k,iA(:))
-        ff(k,iQp(:)) = ff(k,iQp(:)) / ff(k,iA(:))
-       enddo
-    endif
+!    if(istep.ne.1) then
+!       ! After Advection and VMixing, return to Q's
+!       do k=1,km
+!        ff(k,iQn(:)) = ff(k,iQn(:)) / ff(k,iA(:))
+!        ff(k,iQp(:)) = ff(k,iQp(:)) / ff(k,iA(:))
+!       enddo
+!    endif
 
 !write(6,*) "istep=",istep
 !-----------------------------------------------------------------
@@ -603,8 +605,13 @@ write(6,*) "Agrow, Aresp, ZgrazA_tot(isp),Amort(isp)",Agrow, Aresp, ZgrazA_tot(i
 !---------------------------------------------------------
 !-A; Phytoplankton number density (cells/m3);
 !---------------------------------------------------------
-      ff_new(k,iA(isp)) = AMAX1(ff(k,iA(isp))        &
-      & + ( Agrow - Aresp - ZgrazA_tot(isp) - Amort(isp) )*dTd, 1.)
+!      ff_new(k,iA(isp)) = AMAX1(ff(k,iA(isp))        &
+!      & + ( Agrow - Aresp - ZgrazA_tot(isp) - Amort(isp) )*dTd, 1.)
+
+      ff_new(k,iA(isp)) = Agrow - Aresp - ZgrazA_tot(isp) - Amort(isp)
+
+      ff_check = ff(k,iA(isp)) + ff_new(k,iA(isp))*dTd
+      if(ff_check.lt.1) ff_new(k,iA(isp)) = 0. 
     
 
 #ifdef DEBUG
@@ -613,16 +620,23 @@ write(6,*) "In cgem, updated iA"
 !----------------------------------------------------------------------
 !-Qn: Phytoplankton Nitrogen Quota (mmol-N/cell)
 !----------------------------------------------------------------------
-      Qn = ff(k,iQn(isp)) + (vN - Qn*uA)*dTd
+!      Qn = ff(k,iQn(isp)) + (vN - Qn*uA)*dTd
+       ff_new(k,iQn(isp)) = vN - Qn*uA
 !      
 !! Enforce minima, also enforce maxima if not equal Droop (which_quota=1)
-      if(which_quota.eq.1) then
-           Qn = AMAX1(Qn,QminN(isp))
-      else
-           Qn = AMIN1(AMAX1(Qn,QminN(isp)),QmaxN(isp))
-      endif
+!      if(which_quota.eq.1) then
+!           Qn = AMAX1(Qn,QminN(isp))
+!      else
+!           Qn = AMIN1(AMAX1(Qn,QminN(isp)),QmaxN(isp))
+!      endif
 
-      ff_new(k,iQn(isp)) = Qn
+      ff_check = ff(k,iQn(isp)) + ff_new(k,iQn(isp))*dTd
+      if(which_quota.eq.1) then
+        if(ff_check.lt.QminN(isp)) ff_new(k,iQn(isp)) = 0.
+      else
+        if(ff_check.lt.QminN(isp)) ff_new(k,iQn(isp)) = 0.
+        if(ff_check.gt.QmaxN(isp)) ff_new(k,iQn(isp)) = 0.
+      endif
 
 #ifdef DEBUG
 write(6,*) "In cgem, updated iQn"
@@ -631,16 +645,24 @@ write(6,*) "In cgem, updated iQn"
 !----------------------------------------------------------------------
 !-Qp: Phytoplankton Phosphorus Quota (mmol-P/cell)
 !----------------------------------------------------------------------
-      Qp = ff(k,iQp(isp)) + (vP - Qp*uA)*dTd
+!      Qp = ff(k,iQp(isp)) + (vP - Qp*uA)*dTd
+      ff_new(k,iQp(isp)) = vP - Qp*uA
 !
 !! Enforce minima, also enforce maxima if not equal Droop (which_quota=1)
+!      if(which_quota.eq.1) then
+!           Qp = AMAX1(Qp,QminP(isp))
+!      else
+!           Qp = AMIN1(AMAX1(Qp,QminP(isp)),QmaxP(isp))
+!      endif
+
+      ff_check = ff(k,iQp(isp)) + ff_new(k,iQp(isp))*dTd
       if(which_quota.eq.1) then
-           Qp = AMAX1(Qp,QminP(isp))
+        if(ff_check.lt.QminP(isp)) ff_new(k,iQp(isp)) = 0.
       else
-           Qp = AMIN1(AMAX1(Qp,QminP(isp)),QmaxP(isp))
+        if(ff_check.lt.QminP(isp)) ff_new(k,iQp(isp)) = 0.
+        if(ff_check.gt.QmaxP(isp)) ff_new(k,iQp(isp)) = 0.
       endif
 
-     ff_new(k,iQp(isp)) = Qp      
 
 #ifdef DEBUG
 write(6,*) "In cgem, updated iQn"
@@ -729,9 +751,12 @@ write(6,*) "In cgem, updated iQn"
 !---------------------------------------------------------
 !-G; Zooplankton number density (individuals/m3);
 !---------------------------------------------------------
-      ff_new(k,iZ(:))  = AMAX1( ff(k,iZ(:))                         &
-      &      + (Zgrow(:) - Zresp(:) - Zmort(:))*dTd, 1.)
+      ff_new(k,iZ(:))  = Zgrow(:) - Zresp(:) - Zmort(:)
 
+      do isp = 1,nospZ
+        ff_check = ff(k,iZ(isp)) + ff_new(k,iZ(isp))*dTd
+        if(ff_check.lt.1) ff_new(k,iZ(isp)) = 0.
+      enddo
 #ifdef DEBUG
 write(6,*) "In cgem, updated iZ, which_Fluxes(iInRemin),KG_bot=",which_Fluxes(iInRemin),KG_bot
 #endif
@@ -1055,125 +1080,154 @@ write(6,*) "In cgem, finished stoich Z"
 !-------------------------------
 !-NO3; (mmol-N/m3)
 !-------------------------------     
-       ff_new(k,iNO3) = AMAX1(ff(k,iNO3)                            &
-       &  + ( RNO3 - AupN*NO3/(NO3+NH4) )*dTd, 0.0 )              
+       ff_new(k,iNO3) = RNO3 - AupN*NO3/(NO3+NH4)
+
+      ff_check = ff(k,iNO3) + ff_new(k,iNO3)*dTd
+      if(ff_check.lt.0) ff_new(k,iNO3) = 0.
 
 !--------------------------------
 !-NH4; Ammonium (mmol-N/m3)
 !--------------------------------
-       ff_new(k,iNH4) = AMAX1(ff(k,iNH4)                            &
-       & + ( RNH4 - AupN*NH4/(NO3+NH4) + AexudN + SUM(ZexN)  )*dTd, 0.0)          
+       ff_new(k,iNH4) = RNH4 - AupN*NH4/(NO3+NH4) + AexudN + SUM(ZexN) 
+
+      ff_check = ff(k,iNH4) + ff_new(k,iNH4)*dTd
+      if(ff_check.lt.0) ff_new(k,iNH4) = 0.
 
 !----------------------------
 !-Silica: (mmol-Si/m3)
 !----------------------------
-       ff_new(k,iSi) =  AMAX1(ff(k,iSi)                             &
-       & + ( RSi - AupSi + SUM(ZegSi) + SUM(ZunSi) )*dTd, 0.0)
+       ff_new(k,iSi) = RSi - AupSi + SUM(ZegSi) + SUM(ZunSi) 
+
+      ff_check = ff(k,iSi) + ff_new(k,iSi)*dTd
+      if(ff_check.lt.0) ff_new(k,iSi) = 0.
 
 !---------------------------------------------
 !-PO4: Phosphate (mmol-P/m3)
 !--------------------------------------
-      ff_new(k,iPO4) = AMAX1(ff(k,iPO4)                             &
-      & + ( RPO4 - AupP + AexudP + SUM(ZexP)  )*dTd, 0.0)
+      ff_new(k,iPO4) = RPO4 - AupP + AexudP + SUM(ZexP) 
+
+      ff_check = ff(k,iPO4) + ff_new(k,iPO4)*dTd
+      if(ff_check.lt.0) ff_new(k,iPO4) = 0.
 
 !---------------------------------------------------------
 !-DIC: Dissolved Inorganic Carbon (mmol-C/m3)
 !---------------------------------------------------------
-       ff(k,iDIC) = AMAX1(ff(k,iDIC)                            &
-       &  + ( RDIC - PrimProd + ArespC  + ZrespC )*dTd, 0.0)  
-!       ff_new(k,iDIC) = RDIC - PrimProd + ArespC  + ZrespC
+       ff(k,iDIC) = RDIC - PrimProd + ArespC  + ZrespC 
+
+      ff_check = ff(k,iDIC) + ff_new(k,iDIC)*dTd
+      if(ff_check.lt.0) ff_new(k,iDIC) = 0.
  
 !-----------------------------------------------------------------------      
 !-O2: Oxygen (mmol O2 m-3) 
 !-----------------------------------------------------------------------
-       ff_new(k,iO2)  = AMAX1(ff(k,iO2)                             &  
-       &  + ( PrimProd - ArespC + RO2 - ZrespC)*dTd, 0.0)
+       ff_new(k,iO2)  = PrimProd - ArespC + RO2 - ZrespC
+
+      ff_check = ff(k,iO2) + ff_new(k,iO2)*dTd
+      if(ff_check.lt.0) ff_new(k,iO2) = 0.
 
 !-----------------------------------------
 !-OM1_A: (mmol-C/m3-- Dead Phytoplankton Particulate)
 !-----------------------------------------
-       ff_new(k,iOM1_A) = AMAX1(ff(k,iOM1_A)                       &
-       &   + ( (ROM1_A) + OM1_CA )*dTd, 0.0)       
+       ff_new(k,iOM1_A) = ROM1_A + OM1_CA 
+
+      ff_check = ff(k,iOM1_A) + ff_new(k,iOM1_A)*dTd
+      if(ff_check.lt.0) ff_new(k,iOM1_A) = 0.
 
 !----------------------------------------------------------------------
 !---------------------------------------------
 !-OM2_A: (mmol-C/m3-- Dead Phytoplankton Dissolved)
 !---------------------------------------------
-       ff_new(k,iOM2_A) = AMAX1(ff(k,iOM2_A)                       &
-       &   + (ROM2_A + OM2_CA )*dTd, 0.0)              
+       ff_new(k,iOM2_A) = ROM2_A + OM2_CA
+
+      ff_check = ff(k,iOM2_A) + ff_new(k,iOM2_A)*dTd
+      if(ff_check.lt.0) ff_new(k,iOM2_A) = 0.
 
 !----------------------------------------------------------------------
 !------------------------------------------
 !-OM1_Z:(mmol-C/m3--G particulate)
 !------------------------------------------
-       ff_new(k,iOM1_Z) = AMAX1(ff(k,iOM1_Z)                     &
-       &   +( ROM1_Z + OM1_CZ)*dTd, 0.0)              
+       ff_new(k,iOM1_Z) = ROM1_Z + OM1_CZ
+
+      ff_check = ff(k,iOM1_Z) + ff_new(k,iOM1_Z)*dTd
+      if(ff_check.lt.0) ff_new(k,iOM1_Z) = 0.
 
 !---------------------------------------------------------------------
 !-----------------------------------------------
 !-OM2_Z:(mmol-C/m3--G dissolved)
 !-----------------------------------------------
-       ff_new(k,iOM2_Z) = AMAX1(ff(k,iOM2_Z)                      &
-       &   + ( ROM2_Z + OM2_CZ )*dTd, 0.0)              
+      ff_new(k,iOM2_Z) = ROM2_Z + OM2_CZ
+
+      ff_check = ff(k,iOM2_Z) + ff_new(k,iOM2_Z)*dTd
+      if(ff_check.lt.0) ff_new(k,iOM2_Z) = 0.
 
 !---------------------------------------------------------------------
 !-------------------------------------------
 !-OM1_R: (mmol-C/m3--SPM particulate)
 !-------------------------------------------
-       ff_new(k,iOM1_R) = AMAX1(ff(k,iOM1_R)                      &
-       &   + ( ROM1_R )*dTd, 0.0)              
+       ff_new(k,iOM1_R) = ROM1_R 
+
+      ff_check = ff(k,iOM1_R) + ff_new(k,iOM1_R)*dTd
+      if(ff_check.lt.0) ff_new(k,iOM1_R) = 0.
 
 !---------------------------------------------------------------------
 !------------------------------------------------
 !-OM2_R: (mmol-C/m3--SPM dissolved)
 !------------------------------------------------
-       ff_new(k,iOM2_R) =  AMAX1(ff(k,iOM2_R)                     &
-       &   + ( ROM2_R )*dTd, 0.0)       
+       ff_new(k,iOM2_R) = ROM2_R
+
+      ff_check = ff(k,iOM1_R) + ff_new(k,iOM1_R)*dTd
+      if(ff_check.lt.0) ff_new(k,iOM1_R) = 0.
 
 !---------------------------------------------------------------------
 !-------------------------------------------
 !-OM1_BC: (mmol-C/m3--initial and boundary condition OM particulate)
 !-------------------------------------------
-       ff_new(k,iOM1_BC) = AMAX1(ff(k,iOM1_BC)                      &
-       &   + ( ROM1_BC )*dTd, 0.0)
+       ff_new(k,iOM1_BC) = ROM1_BC
 
+      ff_check = ff(k,iOM1_BC) + ff_new(k,iOM1_BC)*dTd
+      if(ff_check.lt.0) ff_new(k,iOM1_BC) = 0.
 
 !---------------------------------------------------------------------
 !------------------------------------------------
 !-OM2_BC: (mmol-C/m3--initial and boundary condition OM dissolved)
 !------------------------------------------------
-       ff_new(k,iOM2_BC) =  AMAX1(ff(k,iOM2_BC)                     &
-       &   + ( ROM2_BC )*dTd, 0.0)
+       ff_new(k,iOM2_BC) = ROM2_BC
 
+      ff_check = ff(k,iOM2_BC) + ff_new(k,iOM2_BC)*dTd
+      if(ff_check.lt.0) ff_new(k,iOM2_BC) = 0.
 !---------------------------------------------------------------------
 !----------------------------
 !-CDOM: (ppb) 
 !----------------------------
-       ff_new(k,iCDOM) =  AMAX1(ff(k,iCDOM)*(1.0 - KGcdom*dTd), 0.0)  
+       ff_new(k,iCDOM) =  -KGcdom*ff(k,iCDOM)
 
+      ff_check = ff(k,iCDOM) + ff_new(k,iCDOM)*dTd
+      if(ff_check.lt.0) ff_new(k,iCDOM) = 0.
 !!---------------------------------------------------------------------
 !!----------------------------
 !!-ALK: (mmol-HCO3/m3)
 !!----------------------------
-       ff_new(k,iALK) =  AMAX1(ff(k,iALK) +                 &
-      & (RALK + AupN*NO3/(NO3+NH4) - AupN*NH4/(NO3+NH4) + AupP + 4.8*AupP)*dTd, 0.0) 
+       ff_new(k,iALK) = (RALK + AupN*NO3/(NO3+NH4) - AupN*NH4/(NO3+NH4) + AupP + 4.8*AupP)
+
+      ff_check = ff(k,iALK) + ff_new(k,iALK)*dTd
+      if(ff_check.lt.0) ff_new(k,iALK) = 0.
  
 #ifdef DEBUG
 write(6,*) "In cgem, updated ALK"
 #endif
  
 !Tracer
-       ff_new(k,iTr) =  ff(k,iTr)       
+       ff_new(k,iTr) = 0. 
 
 !--------------------------------------------------------------------
         enddo   ! end of  "do k = 1, km" 
 
 
        !! Before Advection and VMixing, combine A's and Q's
-       do k=1,km
-        ff_new(k,iQn(:)) = ff_new(k,iQn(:)) * ff_new(k,iA(:))
-        ff_new(k,iQp(:)) = ff_new(k,iQp(:)) * ff_new(k,iA(:))
-       enddo
+       !do k=1,km
+       ! ff_new(k,iQn(:)) = ff_new(k,iQn(:)) * ff_new(k,iA(:))
+       ! ff_new(k,iQp(:)) = ff_new(k,iQp(:)) * ff_new(k,iA(:))
+       !enddo
 
 
 ! ----------------------------------------------------------------------

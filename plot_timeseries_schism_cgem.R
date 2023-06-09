@@ -42,7 +42,8 @@ numvars <- length(df$Var)
 #numfiles <- 13
 #which_nodes = c('1','4','7')
 #which_layers = c('7','4','1')
-which_colors = c('magenta','red','orange','yellow','green','darkgreen','blue','darkblue','purple','black')
+#which_colors = c('magenta','red','orange','yellow','green','darkgreen','blue','darkblue','purple','black')
+which_colors = c('red','green','blue','black')
 #magenta','blue','black','red','green','purple','magenta','blue','black','red','green','purple')
 
 #numfiles <- 1

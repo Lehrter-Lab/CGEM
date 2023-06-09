@@ -162,6 +162,8 @@ integer, parameter :: i_Si      = 9 !Silica (SA, SRP) Fluxes
 !State Variable Array
       real,allocatable :: ff(:,:) !state variable array
       real, allocatable :: ff_new(:,:) !sources array
+!Fluxes Array
+      real, allocatable :: ff_flux(:)
 
 !----INPUT_VARS_CGEM
 !--Switches in GEM---------
@@ -549,8 +551,12 @@ write(6,*) "Begin cgem_allocate"
       allocate(ff_new(km,nf),stat=ierr)
       if(ierr.ne.0) write(6,*) "error in allocating:ff_new"
 
+      allocate(ff_flux(nf),stat=ierr)
+      if(ierr.ne.0) write(6,*) "error in allocating:ff_flux"
+
       ff = 0.
       ff_new = 0.
+      ff_flux = 0.
 
 !----allocate INPUT_VARS_CGEM
 

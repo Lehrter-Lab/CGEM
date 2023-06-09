@@ -260,8 +260,7 @@ if (do_write==1):
         file.write("%s " % node)
     file.write("\n")
     #SCHISM output is bottom to top...reverse it to make the plots
-    wlsort = which_layers
-    wlsort.reverse()
+    which_layers.sort()
     for layer in which_layers:
         file.write("%s " % layer)
     file.write("\n")

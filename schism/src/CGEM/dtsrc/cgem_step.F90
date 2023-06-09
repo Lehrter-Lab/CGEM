@@ -181,7 +181,7 @@
 
 ! write(6,*) "SPD,dTd,dt",StepsPerDay,dTd,dt
 
-!  call getSolar( iYrS, TC_8, lon, lat, Rad)
+  call getSolar( iYrS, TC_8, lon, lat, Rad)
 
 !write(6,*) "iYrS,TC_8,lon,lat,Rad",iYrS,TC_8,lon,lat,Rad
 
@@ -191,13 +191,13 @@ write(6,*) "Begin cgem, TC_8,istep",TC_8,istep
 
    optNP = ZQn/ZQp    ! Optimal nutrient ratio for zooplankton
 
-    if(istep.ne.1) then
-       ! After Advection and VMixing, return to Q's
-       do k=1,km
-        ff(k,iQn(:)) = ff(k,iQn(:)) / ff(k,iA(:))
-        ff(k,iQp(:)) = ff(k,iQp(:)) / ff(k,iA(:))
-       enddo
-    endif
+!    if(istep.ne.1) then
+!       ! After Advection and VMixing, return to Q's
+!       do k=1,km
+!        ff(k,iQn(:)) = ff(k,iQn(:)) / ff(k,iA(:))
+!        ff(k,iQp(:)) = ff(k,iQp(:)) / ff(k,iA(:))
+!       enddo
+!    endif
 
 !write(6,*) "istep=",istep
 !-----------------------------------------------------------------
@@ -622,7 +622,7 @@ write(6,*) "In cgem, updated iA"
            Qn = AMIN1(AMAX1(Qn,QminN(isp)),QmaxN(isp))
       endif
 
-      ff_new(k,iQn(isp)) = Qn
+      ff_new(k,iQn(1)-1+isp) = Qn
 
 #ifdef DEBUG
 write(6,*) "In cgem, updated iQn"
@@ -640,7 +640,7 @@ write(6,*) "In cgem, updated iQn"
            Qp = AMIN1(AMAX1(Qp,QminP(isp)),QmaxP(isp))
       endif
 
-     ff_new(k,iQp(isp)) = Qp      
+     ff_new(k,iQp(1)-1+isp) = Qp      
 
 #ifdef DEBUG
 write(6,*) "In cgem, updated iQn"
@@ -1170,10 +1170,10 @@ write(6,*) "In cgem, updated ALK"
 
 
        !! Before Advection and VMixing, combine A's and Q's
-       do k=1,km
-        ff_new(k,iQn(:)) = ff_new(k,iQn(:)) * ff_new(k,iA(:))
-        ff_new(k,iQp(:)) = ff_new(k,iQp(:)) * ff_new(k,iA(:))
-       enddo
+       !do k=1,km
+       ! ff_new(k,iQn(:)) = ff_new(k,iQn(:)) * ff_new(k,iA(:))
+       ! ff_new(k,iQp(:)) = ff_new(k,iQp(:)) * ff_new(k,iA(:))
+       !enddo
 
 
 ! ----------------------------------------------------------------------
