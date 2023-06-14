@@ -48,3 +48,12 @@ The source code is here:
 ```
 /rsstu/users/l/lllowe/cgem/schism-cgem/src/CGEM
 ```
+
+To just build the hydro:
+```
+cmake -C ../cmake/SCHISM.cgem.build -C ../cmake/SCHISM.local.comet ../src/
+cp bin/pschism_TVD-VL ../../schism_sa_CGEM_test
+```
+
+To run with just hydro, modify bctides.
+
