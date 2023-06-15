@@ -37,26 +37,18 @@ df <- read.csv(file.path(outdir,"hydro_ts.txt"),skip=5)
 #number of files
 numvars <- length(df$Var)
 
-
-#How many separate files?
-#numfiles <- 13
-#which_nodes = c('1','4','7')
-#which_layers = c('7','4','1')
-which_colors = c('black','purple','blue','green','red','darkgreen', 'magenta','blue','black','red','green','purple','magenta','blue','black','red','green','purple','black','purple','blue','green','red','darkgreen', 'magenta','blue','black','red','green','purple','magenta','blue','black','red','green','purple')
-
-#numfiles <- 1
-#The year
-#iYr0 <- 2007 #df$Year[i]
-#iYr0 <- 2019
+#Rainbow to help identify surface to bottom (roygbiv), neither ideal or accessible
+#Hopefully you don't try to plot more than 23 layers
+which_colors = c('red','orange','yellow','green','blue','purple','black','magenta','red','orange','yellow','green','blue','purple','black','magenta','red','orange','yellow','green','blue','purple','black')
 
 #plotting functions
 source(file.path(thisdir, "timeseries_plot.R"))
 
 #setup pdf file in 4x4 layout
-pdfname <- file.path(pdfdir,paste("timeseries_hydro",iYr0,'sasj',".pdf", sep='_'))
+pdfname <- file.path(pdfdir,paste("timeseries_hydro",iYr0,".pdf", sep='_'))
 pdf(file=pdfname)
-pdf_layout <- c(4,4)
-#pdf_layout <- c(2,1)
+#pdf_layout <- c(4,4)
+pdf_layout <- c(2,1)
 which_mod <- pdf_layout[1] * pdf_layout[2]
 par(mfrow=pdf_layout)
 
@@ -83,9 +75,9 @@ for (node in which_nodes){
       nc_close(nc)
   }
   time <- as.POSIXct(time, origin=paste(iYr0,"-01-01",sep=""), tz="GMT")
-  cat("minmax time",min(time),max(time),"\n")
-  cat("var,layer,node,min,max",df$Var[i],layer,node,min(rdata,na.rm=TRUE),max(rdata,na.rm=TRUE),"\n")
-  cat("length rdata time",length(rdata),length(time),"\n")
+  if(debug) cat("minmax time",min(time),max(time),"\n")
+  if(debug) cat("var,layer,node,min,max",df$Var[i],layer,node,min(rdata,na.rm=TRUE),max(rdata,na.rm=TRUE),"\n")
+  if(debug) cat("length rdata time",length(rdata),length(time),"\n")
   if(first){
     if(debug) cat("timeseries plot, first, var, layer, node",first,df$Var[i],layer,node,"\n")
     iwc = 1
