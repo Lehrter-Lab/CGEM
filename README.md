@@ -22,5 +22,3 @@ python write_initial_conditions.py
 Requires the following libraries: pylib, f90nml, FileInput
 
 This is not 'directory friendly' yet.  The grid file needs to be in the current working directory(CWD), as does cgem.nml.  Output is also written to CWD.
-
-ALSO!!! Initializing the Q's doesn't work, because the numbers (~e-9) are set to zero.  I used Vim query replace to fix that (and it is very quick), but ideally that step will be scripted.

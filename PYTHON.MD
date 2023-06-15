@@ -1,16 +1,17 @@
 # Python libraries
 
 ## Using pylibs
+
+Create a conda environment with env_pylibs.yml (from this repo), then activate:
+```
+conda env create -f env_pylibs.yml --prefix ~/env_pylibs
+conda activate ~/env_pylibs
+```
+
 On wzhengui github page:
 ```
 git clone https://github.com/wzhengui/pylibs.git 
 cd pylibs
-```
-
-Create a conda environment, then activate:
-```
-conda env create -f env_pylibs.yml --prefix ./env_pylibs
-conda activate ./env_pylibs
 ```
 
 Install pylibs
