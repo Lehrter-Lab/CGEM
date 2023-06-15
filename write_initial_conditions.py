@@ -1,30 +1,53 @@
+#File: write_initial_conditions.py
+# lllowe@ncsu.edu
+#Purpose:
+# Writes CGEM initial conditions files GEN_hvar_X.ic based on cgem.nml.
+#Use:
+# Copy this file to your schism run directory, which must  
+# containing hgrid.gr3 and cgem.nml. From that directory, do:
+#   python write_initial_conditions.py
+# For troubleshooting, add the debug argument (more print statements):
+#   python write_initial_conditions.py debug
+#Requires:
+# pylibs - https://github.com/wzhengui/pylibs
+# f90nml - (conda installed)
+import os
+import sys
 from pylib import *
 import f90nml
 from fileinput import FileInput
 
+debug = False
+iargs = len(sys.argv)
+if iargs > 1:
+    if sys.argv[1] == 'debug': debug = True
+
 #Grid file
 fname='hgrid.gr3'
-#fname='mb20221128_dp_correct.gr3'
+#Check that the grid file exists
+if not os.path.isfile(fname):
+    sys.exit("SCHISM grid file " + fname + " does not exist. Exiting.")
+#Read it
 grid=read_schism_hgrid(fname)
 
-#to make the files
+#General tracer input file naming convention
 basename = "GEN_hvar_"
 suffix = ".ic"
 
-#read nml used by schism
+#read nml used by cgem-schism
 cgem = f90nml.read('cgem.nml')
 #number of phytoplankton groups
 nospA = cgem.get('nosp').get('nospa')
 #number of zooplankton groups
 nospZ = cgem.get('nosp').get('nospz')
-print(nospA,nospZ)
+if debug: print(nospA,nospZ)
 #Number of state vars, A/Qn/Qp(nospa), Z(nospz), and the rest(17)
 nf = 3*nospA + nospZ + 17
-print('nf',nf)
+if debug: print('nf',nf)
 
 #get initial conditions
 inits = cgem.get('init')
-print(inits)
+if debug: print(inits)
 
 #Initialize lists
 #variable names
@@ -34,7 +57,7 @@ ics = []
 
 #!-A; Phytoplankton number density (cells/m3);
 iA  = inits.get('a_init')
-print(iA,type(iA))
+if debug: print(iA,type(iA))
 for i in range(nospA):
     #iA is only a list (and subsettable) if nospA > 1
     if(nospA==1):
@@ -43,17 +66,17 @@ for i in range(nospA):
         ics.append(iA[i])
     names.append("A" + str(i+1))
 
-print('ics',ics)
-print('names',names)
+if debug: print('ics',ics)
+if debug: print('names',names)
 
 #!-Qn: Phytoplankton Nitrogen Quota (mmol-N/cell)
 iQn= inits.get('qn_init')
 for i in range(nospA):
     #iQn is only a list (and subsettable) if nospA > 1
     if(nospA==1):
-        ics.append(iQn)
+        ics.append(iQn*iA)
     else:
-        ics.append(iQn[i])
+        ics.append(iQn[i]*iA[i])
     names.append("Qn" + str(i+1))
 
 #!-Qp: Phytoplankton Phosphorus Quota (mmol-P/cell)
@@ -61,9 +84,9 @@ iQp= inits.get('qp_init')
 for i in range(nospA):
     #iQp is only a list (and subsettable) if nospA > 1
     if(nospA==1):
-        ics.append(iQp)
+        ics.append(iQp*iA)
     else:
-        ics.append(iQp[i])
+        ics.append(iQp[i]*iA[i])
     names.append("Qp" + str(i+1))
 
 #!-Z: Zooplankton number density (individuals/m3);
@@ -153,15 +176,15 @@ names.append("ALK")
 ics.append(inits.get('tr_init'))
 names.append("TR")
 
-print(len(ics),'ics:',ics)
-print(len(names),'names:',names)
+if debug: print(len(ics),'ics:',ics)
+if debug: print(len(names),'names:',names)
 
 for i in range(nf):
     filename = basename + str(i+1) + suffix
-    print(i+1)
-    print(filename)
-    print(names[i])
-    print(ics[i])
+    if debug: print(i+1)
+    if debug: print(filename)
+    if debug: print(names[i])
+    if debug: print(ics[i])
     gd = grid
     gd.dp = gd.dp*0. + ics[i]
     gd.write_hgrid(filename) 

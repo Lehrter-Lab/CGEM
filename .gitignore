@@ -6,6 +6,7 @@ cgem_extract.csh
 launch.csh
 hydro_extract.sh
 s2p_*
+GEN_hvar*
 
 #python crap
 __pycache__

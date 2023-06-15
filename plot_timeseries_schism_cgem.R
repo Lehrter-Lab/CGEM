@@ -2,6 +2,7 @@ library(ncdf4)
 
 #get the current working directory
 thisdir <- getwd()
+
 #directory where timeseries are, and pdf will go there too
 outdir <- file.path(thisdir,"outputs")
 pdfdir <- file.path(thisdir,"pdfs")
@@ -14,7 +15,16 @@ if (!dir.exists(pdfdir)){
   dir.create(pdfdir) 
 }
 
-con <- file(file.path(outdir,"cgem_ts.txt"),"r")
+
+cgemfile <- file.path(outdir,"cgem_ts.txt")
+#The file cgem_ts.txt should be created when running 
+# cgem.extract_time_series.py in the context of cgem_extract.sh 
+if (!file.exists(cgemfile)){
+  stop("No outputs/cgem_ts.txt found.  Please see instructions for Extracting Timeseries at https://github.com/OyBcSt/CGEM.")
+}
+
+#---Read cgem_ts.txt file
+con <- file(cgemfile,"r")
 
 #Extra write statements if debug is TRUE
 debug <- as.logical(readLines(con,n=1))
@@ -36,44 +46,35 @@ close(con)
 df <- read.csv(file.path(outdir,"cgem_ts.txt"),skip=5)
 #number of files
 numvars <- length(df$Var)
+#---End reading cgem_ts.txt file
 
 
-#How many separate files?
-#numfiles <- 13
-#which_nodes = c('1','4','7')
-#which_layers = c('7','4','1')
-#which_colors = c('magenta','red','orange','yellow','green','darkgreen','blue','darkblue','purple','black')
-which_colors = c('red','green','blue','black')
-#magenta','blue','black','red','green','purple','magenta','blue','black','red','green','purple')
+#Rainbow to help identify surface to bottom (roygbiv), neither ideal or accessible
+#Hopefully you don't try to plot more than 23 layers
+which_colors = c('red','orange','yellow','green','blue','purple','black','magenta','red','orange','yellow','green','blue','purple','black','magenta','red','orange','yellow','green','blue','purple','black')
 
-#numfiles <- 1
-#The year
-#iYr0 <- 2007 #df$Year[i]
-#iYr0 <- 2019
-
-#plotting functions
+#General plotting functions
 source(file.path(thisdir, "timeseries_plot.R"))
 
-
-
-
-
+#Create a separate pdf file for each node
 for (node in which_nodes){
   #setup pdf file in 4x4 layout
   pdfname <- file.path(pdfdir,paste("timeseries_cgem",iYr0,node,".pdf", sep='_'))
   pdf(file=pdfname)
-#  pdf_layout <- c(4,4)
+  #pdf_layout <- c(4,4)
   pdf_layout <- c(2,1)
   which_mod <- pdf_layout[1] * pdf_layout[2]
   par(mfrow=pdf_layout)
 
-  #get ranges first
+  #Get y-limits first
   varmin <- c(1:numvars)*0.
   varmax <- c(1:numvars)*0.
+  #For each CGEM variable
   for (i in 1:numvars) {
+    #For each vertical layer
+    rdata <- c()
     for (layer in which_layers){
-      rdata <- c()
-      time  <- c()
+     #For each chunk of output
      for (j in 1:numfiles){
       basename <- paste(df$Var[i],"ts",iYr0,node,layer,j,sep='_')
       basename <- paste0(basename,".nc")
@@ -87,7 +88,7 @@ for (node in which_nodes){
      varmin[i] <- min(rdata)
      varmax[i] <- max(rdata)
 
-    cat(varmin[i],varmax[i],"\n")
+    if(debug) cat(varmin[i],varmax[i],"\n")
   }
 
 
@@ -95,7 +96,7 @@ for (node in which_nodes){
   for (i in 1:numvars) {
     first <- TRUE
     var_range <- c(varmin[i],varmax[i])
-    cat("var_range",var_range,"\n")
+    if(debug) cat("var_range",var_range,"\n")
     for (layer in which_layers){
       rdata <- c()
       time  <- c()
@@ -113,7 +114,7 @@ for (node in which_nodes){
       nc_close(nc)
      }
   time <- as.POSIXct(time, origin=paste(iYr0,"-01-01",sep=""), tz="GMT")
-  cat("var,layer,node,min,max",df$Var[i],layer,node,min(rdata),max(rdata),"\n")
+  if(debug) cat("var,layer,node,min,max",df$Var[i],layer,node,min(rdata),max(rdata),"\n")
   if(first){
     if(debug) cat("timeseries plot, first, var, layer, node",first,df$Var[i],layer,node,"\n")
     iwc = 1

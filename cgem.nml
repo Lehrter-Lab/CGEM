@@ -13,6 +13,8 @@
 !namelist /nosp/ nospA, nospZ
 nospA = 1
 nospZ = 2
+skipcgem = 0     !1==Run as tracers with sinking
+checkwindrad = 0 !1==write out Rad and Wind
 !------------------------------------------------------------------------
 /
 
@@ -21,7 +23,7 @@ nospZ = 2
 !Switches in CGEM
 !------------------------------------------------------------------------
 !namelist /switches/ Which_fluxes,Which_temperature,Which_uptake,Which_quota,Which_irradiance,Which_chlaC,Which_photosynthesis,Which_growth
-Which_fluxes = 0 0 0 0 0 0 0 0 !Which_fluxes: Toggle on(1) off(0): O2surf, DICsurf, Sediment Oxygen Consumption, Microphytobenthos, Sediment Nutrient Fluxes
+Which_fluxes = 1 0 0 0 0 0 0 0 !Which_fluxes: Toggle on(1) off(0): O2surf, DICsurf, Sediment Oxygen Consumption, Microphytobenthos, Sediment Nutrient Fluxes
                                !  Atmospheric Deposition of Nutrients, Instant Remineralization in Bottom Layer, Sediment Diagenesis Model
 Which_temperature = 1	       !Which_temperature: 1==Sigmoidal, 2==Optimum Temp. Thresh., 3==Arrenhius
 Which_uptake = 1	       !Which_uptake: 1==Michaelis-Menten, 2==Geider (needs nfQs), 3==Roelke, Nutrient uptake rate
@@ -30,6 +32,8 @@ Which_irradiance = 1	       !Which_irradiance: 1==IOP (inherent optical properti
 Which_chlaC = 1	               !Which_chlaC: 1==fixed C:Chl-a, 2==Cloern chl:C
 Which_photosynthesis = 1       !Which_photosynthesis: 1==photoinhibition, 2==without photoinhibition, 3==nutrient dependent
 Which_growth = 1	       !Which_growth: 1==minimum, 2==product formulation, 3==umax is nutrient dependent, Specific growth rate
+Which_rad = 1                  !Which_rad: 0==getsolar, 1==use solar fluxes, in W/m2
+Which_wind = 1                 !Which_wind: 0==constant 5m/s, 1==read wind
 !------------------------------------------------------------------------
 /
 
