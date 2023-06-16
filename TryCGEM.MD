@@ -1,4 +1,4 @@
-# Instructions for running CGEM in various modes
+# Instructions for running CGEM-SCHISM in various modes
 
 Summary:
 - Copy tarred directories with input files and executable from my project directory to your scratch directory
@@ -115,7 +115,7 @@ ls
 more cgem.nml
 ```
 
-Check the batch file.  We use 2 node, each of which has 128 cores.  26 of them are used for writing outputs.  The 2 extra are for salinity and temperature.  We will run for 12 days with hourly output, 3 days per output file.x
+Check the batch file.  We use 2 node, each of which has 128 cores.  26 of them are used for writing outputs.  The 2 extra are for salinity and temperature.  We will run for 12 days with hourly output, 3 days per output file.
 ```
 more submit.sh
 ```
