@@ -89,17 +89,19 @@ python cgem.ts_commands.py
 #check them
 more cgem_extract.sh
 #run commands
-source cgem_extract.csh
+source cgem_extract.sh
 #plot the results
 Rscript plot_timeseries_schism_cgem.R
 ```
 
 This creates a pdf file, `pdfs/timeseries_cgem_2007_0_.pdf`.
 
-Maybe you can look at pdfs while on Expanse, but I just copy them to my computer with Globus.  (Globus was in 'prep' work.)  The endpoint for the scratch directory is:
+Maybe you can figure out how to look at pdfs while on Expanse, but I just copy them to my computer with Globus.  (Globus was in your 'prep' work.)  The Globus endpoint for the scratch directory is:
 ```
 /scratch/$USER/temp_project/
 ```
+
+
 
 
 
