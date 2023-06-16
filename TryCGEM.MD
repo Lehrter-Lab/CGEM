@@ -43,6 +43,7 @@ cp /expanse/lustre/projects/ncs124/llowe/cgem-box.tar .
 tar -xvf cgem-box.tar
 cp /expanse/lustre/projects/ncs124/llowe/CGEM.tar .
 tar -xvf CGEM.tar
+ls
 ```
 
 ## Run the CGEM-Box model
