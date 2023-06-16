@@ -45,7 +45,7 @@ cp /expanse/lustre/projects/ncs124/llowe/CGEM.tar .
 tar -xvf CGEM.tar
 ```
 
-## Run the box model
+## Run the CGEM-Box model
 
 Do
 ```
@@ -69,6 +69,8 @@ more outputs/mirror.out | grep TIME | tail
 ls -lrth
 ```
 If you get an error that doesn't have an obvious fix, just email me.  I checked these instructions, so if it doesn't work for you, we need to check environments.  (Of course it works for me...)
+
+## Extracting time series for CGEM-Box
 
 Make the plots.  If you do this in order, as per these instructions, you should not have to modify ANYTHING.  First, load my module.  It has pylibs, f90nml, nco, and r-ncdf4.
 ```
@@ -100,9 +102,9 @@ You can also look at individual netCDF outputs using `ncdump`, e.g.,
 ncdump outputs/O2_ts_2007_0_0_1.nc | less
 ```
 
-## Run the SA model
+## Run the CGEM-SA model
 
-You can run actual CGEM for kicks, but I recommend just not.right.yet.  Here are instructions anyway.
+You can run actual CGEM for kicks, but I recommend just not.right.yet.  Here are instructions anyway.  Why not.  
 
 Do
 ```
@@ -137,16 +139,29 @@ ls -lrth outputs
 #up arrow to check again
 ```
 
-See how many timesteps are complete.  There are 2592 timesteps per chunk. Output is GEN_X_chunk.nc.  Wait for a chunk to complete before opening in VisIt or extracting timeseries.
+See how many timesteps are complete.  There are 2592 timesteps per chunk, and 10368 total. Output is GEN_X_chunk.nc.  Wait for a chunk to complete before opening in VisIt or extracting timeseries.
 ```
 more outputs/mirror.out | grep TIME | tail
 ls -lrth outputs/*.nc
 ```
-Instead of neurotic up-arrowing, you should probably just go get a coffee.
+Instead of neurotic up-arrowing, you should probably just go get a coffee.  The whole run takes about 25 minutes.
 
 Use VisIt to look at the outputs as the chunks are completed.  (VisIt is in the prep work.)
 
-I said before that until the model is more complete and tested, the timeseries plots are not really meaningful.  But if you insist...here goes.
+## Run CGEM-SA with no CGEM
+
+The next main task is to create and check ICs, BCs, and loads.  To do that, without the equations mucking things up, modify cgem.nml, and rerun.  Use the same instructions for running as above.
+
+Change this line in cgem.nml:
+```
+skipcgem = 1     !1==Run as tracers with sinking
+```
+
+## Extracting time series for CGEM-SA
+
+*Note:  I need to rewrite launch_run.sh to write outputs to node scratch storage, it was fast on Hazel but takes too long on the Expanse Lustre file system.  You can try this once, but avoid running a bunch of times until I modify it, it could be disruptive.  To avoid problems, make larger chunks, and don't extract variables that don't do anything yet, like OMBC.*
+
+I said before that until the model is more complete and tested, cgem timeseries plots on SA are not really meaningful.  But if you insist...here goes.
 
 This time, to make the plots, you need to change setvars.py.  Just comment out box model params and uncomment SA params. If you didn't already, load my module.  It has pylibs, f90nml, nco, and r-ncdf4.
 ```
@@ -155,7 +170,7 @@ module load cgem
 ```
 Then create the commands file.
 ```
-cd ../CGEM
+cd /expanse/lustre/scratch/$USER/temp_project/CGEM
 #create the commands
 python cgem.ts_commands.py
 #check them
@@ -163,16 +178,32 @@ more cgem_extract.sh
 ```
 Now, we have a zillion commands.  Check how many with `wc -l` (word count lines).
 ```
-cat cgem_extract | wc -l
+cat cgem_extract.sh | wc -l
 ```
+Okay, not a zillion, just 304.
 
-This should be done in a batch file, in parallel.  I included the `launch` executable and a batch script.
+This should be done in a batch file, in parallel.  I included the `launch` executable and a batch script.  It takes about the same time per command, so we request 77 cores in the shared queue.  1 core distributes commands to the 76 other cores until the work is complete.
 ```
 #look at launch script
-more 
+more launch_run.sh
+#run it
+sbatch launch_run.sh
+#check status
+squeue -u $USER
+#check task progress
+more launch-extract.*.out
+```
+You really don't want to ls the whole outputs directory, there are too many files.  It is better to check squeue and the .out and .err files.
+
+
+
+When the run ends, plot the results.  One pdf is created for each node.
+```
 #plot the results
 Rscript plot_timeseries_schism_cgem.R
 ```
+
+This plotting script has NA removal, but Inf will break it.  So it broke.  You can check the 6 pdfs that were created before it broke, and also you can look at the files with `ncdump`.  I recommend not extracting timesereis for CGEM yet, but you can run the 'hydro' version of the commands.  I didn't triple check those, but.  maybe they still work.
 
 
 
