@@ -144,7 +144,7 @@ ls -lrth outputs/*.nc
 ```
 Instead of neurotic up-arrowing, you should probably just go get a coffee.
 
-Use VisIt to look at the outputs.  (VisIt is in the prep work.)
+Use VisIt to look at the outputs as the chunks are completed.  (VisIt is in the prep work.)
 
 I said before that until the model is more complete and tested, the timeseries plots are not really meaningful.  But if you insist...here goes.
 
@@ -161,10 +161,15 @@ python cgem.ts_commands.py
 #check them
 more cgem_extract.sh
 ```
-Now, we have a zillion commands.  This should be done in a batch file, in parallel.  I included the `launch` executable and a batch script.
+Now, we have a zillion commands.  Check how many with `wc -l` (word count lines).
 ```
-#run commands
-source cgem_extract.sh
+cat cgem_extract | wc -l
+```
+
+This should be done in a batch file, in parallel.  I included the `launch` executable and a batch script.
+```
+#look at launch script
+more 
 #plot the results
 Rscript plot_timeseries_schism_cgem.R
 ```
