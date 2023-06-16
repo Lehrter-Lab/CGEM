@@ -74,8 +74,34 @@ more outputs/mirror.out | grep TIME | tail
 #if it isn't running, check for log or err files
 ls -lrth
 ```
-
 If the error doesn't have an obvious fix, just email me.  I checked these instructions, so if it doesn't work for you, I need to fix things.
+
+Make plots.  If you do this in order, as per these instructions, you should not have to modify ANYTHING.  First, load my module, it has pylibs, f90nml, nco, and r-ncdf4.
+```
+module use --append /home/llowe/modulefiles
+module load cgem
+```
+Then run the plotting scripts
+```
+cd ../CGEM
+#create the commands
+python cgem.ts_commands.py
+#check them
+more cgem_extract.sh
+#run commands
+source cgem_extract.csh
+#plot the results
+Rscript plot_timeseries_schism_cgem.R
+```
+
+This creates a pdf file, `pdfs/timeseries_cgem_2007_0_.pdf`.
+
+Maybe you can look at pdfs while on Expanse, but I just copy them to my computer with Globus.  (Globus was in 'prep' work.)  The endpoint for the scratch directory is:
+```
+/scratch/$USER/temp_project/
+```
+
+
 
 
 
