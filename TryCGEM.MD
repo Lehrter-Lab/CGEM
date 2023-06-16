@@ -191,7 +191,7 @@ mpirun -n 128 ./pschism_GEN_GEN_TVD-VL 24 > log.out
 
 ## Extracting time series for CGEM-SA
 
-**Note:**  I need to rewrite launch_run.sh to write outputs to node scratch storage, it was fast on Hazel but takes too long on the Expanse Lustre file system. You can try this out, but avoid running a bunch of times until I modify it, it could be disruptive.  Actually, this whole method of doing timeseries is not terribly efficient.  But it works for now.
+***Note:**  I need to rewrite launch_run.sh to write outputs to node scratch storage, it was fast on Hazel but takes too long on the Expanse Lustre file system. You can try this out, but avoid running a bunch of times until I modify it, it could be disruptive.  Actually, this whole method of doing timeseries is not terribly efficient.  But it works for now.*
 
 I said before that until the model is more complete and tested, cgem timeseries plots on SA are not really meaningful.  But if you insist...here goes.
 
