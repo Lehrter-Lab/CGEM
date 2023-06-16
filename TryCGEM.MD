@@ -58,15 +58,22 @@ ls
 more cgem.nml
 ```
 
-Go ahead and run.  It uses only 26 cores (and only 2 for running, 24 do output), so uses the `shared` partition.  1 year takes about 1 minute.
+Go ahead and run.  It uses only 26 cores (and only 2 for running, 24 do output), so uses the `shared` partition.  1 year takes about 1 minute. Submit the job:
 ```
-#submit the job
 sbatch submit.sh
-#check if it is running
+```
+Check if it is running
+```
 squeue -u $USER
-#see how many timesteps are complete.  Should be 8640 in total.
+```
+
+See how many timesteps are complete.  Should be 8640 in total.
+```
 more outputs/mirror.out | grep TIME | tail
-#if it isn't running, check for log or err files
+```
+
+If it isn't running, check for log or err files
+```
 ls -lrth
 ```
 If you get an error that doesn't have an obvious fix, just email me.  I checked these instructions, so if it doesn't work for you, we need to check environments.  (Of course it works for me...)
