@@ -171,9 +171,14 @@ Use VisIt to look at the outputs as the chunks are completed.  (VisIt is in the 
 
 The next main task is to create and check ICs, BCs, and loads.  To do that, without the equations mucking things up, modify cgem.nml, and rerun.  Use the same instructions for running as above.  
 
-You may want to remove some of the output variables.  Do this by setting iout_X to 0 at the bottom of param.nml. When doing so, decrease number of 'scribes', which is the number in submit.sh after pschism_GEN_GEN_TVD-VL, currently 26.  Also, might want to change length of the run or chunk size. This is rnday, nspool, and ihfskip in params.nml.  
+Change this line in cgem.nml:
+```
+skipcgem = 1     !1==Run as tracers with sinking
+```
 
-Also, to decrease queue wait, and because you probably don't need 2 nodes, change these lines in submit.sh.
+Before rerunning, you may want to remove some of the output variables.  Do this by setting iout_X to 0 at the bottom of param.nml. When doing so, decrease number of 'scribes', which is the number in submit.sh after pschism_GEN_GEN_TVD-VL, currently 26.  To change length of the run or chunk size, modify rnday, nspool, and ihfskip in params.nml.  
+
+Also, to decrease queue wait, and because you probably don't need 2 nodes, you might-could change these lines in submit.sh.
 ```
 #SBATCH --nodes=1
 #1node
@@ -183,10 +188,6 @@ mpirun -n 128 ./pschism_GEN_GEN_TVD-VL 24 > log.out
 #time mpirun -n 256 ./pschism_GEN_GEN_TVD-VL 26 > log.out
 ```
 
-Change this line in cgem.nml:
-```
-skipcgem = 1     !1==Run as tracers with sinking
-```
 
 ## Extracting time series for CGEM-SA
 
