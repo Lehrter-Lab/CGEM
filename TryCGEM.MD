@@ -103,7 +103,7 @@ Plot the results
 Rscript plot_timeseries_schism_cgem.R
 ```
 
-This creates a pdf file, `pdfs/timeseries_cgem_2007_0_.pdf`.
+This creates a pdf file, `pdfs/timeseries_cgem_2007_7_.pdf`.
 
 Maybe you can figure out how to look at pdfs while on Expanse, but I just copy them to my computer with Globus.  (Globus was in your 'prep' work.)  The Globus endpoint for the scratch directory is:
 ```
@@ -112,7 +112,7 @@ Maybe you can figure out how to look at pdfs while on Expanse, but I just copy t
 
 You can also look at individual netCDF outputs using `ncdump`, e.g.,
 ```
-ncdump outputs/O2_ts_2007_0_0_1.nc | less
+ncdump outputs/O2_ts_2007_7_0_1.nc | less
 ```
 
 ## Run the CGEM-SA model
