@@ -154,11 +154,15 @@ For this many cores, a bunch of setup is needed.  Check outputs directory until 
 ```
 ls -lrth outputs
 ```
+Then
+```
+ls -lrth outputs/*.nc
+```
 
 See how many timesteps are complete.  There are 2592 timesteps per chunk, and 10368 total. Output is GEN_X_chunk.nc.  Wait for a chunk to complete before opening in VisIt or extracting timeseries.
 ```
 more outputs/mirror.out | grep TIME | tail
-ls -lrth outputs/*.nc
+
 ```
 Instead of neurotic up-arrowing, you should probably just go get a coffee.  The whole run takes about 25 minutes.
 
