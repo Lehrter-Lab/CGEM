@@ -85,16 +85,21 @@ Make the plots.  If you do this in order, as per these instructions, you should 
 module use --append /home/llowe/modulefiles
 module load cgem
 ```
-Then run the plotting scripts
+Then run the scripts.  The first script creates a list of commands.
 ```
 cd ../CGEM
 #create the commands
 python cgem.ts_commands.py
 #check them
 more cgem_extract.sh
-#run commands
+```
+Run the commands
+```
 source cgem_extract.sh
-#plot the results
+```
+
+Plot the results
+```
 Rscript plot_timeseries_schism_cgem.R
 ```
 
