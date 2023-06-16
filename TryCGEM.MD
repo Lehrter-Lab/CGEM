@@ -12,7 +12,7 @@ but I wanted to get you a frozen copy that you can change without thinking.
 Using someone else's modules and libraries is dicey, since they might change them. I have changed permissions on my pylibs 
 and cgem module stuff to make it harder for me to change stuff without warning.
 
-# Use the SCRATCH directory.
+## Use the SCRATCH directory.
 
 I have confirmed these users are in project ncs124 and have a scratch directory:
 ```
@@ -50,6 +50,33 @@ tar -xvf cgem-box.tar
 cp /expanse/lustre/projects/ncs124/llowe/CGEM.tar .
 tar -xvf CGEM.tar
 ```
+
+## Run the box model
+
+Do
+```
+#go to the directory
+cd cgem-box
+#look around
+ls
+#look at the cgem parameters
+more cgem.nml
+```
+
+Go ahead and run, uses only 26 cores (and only 2 for running, the rest do output), so uses the `shared` partition.  1 year takes about 5 minutes.
+```
+#submit the job
+sbatch submit.sh
+#check if it is running
+squeue -u $USER
+#see how many timesteps are complete.  Should be 8640 in total.
+more outputs/mirror.out | grep TIME | tail
+#if it isn't running, check for log or err files
+ls -lrth
+```
+
+If the error doesn't have an obvious fix, just email me.  I checked these instructions, so if it doesn't work for you, I need to fix things.
+
 
 
 
