@@ -62,7 +62,7 @@ Go ahead and run.  It uses only 26 cores (and only 2 for running, 24 do output),
 ```
 sbatch submit.sh
 ```
-Check if it is running
+Check if it is running.  Hit up-arrow to repeat until it goes from pending (PD) to running (R).
 ```
 squeue -u $USER
 ```
