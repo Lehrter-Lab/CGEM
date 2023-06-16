@@ -1,13 +1,14 @@
 subroutine cgem_flux(dT)
 
 use grid, only:T,S,dz,Wind
-use cgem, only:ff,ff_new,Which_fluxes,iO2surf,iO2
+!This is called after cgem_step, which returns ff_new
+!This modifies the surface and bottom cells of ff_new
+use cgem, only:ff_new,Which_fluxes,iO2surf,iO2
 use MOD_UTILITIES
 
 implicit none
 
 real, intent(in) :: dT
-real :: ff_check
 real :: T_sfc, Sal_sfc, O2_sfc, Sc, Op_umole, rhow, Op, OsDOp
 real :: Vtrans, alpha_O2, O2_atF
 real, parameter :: SDay = 86400.0  ! # of sec in 24 hr day
@@ -19,7 +20,7 @@ if(Which_fluxes(iO2surf).eq.1) then
 !--------------------------------------------------------------
    T_sfc    = T(1)       ! Temperature (C)   in sfc layer, k=1
    Sal_sfc  = S(1)       ! Salinity          in sfc layer, k=1
-   O2_sfc   = ff(1,iO2) ! O2 (mmol-O2/m3) in sfc layer, k=1
+   O2_sfc   = ff_new(1,iO2) ! O2 (mmol-O2/m3) in sfc layer, k=1
 
    Sc       = SchmidtNumber(Sal_sfc,T_sfc,0)  ! Schmidt number,
                                                           !   0 (zero)
@@ -64,7 +65,7 @@ if(Which_fluxes(iO2surf).eq.1) then
                                            ! ((mmol-O2/m2/sec)
                                            ! negative means
                                            ! into
-   ff_new(1,iO2) = AMAX1(ff(1,iO2) - O2_atF/dz(1)*dT,0.)
+   ff_new(1,iO2) = AMAX1(ff_new(1,iO2) - O2_atF/dz(1)*dT,0.)
 
 endif
 

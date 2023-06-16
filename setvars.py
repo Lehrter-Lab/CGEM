@@ -31,22 +31,23 @@ numfiles = 1
 
 #Nodes and layers are 0 (Zero) indexed in netCDF files
 #--Nodes
-##--Box model has 40 nodes 
-which_nodes = [0,7,28,43]
+##--Box model has 49 nodes, but they should all be the same 
+#which_nodes = [0,7,28,43]
+which_nodes = [0]
 ##--SABay has 10240 nodes, these are the ones Zhilong emailed me on 6.13.2023:
 #which_nodes = [823,6000,492,1850,3083,78,2383,3329,4569,5779,5082,4465,6337,7193,8609,9743,2100,2421,2253]
 
 #--Layers
-##--Box model has 11 layers 
+##--Box model has 11 layers  
 which_layers = [0,2,4,6,8,10]
 ##--SABay has 15 layers 
 #which_layers = [0,4,9,14]
 
 #--CGEM variables
 ##-all of them
-#cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','OM2Z','OM1R','OM2R','CDOM','Si','OM1BC','OM2BC','Alk','Tr']
+cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','OM2Z','OM1R','OM2R','CDOM','Si','OM1BC','OM2BC','Alk','Tr']
 ##--During testing, OM1R=OM2R=OM1BC=OM2BC=0 (but you should check them anyway, occasionally)
-cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','CDOM','Si','Alk','Tr']
+#cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','CDOM','Si','Alk','Tr']
 ##-smaller subset
 #cgem_vars = ['A','Z','NO3','NH4','PO4','O2']
 

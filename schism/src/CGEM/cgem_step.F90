@@ -181,7 +181,8 @@
 
 ! write(6,*) "SPD,dTd,dt",StepsPerDay,dTd,dt
 
-!  call getSolar( iYrS, TC_8, lon, lat, Rad)
+if(Which_rad.eq.0) call getSolar( iYrS, TC_8, lon, lat, Rad)
+if(Which_wind.eq.0) Wind = 5. 
 
 !write(6,*) "iYrS,TC_8,lon,lat,Rad",iYrS,TC_8,lon,lat,Rad
 
@@ -191,13 +192,22 @@ write(6,*) "Begin cgem, TC_8,istep",TC_8,istep
 
    optNP = ZQn/ZQp    ! Optimal nutrient ratio for zooplankton
 
-    if(istep.ne.1) then
+!    if(istep.ne.1) then
        ! After Advection and VMixing, return to Q's
        do k=1,km
         ff(k,iQn(:)) = ff(k,iQn(:)) / ff(k,iA(:))
         ff(k,iQp(:)) = ff(k,iQp(:)) / ff(k,iA(:))
        enddo
+!    endif
+
+do k=1,km
+  do isp = 1,nf
+    if(ff(k,isp).lt.0.) then 
+      write(6,*) "WARNING,ff.lt.0, setting to 0 for istep,myrank,inea,k,isp=",istep,myrank,inea,k,isp,ff(k,isp)
+      ff(k,isp) = 0.0
     endif
+  enddo
+enddo
 
 !write(6,*) "istep=",istep
 !-----------------------------------------------------------------
@@ -217,8 +227,8 @@ write(6,*) "init loop, ZQp, nea, km",ZQp,k
    !Get algae counts and Nitrogen/phosphorus quotas
              do isp = 1, nospA          
                A_k(isp,k) = ff(k,isp) ! Phytoplankton in group isp, cells/m3
-               Qn_k(isp,k) = ff(k,iQn(1)-1+isp)
-               Qp_k(isp,k) = ff(k,iQp(1)-1+isp)
+               Qn_k(isp,k) = ff(k,iQn(isp))
+               Qp_k(isp,k) = ff(k,iQp(isp))
              enddo 
          !Save Zooplanton to k array
              do isp = 1,nospZ
@@ -1079,7 +1089,7 @@ write(6,*) "In cgem, finished stoich Z"
 !---------------------------------------------------------
 !-DIC: Dissolved Inorganic Carbon (mmol-C/m3)
 !---------------------------------------------------------
-       ff(k,iDIC) = AMAX1(ff(k,iDIC)                            &
+       ff_new(k,iDIC) = AMAX1(ff(k,iDIC)                            &
        &  + ( RDIC - PrimProd + ArespC  + ZrespC )*dTd, 0.0)  
 !       ff_new(k,iDIC) = RDIC - PrimProd + ArespC  + ZrespC
  
@@ -1174,7 +1184,6 @@ write(6,*) "In cgem, updated ALK"
         ff_new(k,iQn(:)) = ff_new(k,iQn(:)) * ff_new(k,iA(:))
         ff_new(k,iQp(:)) = ff_new(k,iQp(:)) * ff_new(k,iA(:))
        enddo
-
 
 ! ----------------------------------------------------------------------
 

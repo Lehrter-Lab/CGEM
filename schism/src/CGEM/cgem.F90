@@ -15,6 +15,7 @@ integer :: nospA
 integer :: nospZ
 
 !misc
+integer :: skipcgem,checkwindrad
 real :: eps
 
 !Sinking
@@ -173,6 +174,8 @@ integer Which_chlaC
 integer Which_photosynthesis
 integer Which_growth
 integer Which_temperature
+integer Which_wind
+integer Which_rad
 !--Temperature
 real, allocatable :: KTg1(:)
 real, allocatable :: KTg2(:)
@@ -277,7 +280,7 @@ subroutine cgem_dim
   integer           :: istat,iunit
   character(len=1000) :: line
   !http://degenerateconic.com/namelist-error-checking.html
-  namelist /nosp/ nospA,nospZ
+  namelist /nosp/ nospA,nospZ,skipcgem,checkwindrad
 
 #ifdef DEBUG
 write(6,*) "Begin cgem_dim"
@@ -314,7 +317,7 @@ subroutine cgem_read
   character(len=1000) :: line
   !http://degenerateconic.com/namelist-error-checking.html
   namelist /switches/ Which_fluxes,Which_temperature,Which_uptake,Which_quota,Which_irradiance,&
-    Which_chlaC,Which_photosynthesis,Which_growth
+    Which_chlaC,Which_photosynthesis,Which_growth,Which_wind,Which_rad
   namelist /optics/ Kw,Kcdom,Kspm,Kchla,astar490,aw490,astarOMA,astarOMZ,astarOMR,astarOMBC,PARfac,sinkCDOM
   namelist /temperature/ Tref,KTg1,KTg2,Ea
   namelist /phytoplankton/ umax,CChla,alpha,beta,respg,respb,QminN,QminP,QmaxN,QmaxP,Kn,Kp,Ksi,KQn,&
@@ -549,8 +552,8 @@ write(6,*) "Begin cgem_allocate"
       allocate(ff_new(km,nf),stat=ierr)
       if(ierr.ne.0) write(6,*) "error in allocating:ff_new"
 
-      ff = 0.
-      ff_new = 0.
+      ff = -9999. 
+      ff_new = -9999.
 
 !----allocate INPUT_VARS_CGEM
 
@@ -726,36 +729,38 @@ do isp=1,nospA
 enddo
 
 
+!ff is initialized by SCHISM
+
 !namelist /init/ A_init,Qn_init,Qp_init,Z_init,NO3_init,NH4_init,PO4_init,DIC_init,O2_init,&
 ! OM1_A_init,OM2_A_init,OM1_Z_init,OM2_Z_init,OM1_R_init,OM2_R_init,CDOM_init,Si_init,OM1_BC_init,OM2_BC_init,ALK_init,Tr_init
 !Initialize ff for testing
-do isp=1,nospA
- ff(:,iA(isp))  = A_init(isp)
- ff(:,iQn(isp)) = Qn_init(isp)
- ff(:,iQp(isp)) = Qp_init(isp)
-!write(6,*) "Initializing A,isp=",isp,A_init(isp)
-enddo
-do isp=1,nospZ
- ff(:,iZ(isp)) = Z_init(isp)
-! write(6,*) "Initializing Z,isp=",isp,Z_init(isp)  
-enddo
-ff(:,iNO3) = NO3_init
-ff(:,iNH4) = NH4_init 
-ff(:,iPO4) = PO4_init 
-ff(:,iDIC) = DIC_init 
-ff(:,iO2) = O2_init 
-ff(:,iOM1_A) = OM1_A_init
-ff(:,iOM2_A) = OM2_A_init
-ff(:,iOM1_Z) = OM1_Z_init !0. !78.162582                   !OM1_fp 
-ff(:,iOM2_Z) = OM2_Z_init !0. !225.37767                   !OM2_fp 
-ff(:,iOM1_R) = OM1_R_init !0.0000000               !OM1_rp 
-ff(:,iOM2_R) = OM2_R_init !0.0000000               !OM2_rp 
-ff(:,iCDOM) = CDOM_init !2.              !CDOM 
-ff(:,iSi) = Si_init !15.             !Si 
-ff(:,iOM1_BC) = OM1_BC_init !0. !157.09488                   !OM1_bc 
-ff(:,iOM2_BC) = OM2_BC_init !0. !333.65701                   !OM2_bc
-ff(:,iALK) = ALK_init !2134               !ALK 
-ff(:,iTr) = Tr_init !1                  !Tr
+!do isp=1,nospA
+! ff(:,iA(isp))  = A_init(isp)
+! ff(:,iQn(isp)) = Qn_init(isp)
+! ff(:,iQp(isp)) = Qp_init(isp)
+!!write(6,*) "Initializing A,isp=",isp,A_init(isp)
+!enddo
+!do isp=1,nospZ
+! ff(:,iZ(isp)) = Z_init(isp)
+!! write(6,*) "Initializing Z,isp=",isp,Z_init(isp)  
+!enddo
+!ff(:,iNO3) = NO3_init
+!ff(:,iNH4) = NH4_init 
+!ff(:,iPO4) = PO4_init 
+!ff(:,iDIC) = DIC_init 
+!ff(:,iO2) = O2_init 
+!ff(:,iOM1_A) = OM1_A_init
+!ff(:,iOM2_A) = OM2_A_init
+!ff(:,iOM1_Z) = OM1_Z_init !0. !78.162582                   !OM1_fp 
+!ff(:,iOM2_Z) = OM2_Z_init !0. !225.37767                   !OM2_fp 
+!ff(:,iOM1_R) = OM1_R_init !0.0000000               !OM1_rp 
+!ff(:,iOM2_R) = OM2_R_init !0.0000000               !OM2_rp 
+!ff(:,iCDOM) = CDOM_init !2.              !CDOM 
+!ff(:,iSi) = Si_init !15.             !Si 
+!ff(:,iOM1_BC) = OM1_BC_init !0. !157.09488                   !OM1_bc 
+!ff(:,iOM2_BC) = OM2_BC_init !0. !333.65701                   !OM2_bc
+!ff(:,iALK) = ALK_init !2134               !ALK 
+!ff(:,iTr) = Tr_init !1                  !Tr
 
 #ifdef DEBUG
 write(6,*) "ff(1,iOM2_R)",ff(:,iOM2_R)
@@ -802,6 +807,9 @@ write(6,*) "After Esed",s_z2Z
 
 ws = 0.
 ws(iA(:))=sinkA(:)
+!We didn't do this before, but we should have...
+ws(iQn(:)) = sinkA(:)
+ws(iQp(:)) = sinkA(:)
 
 #ifdef DEBUG
 write(6,*) "ws(ia)",ws(iA(:))
