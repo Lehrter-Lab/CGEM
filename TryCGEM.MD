@@ -137,12 +137,16 @@ more submit.sh
 
 Go ahead and run it.
 ```
-#submit the job
 sbatch submit.sh
-#check if it is Running or PenDing
+```
+
+Check if it is Running or PenDing, up arrow to keep checking for Run state.
+```
 squeue -u $USER
-#up arrow to keep checking for Run state
-#If it exits quickly, look for the error file
+```
+
+If it exits quickly, look for the error file
+```
 ls -lrth
 ```
 
