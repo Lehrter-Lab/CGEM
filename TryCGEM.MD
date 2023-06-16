@@ -6,6 +6,8 @@ Summary:
 - Load my module files to set environment
 - Do stuff
 
+My pdfs resulting from following these instructions are in the Google Drive folder for CGEM testing.
+
 ## Use the SCRATCH directory.
 
 I have confirmed these users are in project ncs124 and have a scratch directory:
@@ -235,7 +237,7 @@ When the run ends, plot the results.  One pdf is created for each node.
 Rscript plot_timeseries_schism_cgem.R
 ```
 
-This plotting script has NA removal, but Inf will break it.  So it broke.  You can check the 6 pdfs that were created before it broke, and also you can look at the files with `ncdump`.  I recommend not extracting timesereis for CGEM yet, but you can run the 'hydro' version of the commands.  I didn't triple check those, but.  maybe they still work.
+This plotting script has NA removal, but Inf will break it.  So it broke.  You can check the 6 pdfs that were created before it broke, and also you can look at the files with `ncdump`.  I recommend not extracting timesereis for CGEM yet, but you can run the 'hydro' version of the commands.  I didn't triple check those, but.  maybe they still work.  
 
 
 
