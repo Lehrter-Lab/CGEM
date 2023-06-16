@@ -159,7 +159,7 @@ skipcgem = 1     !1==Run as tracers with sinking
 
 ## Extracting time series for CGEM-SA
 
-*Note:  I need to rewrite launch_run.sh to write outputs to node scratch storage, it was fast on Hazel but takes too long on the Expanse Lustre file system.*  You can try this once, but avoid running a bunch of times until I modify it, it could be disruptive.  To avoid problems, make larger chunks, and don't extract variables that don't do anything yet, like OMBC.  Actually, this whole method of doing timeseries is not terribly efficient.  It works for now.*
+**Note:**  I need to rewrite launch_run.sh to write outputs to node scratch storage, it was fast on Hazel but takes too long on the Expanse Lustre file system. You can try this out, but avoid running a bunch of times until I modify it, it could be disruptive.  Actually, this whole method of doing timeseries is not terribly efficient.  But it works for now.
 
 I said before that until the model is more complete and tested, cgem timeseries plots on SA are not really meaningful.  But if you insist...here goes.
 
