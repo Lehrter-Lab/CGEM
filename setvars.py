@@ -18,7 +18,7 @@ import os
 SCRIPT_PATH = os.getcwd()
 
 #--Run directory
-RUNDIR = "/rsstu/users/l/lllowe/cgem/cgem-real"
+RUNDIR = "/rsstu/users/l/lllowe/cgem/cgem-box"
 
 #--Output directory
 OUTPUTS = os.path.join(RUNDIR,'outputs')
@@ -26,20 +26,21 @@ OUTPUTS = os.path.join(RUNDIR,'outputs')
 #OUTPUTS = /my/path/to/outputs
 
 #--How many separate output chunks for each variable 
-#numfiles = 13
-numfiles = 1
+numfiles = 13
+#numfiles = 1
 
 #Nodes and layers are 0 (Zero) indexed in netCDF files
 #--Nodes
 ##--Box model has 49 nodes, but they should all be the same 
-#which_nodes = [0,7,28,43]
-which_nodes = [0]
+#which_nodes = [7,28,43]
+which_nodes = [7,28]
 ##--SABay has 10240 nodes, these are the ones Zhilong emailed me on 6.13.2023:
 #which_nodes = [823,6000,492,1850,3083,78,2383,3329,4569,5779,5082,4465,6337,7193,8609,9743,2100,2421,2253]
 
 #--Layers
 ##--Box model has 11 layers  
-which_layers = [0,2,4,6,8,10]
+which_layers = [1,3,5,7,9,11]
+#which_layers = [1]
 ##--SABay has 15 layers 
 #which_layers = [0,4,9,14]
 

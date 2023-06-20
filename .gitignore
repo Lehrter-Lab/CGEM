@@ -2,7 +2,7 @@
 outputs/*
 pdfs/*
 saveoutputs*/*
-cgem_extract.csh
+cgem_extract.sh
 launch.csh
 hydro_extract.sh
 s2p_*
