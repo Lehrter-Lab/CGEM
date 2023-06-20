@@ -87,10 +87,28 @@ If you get an error that doesn't have an obvious fix, just email me.  I checked 
 
 ## Extracting time series for CGEM-Box
 
-Make the plots.  If you do this in order, as per these instructions, you should not have to modify ANYTHING.  First, load my module.  It has pylibs, f90nml, nco, and r-ncdf4.
+Make the plots.  If you do this in order, as per these instructions, you should not have to modify ANYTHING.  
+
+First, check to see if you can load my module (has pylibs, f90nml, nco, and r-ncdf4), and check that it can find ncdump.  Stop here if the following doesn't work, and let me know.
 ```
 module use --append /home/llowe/modulefiles
 module load cgem
+which ncdump
+which Rscript
+```
+The `which` commands should return
+```
+~/env_pylibs/bin/ncdump
+~/env_pylibs/bin/Rscript
+```
+Also do a quick check of Python libraries
+```
+python
+import pylib
+import f90nml
+quit()
+```
+Try this:
 ```
 Then run the scripts.  The first script creates a list of commands.
 ```
