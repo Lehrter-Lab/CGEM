@@ -60,7 +60,9 @@ ls
 more cgem.nml
 ```
 
-Go ahead and run.  It uses only 26 cores (and only 2 for running, 24 do output), so uses the `shared` partition.  1 year takes about 1 minute. Check the batch script:
+Go ahead and run.  It uses only 26 cores (and only 2 for running, 24 do output), so uses the `shared` partition.  1 year takes about 1 minute. 
+
+First, check the batch script:
 ```
 cat submit.sh
 ```
