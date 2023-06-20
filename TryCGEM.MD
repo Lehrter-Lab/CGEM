@@ -243,7 +243,7 @@ And, run it:
 sbatch submit.sh
 ```
 
-This will take considerably longer, maybe ~40min, and you can't really check the progress because outputs are being written to local scratch and aren't copied until all of the netCDF files are extracted.  If you are impatient, change setvars.py to do just a couple nodes.  (It is mainly taking longer because it is extracting 19x the number of nodes as we did for cgem-box.)  
+This will take considerably longer, maybe ~40min, and you can't really check the progress because outputs are being written to local scratch and aren't copied until all of the netCDF files are extracted.  If you are impatient, change setvars.py to do just a couple nodes.  (It is mainly taking longer because it is extracting 19x the number of nodes as we did for cgem-box.)  We'll parallelize it later, by node.
 
 Outputs will be in ./pdfs.
 
