@@ -222,6 +222,11 @@ mpirun -n 128 ./pschism_GEN_GEN_TVD-VL 24 > log.out
 
 Until the model is more complete and tested, I don't think cgem timeseries plots on SA are meaningful.  But here's how to do it anyway.
 
+Go to the CGEM directory
+```
+cd /expanse/lustre/scratch/$USER/temp_project/CGEM
+```
+
 This time, to make the plots, you need to change setvars.py.  Just comment out box model params and uncomment SA params.  Make sure you caught these lines: 
 ```
 RUNDIR = '/expanse/lustre/scratch/' + os.environ['USER'] + '/temp_project/cgem-SA'
@@ -230,6 +235,17 @@ which_nodes = [823,6000,492,1850,3083,78,2383,3329,4569,5779,5082,4465,6337,7193
 which_layers = [1,5,10,15]
 iYr0 = '2019'
 ```
+
+And, run it:
+```
+sbatch submit.sh
+```
+
+This will take considerably longer, maybe ~40min, and you can't really check the progress because outputs are being written to local scratch and aren't copied until all of the netCDF files are extracted.  If you are impatient, change setvars.py to do just a couple nodes.  (It is mainly taking longer because it is extracting 19x the number of nodes as we did for cgem-box.)  
+
+Outputs will be in ./pdfs.
+
+
 
 
 
