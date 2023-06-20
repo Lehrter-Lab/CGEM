@@ -132,7 +132,12 @@ Notes on submit.sh:
 - `python commands.py uses cgem.nml and setvars.py to create an R input file called outputs/R_cgem_ts.txt.
 - `extract_timeseries.R [optional argument]` extracts timeseries, creating a bunch of netCDF files to a directory.  Used without an argument, it will write to ./outputs.  We set the output directory to the one we created on local scratch.
 - The outputs will be deleted after the run, and plot_timeseries_cgem.R expects the files to be in ./output, so move them from scratch.
-- PDFs are written to ./pdfs.
+
+Submit the job
+```
+sbatch submit.sh
+```
+PDFs are written to ./pdfs.  Plot colors for layers are rainbow, roygbiv, with r==surface.
 
 Maybe you can figure out how to look at pdfs while on Expanse, but I just copy them to my computer with Globus.  (Globus was in your 'prep' work.)  The Globus endpoint for the scratch directory is:
 ```
@@ -141,18 +146,17 @@ Maybe you can figure out how to look at pdfs while on Expanse, but I just copy t
 
 You can also look at individual netCDF outputs using `ncdump`, e.g.,
 ```
-ncdump outputs/O2_ts_2007_7_0_1.nc | less
+ncdump outputs/timeseries_2007_A1_1_7.nc | less
 ```
 
 ## Run the CGEM-SA model
 
-You can run actual CGEM for kicks, but I recommend just not.right.yet.  Here are instructions anyway.  Why not.  
+You can run CGEM-SA for kicks, but I recommend just not.right.yet.  Here are instructions anyway.  BTW, it's not stable, so don't go looking for science. 
 
 Do
 ```
 #go to the directory
-cd /expanse/lustre/scratch/$USER/temp_project
-cd cgem-SA
+cd /expanse/lustre/scratch/$USER/temp_project/cgem-SA
 #look around
 ls
 #look at the cgem parameters
@@ -161,7 +165,7 @@ more cgem.nml
 
 Check the batch file.  We use 2 node, each of which has 128 cores.  26 of them are used for writing outputs.  The 2 extra are for salinity and temperature.  We will run for 12 days with hourly output, 3 days per output file.
 ```
-more submit.sh
+cat submit.sh
 ```
 
 Go ahead and run it.
