@@ -209,16 +209,13 @@ Change this line in cgem.nml:
 skipcgem = 1     !1==Run as tracers with sinking
 ```
 
-Before rerunning, you may want to remove some of the output variables.  Do this by setting iout_X to 0 at the bottom of param.nml. When doing so, decrease number of 'scribes', which is the number in submit.sh after pschism_GEN_GEN_TVD-VL, currently 26.  To change length of the run or chunk size, modify rnday, nspool, and ihfskip in params.nml.  
+During the testing process, you may want to remove some of the output variables.  Do this by setting iout_X to 0 at the bottom of param.nml. When doing so, decrease number of 'scribes', which is the number in submit.sh after pschism_GEN_GEN_TVD-VL, currently 26.  To change length of the run or chunk size, modify rnday, nspool, and ihfskip in params.nml.  
 
 Also, to decrease queue wait, and because you probably don't need 2 nodes, you might-could change these lines in submit.sh.
 ```
 #SBATCH --nodes=1
 #1node
 mpirun -n 128 ./pschism_GEN_GEN_TVD-VL 24 > log.out
-[...]
-#2nodes
-#time mpirun -n 256 ./pschism_GEN_GEN_TVD-VL 26 > log.out
 ```
 
 ## Extracting time series for CGEM-SA
@@ -231,7 +228,7 @@ RUNDIR = '/expanse/lustre/scratch/' + os.environ['USER'] + '/temp_project/cgem-S
 numfiles = 4
 which_nodes = [823,6000,492,1850,3083,78,2383,3329,4569,5779,5082,4465,6337,7193,8609,9743,2100,2421,2253]
 which_layers = [1,5,10,15]
-iYr0 = '2019'k
+iYr0 = '2019'
 ```
 
 
