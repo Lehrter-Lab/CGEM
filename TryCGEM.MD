@@ -110,27 +110,29 @@ import pylib
 import f90nml
 quit()
 ```
-Try this:
+
+Go to the CGEM directory
 ```
-Then run the scripts.  The first script creates a list of commands.
-```
-cd ../CGEM
-#create the commands
-python cgem.ts_commands.py
-#check them
-more cgem_extract.sh
-```
-Run the commands
-```
-source cgem_extract.sh
+cd /expanse/lustre/scratch/$USER/temp_project/CGEM
 ```
 
-Plot the results
+Parameters are set in setvars.py.  Do not modify this yet, but take a look:
 ```
-Rscript plot_timeseries_schism_cgem.R
+cat setvars.py
 ```
 
-This creates a pdf file, `pdfs/timeseries_cgem_2007_7_.pdf`.
+The batch script is set up already for you to `sbatch`, but take a look first
+```
+cat submit.sh
+```
+
+Notes on submit.sh:
+- This is a serial job, so we request 1 task on 1 node.  
+- When writing a bunch of small output files, it is faster and more efficient to use on-node storage.  Storage only exists during the job, and is called `/scratch/$USER/job_$SLURM_JOB_ID`.  We make a directory outputs in our scratch space.
+- `python commands.py uses cgem.nml and setvars.py to create an R input file called outputs/R_cgem_ts.txt.
+- `extract_timeseries.R [optional argument]` extracts timeseries, creating a bunch of netCDF files to a directory.  Used without an argument, it will write to ./outputs.  We set the output directory to the one we created on local scratch.
+- The outputs will be deleted after the run, and plot_timeseries_cgem.R expects the files to be in ./output, so move them from scratch.
+- PDFs are written to ./pdfs.
 
 Maybe you can figure out how to look at pdfs while on Expanse, but I just copy them to my computer with Globus.  (Globus was in your 'prep' work.)  The Globus endpoint for the scratch directory is:
 ```
