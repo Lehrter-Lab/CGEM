@@ -8,6 +8,8 @@ Summary:
 
 My pdfs resulting from following these instructions are in the Google Drive folder for CGEM testing.
 
+If you get errors, send me an email with your inputs and outputs copy/pasted from the terminal, and a screenshot.
+
 ## Use the SCRATCH directory.
 
 I have confirmed these users are in project ncs124 and have a scratch directory:
@@ -91,7 +93,7 @@ If you get an error that doesn't have an obvious fix, just email me.  I checked 
 
 Make the plots.  If you do this in order, as per these instructions, you should not have to modify ANYTHING.  
 
-First, check to see if you can load my module (has pylibs, f90nml, nco, and r-ncdf4), and check that it can find ncdump.  Stop here if the following doesn't work, and let me know.
+First, check to see if you can load my module (has pylibs, f90nml, nco, and r-ncdf4), and check that it can find a couple commands.  Stop here if the following doesn't work or you get different output and let me know: send me an email with your inputs and outputs copy/pasted from the terminal, and a screenshot.
 ```
 module use --append /home/llowe/modulefiles
 module load cgem
