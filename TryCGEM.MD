@@ -221,55 +221,18 @@ mpirun -n 128 ./pschism_GEN_GEN_TVD-VL 24 > log.out
 #time mpirun -n 256 ./pschism_GEN_GEN_TVD-VL 26 > log.out
 ```
 
-
 ## Extracting time series for CGEM-SA
 
-***Note:**  I need to rewrite launch_run.sh to write outputs to node scratch storage, it was fast on Hazel but takes too long on the Expanse Lustre file system. You can try this out, but avoid running a bunch of times until I modify it, it could be disruptive.  Actually, this whole method of doing timeseries is not terribly efficient.  But it works for now.*
+Until the model is more complete and tested, I don't think cgem timeseries plots on SA are meaningful.  But here's how to do it anyway.
 
-I said before that until the model is more complete and tested, cgem timeseries plots on SA are not really meaningful.  But if you insist...here goes.
-
-This time, to make the plots, you need to change setvars.py.  Just comment out box model params and uncomment SA params. If you didn't already, load my module.  It has pylibs, f90nml, nco, and r-ncdf4.
+This time, to make the plots, you need to change setvars.py.  Just comment out box model params and uncomment SA params.  Make sure you caught these lines: 
 ```
-module use --append /home/llowe/modulefiles
-module load cgem
+RUNDIR = '/expanse/lustre/scratch/' + os.environ['USER'] + '/temp_project/cgem-SA'
+numfiles = 4
+which_nodes = [823,6000,492,1850,3083,78,2383,3329,4569,5779,5082,4465,6337,7193,8609,9743,2100,2421,2253]
+which_layers = [1,5,10,15]
+iYr0 = '2019'k
 ```
-Then create the commands file.
-```
-cd /expanse/lustre/scratch/$USER/temp_project/CGEM
-#create the commands
-python cgem.ts_commands.py
-#check them
-more cgem_extract.sh
-```
-Now, we have a zillion commands.  Check how many with `wc -l` (word count lines).
-```
-cat cgem_extract.sh | wc -l
-```
-Okay, not a zillion, just 304.
-
-This should be done in a batch file, in parallel.  I included the `launch` executable and a batch script.  It takes about the same time per command, so we request 77 cores in the shared queue.  1 core distributes commands to the 76 other cores until the work is complete.
-```
-#look at launch script
-more launch_run.sh
-#run it
-sbatch launch_run.sh
-#check status
-squeue -u $USER
-#check task progress
-more launch-extract.*.out
-```
-You really don't want to ls the whole outputs directory, there are too many files.  It is better to check squeue and the .out and .err files.
-
-
-
-When the run ends, plot the results.  One pdf is created for each node.
-```
-#plot the results
-Rscript plot_timeseries_schism_cgem.R
-```
-
-This plotting script has NA removal, but Inf will break it.  So it broke.  You can check the 6 pdfs that were created before it broke, and also you can look at the files with `ncdump`.  I recommend not extracting timeseries for CGEM yet, but you can run the 'hydro' version of the commands.  I didn't triple check those, but.  maybe they still work.  
-
 
 
 
