@@ -23,7 +23,7 @@ To use VisIt, you must install the SCHISM plugin locally and set up client-serve
 more /cm/shared/examples/sdsc/visit/README
 ```
 
-The plugin must also be installed on Expanse.  You can install the plugins by following [these instructions](https://github.com/schism-dev/schism_visit_plugin/blob/master/install-expanse.md) or–for OyBcSt members–by copying my plugins to your home directory:
+The plugin must also be installed on Expanse.  You can install the plugins by following [these instructions](https://github.com/schism-dev/schism_visit_plugin/blob/master/install-expanse.md) or, (for OyBcSt members), by copying my plugins to your home directory:
 ```
 cd ~
 cp -r /home/llowe/.visit .
