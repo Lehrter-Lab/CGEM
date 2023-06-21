@@ -6,7 +6,30 @@ Implementing CGEM in SCHISM
 CGEM is in BETA.  It is not stable.  It is not finished.  You need to help me with testing.  Lots of it.
 
 Here are:
-- [Step-by-step instructions for running CGEM on Expanse](TryCGEM.md), includes submitting jobs, extracting timeseries, and creating timeseries plots.
+- [Step-by-step instructions for running CGEM on Expanse](TryCGEM.MD), includes submitting jobs, extracting timeseries, and creating timeseries plots.
+
+### Python and R libraries
+
+If you are in the OyBcSt Expanse group, you should have access to my 'cgem' module, containing pylibs, r-netcdf, f90nml, and the nco operators.  To use, do
+```
+module use --append /home/llowe/modulefiles
+module load cgem
+```
+
+### VisIt
+
+To use VisIt, you must install the SCHISM plugin locally and set up client-server mode for Expanse.  Instructions are on Expanse:
+```
+more /cm/shared/examples/sdsc/visit/README
+```
+
+The plugin must also be installed on Expanse.  You can install the plugins by following [these instructions](https://github.com/schism-dev/schism_visit_plugin/blob/master/install-expanse.md) or -- for OyBcSt members -- by copying my plugins to your home directory:
+```
+cd ~
+cp -r /home/llowe/.visit .
+ls -a
+```
+
 
 ## Contents
 - [cgem.nml](cgem.nml) - namelist for CGEM
