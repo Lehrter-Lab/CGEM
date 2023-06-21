@@ -2,6 +2,10 @@
 Implementing CGEM in SCHISM
 
 ## Running CGEM on Expanse
+
+CGEM is in BETA.  It is not stable.  It is not finished.  You need to help me with testing.  Lots of it.
+
+Here are:
 - [Step-by-step instructions for running CGEM on Expanse](TryCGEM.md), includes submitting jobs, extracting timeseries, and creating timeseries plots.
 
 ## Contents
