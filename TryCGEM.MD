@@ -141,7 +141,7 @@ sbatch submit.sh
 ```
 PDFs are written to ./pdfs.  Plot colors for layers are rainbow, roygbiv, with r==surface.
 
-Maybe you can figure out how to look at pdfs while on Expanse, but I just copy them to my computer with Globus.  (Globus was in your 'prep' work.)  The Globus endpoint for the scratch directory is:
+Maybe you can figure out how to look at pdfs while on Expanse, but I just copy them to my computer with Globus.  (Globus was in your 'prep' work.)  The [Globus endpoint](https://www.sdsc.edu/support/user_guides/expanse.html#data_movement) for the scratch directory is:
 ```
 /scratch/$USER/temp_project/
 ```
