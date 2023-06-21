@@ -1,10 +1,10 @@
-# Instructions for running CGEM-SCHISM in various modes
+# Running CGEM-SCHISM on Expanse
 
 Summary:
 - Copy tarred directories with input files and executable from my project directory to your scratch directory
 - Copy tarred script directory from my project directory to your scratch directory
 - Load my module files to set environment
-- Do stuff
+- Do stuff and look at the results
 
 My pdfs resulting from following these instructions are in the Google Drive folder for CGEM testing.
 
