@@ -16,7 +16,7 @@ module use --append /home/llowe/modulefiles
 module load cgem
 ```
 
-### VisIt
+### [VisIt](#visit)
 
 To use VisIt, you must install the SCHISM plugin locally and set up client-server mode for Expanse.  Instructions are on Expanse:
 ```
