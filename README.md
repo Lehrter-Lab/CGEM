@@ -50,4 +50,7 @@ python write_initial_conditions.py
 ```
 Requires the following libraries: pylib, f90nml, FileInput
 
-This is not 'directory friendly' yet.  The grid file needs to be in the current working directory(CWD), as does cgem.nml.  Output is also written to CWD.
+The grid file hgrid.gr3 needs to be in the current working directory(CWD), as does cgem.nml.  Output is also written to CWD.
+
+# Thank you!
+*This work is funded by the National Oceanic and Atmospheric Administration's RESTORE Science Program under award NA19NOS4510194.*
