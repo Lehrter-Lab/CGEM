@@ -200,7 +200,9 @@ more outputs/mirror.out | grep TIME | tail
 ```
 Instead of neurotic up-arrowing, you should probably just go get a coffee.  The whole run takes about 25 minutes.
 
-Use VisIt to look at the outputs as the chunks are completed.  (VisIt is in the prep work.)
+**Use VisIt** in client-server mode to look at the outputs as the chunks are completed.  (VisIt is in the prep work.)
+
+I have added extensive VisIt documentation to the repo [visit-scripts](https://github.com/l3-hpc/visit-scripts/blob/main/README.md), including mini-tutorials and links to videos.  It also shows how to install and prep MobaXterm for folks following along with a Windows machine.
 
 ## Run CGEM-SA with no CGEM
 
