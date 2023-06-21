@@ -30,6 +30,8 @@ cp -r /home/llowe/.visit .
 ls -a
 ```
 
+See [visit-scripts](https://github.com/l3-hpc/visit-scripts/blob/main/README.md) for mini-tutorials and links to videos. 
+
 
 ## Contents
 - [cgem.nml](cgem.nml) - namelist for CGEM
