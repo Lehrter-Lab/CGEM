@@ -8,7 +8,7 @@ CGEM is in BETA.  It is not stable.  It is not finished.  You need to help me wi
 Here are:
 - [Step-by-step instructions for running CGEM on Expanse](TryCGEM.MD), includes submitting jobs, extracting timeseries, and creating timeseries plots.
 
-### Python and R libraries
+### [Python and R libraries](#pylibs)
 
 If you are in the OyBcSt Expanse group, you should have access to my 'cgem' module, containing pylibs, r-netcdf, f90nml, and the nco operators.  To use, do
 ```
