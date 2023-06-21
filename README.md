@@ -1,8 +1,8 @@
 # CGEM
 Implementing CGEM in SCHISM
 
-## Task instructions
-- [Extract and plot timeseries data for CGEM](ExtractingTimeseries.md)
+## Running CGEM on Expanse
+- [Step-by-step instructions for running CGEM on Expanse](TryCGEM.md), includes submitting jobs, extracting timeseries, and creating timeseries plots.
 
 ## Contents
 - [cgem.nml](cgem.nml) - namelist for CGEM
