@@ -16,8 +16,7 @@ git clone https://github.com/schism-dev/schism.git
 cd schism
 ```
 
-I suggest modifying the following line in schism/cmake/SCHISM.local.comet, replacing aggressive optimization with O2 and fp-model precise.  
-This change is *necessary* when running CGEM.
+I suggest modifying the following line in schism/cmake/SCHISM.local.comet, replacing aggressive optimization with O2 and fp-model precise.  This change is *necessary* when running CGEM.
 ```
 set(CMAKE_Fortran_FLAGS_RELEASE "-O2 -fp-model precise -mcmodel=medium -shared-intel" CACHE STRING "Fortran flags" FORCE)
 ```
