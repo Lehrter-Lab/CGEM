@@ -5,7 +5,7 @@ Here is a link to [Amdahl's law](https://en.wikipedia.org/wiki/Amdahl%27s_law). 
 The most important concept is that for certain problems, a 'perfect speedup' might mean a maximum speedup of 20x.  You can only parallelize the 
 parallel part. It seems obvious, but it isn't, and you will use this knowledge in the future to manage other people's expectations...you can't just say 
 "No, we're not going to get a 500x speedup with 500 cores." you have to say "Here is a math equation and a graph proving that 
-it is impossible for me to get you a 500x speedup." 
+it is impossible for me to get you a 500x speedup no matter how many darn cores you use." 
 
 ## Scaling test
 
