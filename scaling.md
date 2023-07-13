@@ -36,10 +36,9 @@ Notes:
 
 Keep all of the output for all the runs.
 
-Make a table with 
-```
-nodes/cores, Wall clock time for test run, speedup, estimated wall clock time for 1 year, estimated SUs
-```
+Make a table with:
+- nodes/cores, Wall clock time for test run, speedup, estimated wall clock time for 1 year, estimated SUs
+
 
 SU == cores * wall clock hours
 
