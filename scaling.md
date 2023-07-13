@@ -26,14 +26,13 @@ Notes:
 - /usr/bin/time gives more info than just 'time'
 - `-v` is for verbose, so even more info
 - In redirect, `>` is for stdout and `&` is for stderr.
-- seff $SLURM_JOB_ID
-- SLURM_NTASKS should be the number of cores.  This is to help you keep track.
+- SLURM_NTASKS should be the number of cores.  This is to help you keep track of log files.
 - seff <JOBID> gives stats for jobs
 - Keeping SLURM_JOB_ID allows you to get more stats later, or in case seff doesn't work well from within the batch script
 
 Keep all of the output for all the runs.
 
-Then can you please send me a table, like the one you had, with 
+Make a table with 
 ```
 nodes/cores, Wall clock time for test run, speedup, estimated wall clock time for 1 year, estimated SUs
 ```
