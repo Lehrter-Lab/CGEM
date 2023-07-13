@@ -16,6 +16,10 @@ Pick a number of model run days so that it does not take forever on 1 node, but 
 Turn off unnecessary output (don't do extra restart dumps, minimize info messages written to text files).  You want the same
 settings as in the 'real' run, but you should turn off that unnecessary output during the 'real' run anyway.
 
+To really do a proper scaling test, especially when you developing code or worrying about hardware, you should do each test several times.  
+In this case, I'd say you don't need to do that.  Do all the tests once.  Then for one of the 'quicker' runs, do a second run.  
+If the time for two identical runs on the same number of cores is the same, I wouldn't worry about repeating any other runs.
+
 Here is my suggestion for getting the time
 ```
 /usr/bin/time -v mpirun -n 128 ./pschism_GEN_GEN_TVD-VL 32 >& log.$SLURM_NTASKS.$SLURM_JOB_ID
