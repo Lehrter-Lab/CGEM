@@ -40,6 +40,12 @@ nodes/cores, Wall clock time for test run, speedup, estimated wall clock time fo
 
 SU == cores * wall clock hours
 
+And storage numbers for a year of output, e.g.,
+```
+1 year model output: 300GB
+1 year model input files: ???
+```
+
 If you want to check how the time and seff commands work, you can use this test batch script.  Since it only uses 3 cores, it 
 uses the shared 'shared' queue.
 ```
