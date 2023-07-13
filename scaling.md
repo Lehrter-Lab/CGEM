@@ -23,13 +23,13 @@ If the time for two identical runs on the same number of cores is the same, I wo
 Here is my suggestion for getting the time
 ```
 /usr/bin/time -v mpirun -n 128 ./pschism_GEN_GEN_TVD-VL 32 >& log.$SLURM_NTASKS.$SLURM_JOB_ID
-seff $SLURM_JOB_ID
+seff $SLURM_JOB_ID >> log.$SLURM_NTASKS.$SLURM_JOB_ID
 ```
 
 Notes:
 - /usr/bin/time gives more info than just 'time'
 - `-v` is for verbose, so even more info
-- In redirect, `>` is for stdout and `&` is for stderr.
+- In redirect, `>` is for stdout and `&` is for stderr, `>>` appends to a file rather than overwrite it.
 - SLURM_NTASKS should be the number of cores.  This is to help you keep track of log files.
 - seff <JOBID> gives stats for jobs
 - Keeping SLURM_JOB_ID allows you to get more stats later, or in case seff doesn't work well from within the batch script
