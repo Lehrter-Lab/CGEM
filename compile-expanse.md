@@ -25,6 +25,6 @@ Make a build directory, cmake, then make.  Assuming you are in the directory 'sc
 ```
 mkdir build
 cd build
-cmake -C ../cmake/SCHISM.local.build -C ../cmake/SCHISM.local.comet ../src/
+cmake -C ../cmake/SCHISM.cgem.build -C ../cmake/SCHISM.local.comet ../src/
 make
 ```
