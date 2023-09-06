@@ -18,8 +18,9 @@ module load cmake
 ```
 
 
-Make a build directory, cmake, then make.  Assuming you are in the directory 'schism', do:
+Make a build directory, cmake, then make. 
 ```
+cd ~/schism
 mkdir build
 cd build
 cmake -C ../cmake/SCHISM.cgem.build -C ../cmake/SCHISM.local.comet ../src/
