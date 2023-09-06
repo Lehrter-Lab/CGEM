@@ -26,3 +26,24 @@ cd build
 cmake -C ../cmake/SCHISM.cgem.build -C ../cmake/SCHISM.local.comet ../src/
 make
 ```
+
+Go to a run directory:
+```
+cd /expanse/lustre/projects/ncs124/llowe/cgem-box
+```
+
+Get the executable:
+```
+cp ~/schism/build/bin/pschism_GEN_GEN_TVD-VL .
+```
+
+Run a job
+```
+sbatch submit.sh
+```
+
+Check on it
+```
+squeue -l llowe
+```
+
