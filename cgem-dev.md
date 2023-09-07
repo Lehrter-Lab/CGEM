@@ -29,7 +29,7 @@ make
 
 Go to a run directory:
 ```
-cd /expanse/lustre/projects/ncs124/llowe/cgem-box
+cd /expanse/lustre/scratch/llowe/temp_project/cgem-box
 ```
 
 Get the executable:
@@ -37,13 +37,25 @@ Get the executable:
 cp ~/schism/build/bin/pschism_GEN_GEN_TVD-VL .
 ```
 
-Run a job
+Run a job:
 ```
 sbatch submit.sh
 ```
 
-Check on it
+Check on it:
 ```
 squeue -l llowe
+```
+
+
+Make plots, output will be in directory pdfs:
+```
+cd /expanse/lustre/scratch/llowe/temp_project/CGEM
+sbatch submit.sh
+```
+
+Globus endpoint for pdf directory is:
+```
+/scratch/llowe/temp_project/CGEM/pdfs
 ```
 
