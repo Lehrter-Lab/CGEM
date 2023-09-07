@@ -53,7 +53,7 @@ sbatch submit.sh
 
 Check on it:
 ```
-squeue -l llowe
+squeue -u llowe
 ```
 
 ## Check
