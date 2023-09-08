@@ -56,6 +56,42 @@ Check on it:
 squeue -u llowe
 ```
 
+## Shiny checking
+
+Create a script with ncks commands.  The Python script just prints out the commands.  Try it, to see what they look like:
+
+You need cgem module for f90nml
+```
+module load cgem
+```
+Then
+```
+python cgem_shiny.extract.py
+```
+
+Check them, if it looks correct, save them in a file:
+```
+python cgem_shiny.extract.py > nco_all.sh
+```
+
+Run the nco commands.  You need to be in a different session than either compiling or running python, because the modules conflict.
+
+Load these modules:
+```
+module load cpu/0.15.4
+module load gcc/10.2.0
+module load openmpi/4.0.4
+module load nco/4.9.3
+```
+
+Then:
+```
+source nco_all.sh
+```
+
+Copy the outputs to your local shiny_gem directory.
+
+
 ## Check
 Make plots, output will be in directory pdfs:
 ```
@@ -67,30 +103,4 @@ Globus endpoint for pdf directory is:
 ```
 /scratch/llowe/temp_project/CGEM/pdfs
 ```
-
-## Add debugging print statements
-6000 = light
-```
-write(6001,'(*(g0,:,", "))') Agrow_k(1,1),Aresp_k(1,1),uA_k(1,1),Aresp_k(1,1),uN_k(1,1),uP_k(1,1),uE_k(1,1),uSi_k(1,1)
-```
-
-6100 = Rates
-```
-  write(6101,'(*(g0,:,", "))') ROM1_A,ROM2_A,RO2_A,RNO3_A,RPO4_A,RDIC_A,RNH4_A,RSi_A,RALK_A,RN2_A, &
-    & ROM1_Z,ROM2_Z,RO2_Z,RNO3_Z,RPO4_Z,RDIC_Z,RNH4_Z,RSi_Z,RALK_Z,RN2_Z, &
-    & ROM1_BC,ROM2_BC,RO2_BC,RNO3_BC,RPO4_BC,RDIC_BC,RNH4_BC,RSi_BC,RALK_BC,RN2_BC, &
-    & ROM1_R,ROM2_R,RO2_R,RNO3_R,RPO4_R,RDIC_R,RNH4_R,RSi_R,RALK_R,RN2_R
-```
-
-7100 = Variables
-```
-write(7001,'(A137)') "A,Qn,Qp,Z1,Z2,NO3,NH4,PO4,DIC,O2,OM1_A,OM2_A,OM1_Z,OM2_Z,OM1_R,OM2_R,CDOM,Si,OM1_BC,OM2_BC,Alk,Tr,sx1A,sy1A,sx2A,sy2A,sx1Z,sy1Z,sx2Z,sy2Z"
-```
-
-
-6000 = Growth
-6100 = Rates
-6200 = CGEM vars
-6300 = Hydro vars
-6400 = Light
 
