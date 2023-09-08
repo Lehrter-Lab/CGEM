@@ -18,7 +18,7 @@ import os
 SCRIPT_PATH = os.getcwd()
 
 #--Run directory
-RUNDIR = "/rsstu/users/l/lllowe/cgem/cgem-box"
+RUNDIR = "/expanse/lustre/scratch/llowe/temp_project/cgem-box"
 
 #--Output directory
 OUTPUTS = os.path.join(RUNDIR,'outputs')
@@ -46,7 +46,7 @@ which_layers = [1,3,5,7,9,11]
 
 #--CGEM variables
 ##-all of them
-cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','OM2Z','OM1R','OM2R','CDOM','Si','OM1BC','OM2BC','Alk','Tr']
+cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','OM2Z','OM1R','OM2R','CDOM','Si','OM1BC','OM2BC','Alk','Tr','sx1A','sy1A','sx2A','sy2A','sx1Z','sy1Z','sx2Z','sy2Z'] 
 ##--During testing, OM1R=OM2R=OM1BC=OM2BC=0 (but you should check them anyway, occasionally)
 #cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','CDOM','Si','Alk','Tr']
 ##-smaller subset
