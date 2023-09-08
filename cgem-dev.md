@@ -66,12 +66,12 @@ module load cgem
 ```
 Then
 ```
-python cgem_shiny.extract.py
+python shiny_extract.py
 ```
 
 Check them, if it looks correct, save them in a file:
 ```
-python cgem_shiny.extract.py > nco_all.sh
+python shiny_extract.py > nco_all.sh
 ```
 
 Run the nco commands.  You need to be in a different session than either compiling or running python, because the modules conflict.
