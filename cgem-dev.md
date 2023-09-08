@@ -64,14 +64,14 @@ You need cgem module for f90nml
 ```
 module load cgem
 ```
-Then
+Then, to extract node 10:
 ```
-python shiny_extract.py
+python shiny_extract.py 10
 ```
 
 Check them, if it looks correct, save them in a file:
 ```
-python shiny_extract.py > nco_all.sh
+python shiny_extract.py 10 > nco_all.sh
 ```
 
 Run the nco commands.  You need to be in a different session than either compiling or running python, because the modules conflict.
@@ -89,15 +89,17 @@ Then:
 source nco_all.sh
 ```
 
+You should have these in outputs:
+```
+A1.nc    DIC.nc  O2.nc     OM1R.nc  OM2BC.nc  PO4.nc  Qp1.nc.pid3786265.ncks.tmp  sx1Z.nc  sy1A.nc  sy2Z.nc  Z2.nc
+Alk.nc   NH4.nc  OM1A.nc   OM1Z.nc  OM2R.nc   Qn1.nc  Si.nc                       sx2A.nc  sy1Z.nc  Tr.nc
+CDOM.nc  NO3.nc  OM1BC.nc  OM2A.nc  OM2Z.nc   Qp1.nc  sx1A.nc                     sx2Z.nc  sy2A.nc  Z1.nc
+```
+
 Copy the outputs to your local shiny_gem directory.
 
 
-## Check
-Make plots, output will be in directory pdfs:
-```
-cd /expanse/lustre/scratch/llowe/temp_project/CGEM
-sbatch submit.sh
-```
+
 
 Globus endpoint for pdf directory is:
 ```
