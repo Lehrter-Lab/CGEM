@@ -2,7 +2,7 @@ I have a file that started with modified lat/lon:
 ```
 /Users/lllowe/DEMO/crop/slre_efdc.nc
 ```
-Extract values at a single time
+And I extracted values of LONGXY,LATIXY at a single time
 ```
 ncks -d time,0,0 -v LONGXY,LATIXY slre_efdc.nc slre_latlon.nc
 ```
