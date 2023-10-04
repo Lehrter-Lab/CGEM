@@ -16,7 +16,7 @@ NOTE: Can we get good values??
 ## Replace values in output file
 To replace Lat/Lon for existing file:
 
-Make a copy just in case we mess up, use ncks rather than 'cp' to preserve metadata
+Make a copy just in case we mess up, use ncks rather than 'cp' to preserve metadata.  (Once you are sure it works, you can just write directly to cgem.000000.nc.)
 ```
 ncks -O cgem.000000.nc cgem.nc
 ```
@@ -29,3 +29,13 @@ I tested it with original file, and was able to open it in VisIt:
 ```
 /Users/lllowe/SLRE/CGEM/CGEM/data/Examples/SLRE/NETCDF/cgem.000000.nc
 ```
+
+## Installing NCO
+[Install miniconda](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html), then:
+```
+conda create -n env_nco nco
+conda activate env_nco
+```
+
+If you are on HPC and don't have space to install to the home directory, [see this](https://hpc.ncsu.edu/Software/Apps.php?app=Conda).
+
