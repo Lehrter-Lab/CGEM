@@ -1,3 +1,4 @@
+```
 #For my rememberings
 #I have a file that started with modified lat/lon:
 #/Users/lllowe/DEMO/crop/slre_efdc.nc
@@ -15,3 +16,4 @@ ncks -O cgem.000000.nc cgem.nc
 ncks -A -v LONGXY,LATIXY slre_latlon.nc cgem.nc
 
 #It should work, for the slre grid.
+```
