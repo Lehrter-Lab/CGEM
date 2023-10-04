@@ -1,4 +1,4 @@
-# Renaming Lat/Lon for existing EFDC outputs
+# Replacing Lat/Lon values for existing EFDC output
 
 ## Get my NetCDF with non-'-9999's
 I have a file that started with modified lat/lon:
