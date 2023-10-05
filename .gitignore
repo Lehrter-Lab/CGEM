@@ -15,6 +15,8 @@ __pycache__
 pschism_*
 launch
 ser2par
+visit/ser2par
+visit/launch
 
 #scheduler output
 out
@@ -23,6 +25,15 @@ out.*
 err.*
 *.out.*
 *.err.*
+visit/*.out.*
+visit/*.err.*
+visit/*.err
+visit/*.out
+visit/*.pyc
+visit/core*
+visit/__pycache__
+visit/databases
+visit/visitlog.py
 
 # Prerequisites
 *.d
