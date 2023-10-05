@@ -42,7 +42,7 @@ nospA = cgem.get('nosp').get('nospa')
 nospZ = cgem.get('nosp').get('nospz')
 if debug: print(nospA,nospZ)
 #Number of state vars, A/Qn/Qp(nospa), Z(nospz), and the rest(17)
-nf = 3*nospA + nospZ + 17
+nf = 3*nospA + nospZ + 17 + 8
 if debug: print('nf',nf)
 
 #get initial conditions
@@ -175,6 +175,23 @@ names.append("ALK")
 #!Tracer
 ics.append(inits.get('tr_init'))
 names.append("TR")
+
+ics.append(inits.get('sx1A')*inits.get('om1_a_init'))
+ics.append(inits.get('sy1A')*inits.get('om1_a_init'))
+ics.append(inits.get('sx2A')*inits.get('om2_a_init'))
+ics.append(inits.get('sy2A')*inits.get('om2_a_init'))
+ics.append(inits.get('sx1Z')*inits.get('om1_z_init'))
+ics.append(inits.get('sy1Z')*inits.get('om1_z_init'))
+ics.append(inits.get('sx2Z')*inits.get('om2_z_init'))
+ics.append(inits.get('sy2Z')*inits.get('om2_z_init'))
+names.append('sx1A')
+names.append('sy1A')
+names.append('sx2A')
+names.append('sy2A')
+names.append('sx1Z')
+names.append('sy1Z')
+names.append('sx2Z')
+names.append('sy2Z')
 
 if debug: print(len(ics),'ics:',ics)
 if debug: print(len(names),'names:',names)
