@@ -6,13 +6,11 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --account=ncs124
-#SBATCH -t 0:10:00
+#SBATCH -t 1:00:00
 
 module load cgem
-
-#1 shared node
-#python write_initial_conditions.py 
-python shiny_extract_all.py 823 > nco_SA.sh
+echo "#nco" > nco_SA.sh
+python shiny_extract_all.py 823 >> nco_SA.sh
 python shiny_extract_all.py 6000 >> nco_SA.sh
 python shiny_extract_all.py 492 >> nco_SA.sh
 python shiny_extract_all.py 1850 >> nco_SA.sh
@@ -21,8 +19,8 @@ python shiny_extract_all.py 78 >> nco_SA.sh
 python shiny_extract_all.py 2383 >> nco_SA.sh
 python shiny_extract_all.py 3329 >> nco_SA.sh
 python shiny_extract_all.py 4569 >> nco_SA.sh
-python shiny_extract_all.py 5082 >> nco_SA.sh
 python shiny_extract_all.py 5779 >> nco_SA.sh
+python shiny_extract_all.py 5082 >> nco_SA.sh
 python shiny_extract_all.py 4465 >> nco_SA.sh
 python shiny_extract_all.py 6337 >> nco_SA.sh
 python shiny_extract_all.py 7193 >> nco_SA.sh

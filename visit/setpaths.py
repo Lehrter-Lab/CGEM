@@ -8,7 +8,7 @@ SCRIPT_PATH = "/expanse/lustre/scratch/llowe/temp_project/CGEM/visit"
 #Put the full path, followed by '/'
 #SCHISM outputs here: 
 ##On my Mac:
-OUTPUTS = "/expanse/lustre/scratch/llowe/temp_project/cgem-SA/outputs_nosink_noflux/" 
+OUTPUTS = "/expanse/lustre/scratch/llowe/temp_project/cgem-SA/outputs/" 
 
 FILENAME = "TPtot.nc"
 #FILENAME = "leem_0001.nc"
@@ -26,7 +26,7 @@ DBFILES = "/expanse/lustre/scratch/llowe/temp_project/CGEM/visit/databases/"
 
 #Main path to images
 ##On Expanse 
-IMAGES = "/expanse/lustre/scratch/llowe/temp_project/imgs-cgem-nosink-noflux/"
+IMAGES = "/expanse/lustre/scratch/llowe/temp_project/imgs-cgem-cons/"
 #IMAGES = "/Users/lllowe/SASJ/images/"
 #On Hazel:
 #IMAGES = "/rsstu/users/l/lllowe/tops/images_sasj_mocsy/"

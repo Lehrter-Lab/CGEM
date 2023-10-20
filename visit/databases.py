@@ -16,7 +16,7 @@ from cgem_vars import *
 #SCHISM outputs here: 
 #filedir = "/rsstu/users/l/lllowe/cgem/sasj_bay_setup/outputs/"
 #filedir = "/rsstu/users/l/lllowe/cgem/cgem-real/outputs/"
-filedir = "/expanse/lustre/scratch/llowe/temp_project/cgem-SA/outputs_nosink_noflux/"
+filedir = "/expanse/lustre/scratch/llowe/temp_project/cgem-SA/outputs/"
 
 #databases go here
 dbfiles = "/expanse/lustre/scratch/llowe/temp_project/CGEM/visit/databases/"
@@ -30,7 +30,7 @@ if not os.path.exists(dbfiles):
 
 istart = 1
 #iend = 13 
-iend = 5
+iend = 2 
 
 #Images are in separate directories for each varible
 for var in cgem_vars:
