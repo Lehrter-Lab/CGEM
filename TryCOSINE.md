@@ -37,7 +37,7 @@ Instructions:
 Commands
 ```
 cd /expanse/lustre/scratch/$USER/temp_project
-cp /home/llowe/cosine-box.tar
+cp /home/llowe/cosine-box.tar .
 tar -xvf cosine-box.tar
 cd cosine-box
 head 3 COS*ic
@@ -52,7 +52,7 @@ ls outputs
 sbatch submit.sh
 squeue -u $USER
 ls -lrth
-more cosine-box[numbers].err
+more cosine-box[...numbers...].err
 source rm.sh
 ls -lhrt outputs
 ```
