@@ -40,5 +40,32 @@ make
 ```
 
 ## Get the box model
+I copied my cgem-box to cosine-box and cleaned out cgem related files.
+
+Then, get sample cosine.nml file from the repo:
+```
+cp ~/schism/sample_inputs/cosine.nml .
+```
+
+Modify param.nml to include cosine related stuff.  I cleaned my param.nml of non-GEN parameters.  Here, I looked at param.in from schism_verification_tests, COSINE, SF Bay.  The only thing was `iof_cos`.
+
+Created init_cos.nml for initial values.  Get initial values from SFBay...they are all zero! 
+
+Modify write_initial_conditions_cosine.py. Submit job, since environment gets messed up otherwise:
+```
+sbatch submit.python.sh
+```
+
+Check:
+```
+rm *.bak
+head -3 COS*
+```
+
+Get executable.
+```
+cp ~/schism/build_cosine/bin/pschism_COSINE_TVD-VL .
+```
+
 
 
