@@ -71,6 +71,11 @@ Tried to run, but things were missing in param.nml. I copied the one from SFBay,
 
 Moving output files to local computer.  Better to remove individual files, so I have rm.sh, then `source rm.sh`. to remove junk from outputs.
 
+Box output, quick check...
+- DSi goes negative (DN gets small, but not negative)
+- S1, S2, Z1,Z2 all go negative
+We are not providing solar radiation, so it makes sense they would tank.  (and the zeroes didn't seem to blow anything up.)
+
 
 
 Initial value look sketchy?  Got it from their plots...
