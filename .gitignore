@@ -21,6 +21,8 @@ visit/launch
 #scheduler output
 out
 err
+*.err
+*.out
 out.*
 err.*
 *.out.*

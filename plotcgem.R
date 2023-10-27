@@ -4,7 +4,8 @@ library(viridis)
 source("/expanse/lustre/scratch/llowe/temp_project/CGEM/listplot.R")
 
 #which_nodes = c(823,6000,492,1850,3083,78,2383,3329)
-which_nodes = c(10)
+#which_nodes = c(10)
+which_nodes = c(823)
 setwd("/expanse/lustre/scratch/llowe/temp_project/CGEM/outputs")
 
 

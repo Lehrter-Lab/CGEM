@@ -11,5 +11,5 @@
 module load cgem
 
 #1 shared node
-#Rscript Reformat_cgem.R
+Rscript Reformat_cgem.R
 Rscript plotcgem.R
