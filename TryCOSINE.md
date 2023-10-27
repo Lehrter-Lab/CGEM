@@ -34,9 +34,25 @@ Instructions:
 - To see what is going on, fix the colormap...try to find good limits
 - Change the colormap.  Try to use continuous ones, or it looks like weird stratification
 
-That's it.
-
+Commands
 ```
-cd 
-sbatch submit.python
-
+cd /expanse/lustre/scratch/$USER/temp_project
+cp /home/llowe/cosine-box.tar
+tar -xvf cosine-box.tar
+cd cosine-box
+head 3 COS*ic
+vi write_initial_conditions.py
+sbatch submit.python.sh
+squeue -u $USER
+rm *.bak
+head 3 COS*ic
+vi submit.sh
+vi param.nml
+ls outputs
+sbatch submit.sh
+squeue -u $USER
+ls -lrth
+more cosine-box[numbers].err
+source rm.sh
+ls -lhrt outputs
+```
