@@ -1,19 +1,19 @@
-My notes for setting up cosine-box are [here](cosine.nml).
+My notes for setting up cosine-box are [here]([cosine.nml](https://github.com/oybcst/CGEM/blob/main/cosine.md).
 
 YouTube video on how to get cosine-box and look at it with VisIt is [here](https://youtu.be/4LH2LzVSkD0).
 
 Instructions:
 - go to the scratch directory
-- copy my tarball
-- untar
+- copy my tarball, untar, cd into directory
 - look at input files
-- change write_initial_conditions.py
-- run in batch script, not on command line (environment stuff)
+- change something write_initial_conditions.py
+- check out the batch script
+- run via batch script, not on command line (because of environment stuff)
 - look at ICs again, see it changed
-- look at run batch script-
-- using shared queue because not many processors,
-- procs depend out outputs
-- I'm printing every 6 hours
+- look at run batch script
+- use shared queue because not many processors
+- procs needed depend out outputs
+- I'm outputting each cosine variable, outputs are every 6 hours
 - nothing in outputs, but the directory needs to exist
 - submit the job
 - check on it
@@ -23,14 +23,14 @@ Instructions:
 - just nc files
 - use Globus to transfer locally...Expanse endpoint starts at '/scratch'
 - open visit
-- open a file - remember to choose SCHISM as type of tile
+- open a file - remember to choose SCHISM as type
 - Transform to make it more box
 - look at it
 - Open another one in the same window...this is because it creates a time correlation
 - Set view and time to 'locked'
-- Clone the window
+- Clone the window (we want a time correlation and locked view/time *before* cloning, or you have to do that for each window)
 - Delete 'extra' plots (if you want)
-- Now they move together in space and time
+- Now they dance together in space and time
 - To see what is going on, fix the colormap...try to find good limits
 - Change the colormap.  Try to use continuous ones, or it looks like weird stratification
 
