@@ -69,6 +69,8 @@ cp ~/schism/build_cosine/bin/pschism_COSINE_TVD-VL .
 
 Tried to run, but things were missing in param.nml. I copied the one from SFBay, and figure out what to turn off so it wouldn't look for non-box stuff.
 
-Ran it...zeros are not good.  SFBay uses hotstart I think.  So then I opened each of the variables from SFBay, plotted depth average, and tried to pick a middle ground point.  (Initial value look sketchy?  Got it from their plots...)
+Ran it...zeros are not good.  SFBay uses hotstart I think.  So then I opened each of the variables from SFBay, plotted depth average, and tried to pick a middle ground point. 
+
+Initial value look sketchy?  Got it from their plots...
 ![How I picked initial conditions...](pickcosineics.png)
 
