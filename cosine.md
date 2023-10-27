@@ -49,7 +49,7 @@ cp ~/schism/sample_inputs/cosine.nml .
 
 Modify param.nml to include cosine related stuff.  I cleaned my param.nml of non-GEN parameters.  Here, I looked at param.in from schism_verification_tests, COSINE, SF Bay.  The only thing was `iof_cos`.
 
-Created init_cos.nml for initial values.  Get initial values from SFBay...they are all zero! 
+Created init_cos.nml for initial values.  Get initial values from SFBay...they are all zero! SFBay uses hotstart I think.  I opened each of the variables from SFBay, plotted depth average, and tried to pick a middle ground point.  (Image below.) 
 
 Modify write_initial_conditions_cosine.py. Submit job, since environment gets messed up otherwise:
 ```
@@ -67,9 +67,11 @@ Get executable.
 cp ~/schism/build_cosine/bin/pschism_COSINE_TVD-VL .
 ```
 
-Tried to run, but things were missing in param.nml. I copied the one from SFBay, and figure out what to turn off so it wouldn't look for non-box stuff.
+Tried to run, but things were missing in param.nml. I copied the one from SFBay, and figure out what to turn off so it wouldn't look for non-box stuff.  
 
-Ran it...zeros are not good.  SFBay uses hotstart I think.  So then I opened each of the variables from SFBay, plotted depth average, and tried to pick a middle ground point. 
+Moving output files to local computer.  Better to remove individual files, so I have rm.sh, then `source rm.sh`. to remove junk from outputs.
+
+
 
 Initial value look sketchy?  Got it from their plots...
 ![How I picked initial conditions...](pickcosineics.png)
