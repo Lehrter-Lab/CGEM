@@ -1,6 +1,8 @@
-My notes for setting up cosine-box are [here](https://github.com/oybcst/CGEM/blob/main/cosine.md).
+My notes for setting up cosine-box are [here](https://github.com/oybcst/CGEM/blob/main/cosine.md): compiling, setting up nml files, changing the python for initial conditions, and how I chose values for initial conditions.
 
-YouTube video on how to get cosine-box and look at it with VisIt is [here](https://youtu.be/4LH2LzVSkD0).
+I tarred up everything so you can try COSINE on the box model. I just transferred files locally and used VisIt to look at them.
+
+All steps are recorded in [this YouTube video](https://youtu.be/4LH2LzVSkD0).
 
 Instructions:
 - go to the scratch directory
