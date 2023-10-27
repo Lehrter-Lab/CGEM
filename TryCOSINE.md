@@ -4,7 +4,7 @@ I tarred up everything so you can try COSINE on the box model. I just transferre
 
 All steps are recorded in [this YouTube video](https://youtu.be/4LH2LzVSkD0).
 
-Instructions:
+Instructions to go with the video:
 - go to the scratch directory
 - copy my tarball, untar, cd into directory
 - look at input files
