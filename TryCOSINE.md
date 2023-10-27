@@ -1,4 +1,4 @@
-My notes for setting up cosine-box are [here]([cosine.nml](https://github.com/oybcst/CGEM/blob/main/cosine.md).
+My notes for setting up cosine-box are [here](https://github.com/oybcst/CGEM/blob/main/cosine.md).
 
 YouTube video on how to get cosine-box and look at it with VisIt is [here](https://youtu.be/4LH2LzVSkD0).
 
