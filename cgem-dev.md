@@ -74,7 +74,9 @@ Check them, if it looks correct, save them in a file:
 python shiny_extract.py 10 > nco_all.sh
 ```
 
-Run the nco commands.  You need to be in a different session than either compiling or running python, because the modules conflict.
+Run in a batch script because of environment, `submit.python.sh`.
+
+Run the nco commands.  You need to be in a different session than either compiling or running python, because the modules conflict. `submit.nco_extract.sh`.
 
 Load these modules:
 ```
