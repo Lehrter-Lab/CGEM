@@ -108,6 +108,11 @@ Globus endpoint for pdf directory is:
 /scratch/llowe/temp_project/CGEM/pdfs
 ```
 
-To run the R scripts on Expanse:
+To run the R scripts on Expanse, Reformat_cgem.R and plotcgem.R:
+```
+sbatch submit.r.sh
+```
+
+Copy the `outputs/outputs_?.pdf` locally to view.
 
 
