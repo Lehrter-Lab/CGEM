@@ -91,11 +91,11 @@ Then:
 source nco_all.sh
 ```
 
-You should have these in outputs:
+You should something like this in `outputs`
 ```
-A1.nc    DIC.nc  O2.nc     OM1R.nc  OM2BC.nc  PO4.nc                              sx1Z.nc  sy1A.nc  sy2Z.nc  Z2.nc
-Alk.nc   NH4.nc  OM1A.nc   OM1Z.nc  OM2R.nc   Qn1.nc  Si.nc                       sx2A.nc  sy1Z.nc  Tr.nc
-CDOM.nc  NO3.nc  OM1BC.nc  OM2A.nc  OM2Z.nc   Qp1.nc  sx1A.nc                     sx2Z.nc  sy2A.nc  Z1.nc
+A1_10.nc    DIC_10.nc  O2_10.nc     OM1CZ_10.nc  OM1PA_10.nc  OM2BC_10.nc  OM2NA_10.nc  OM2PZ_10.nc  Qn1_10.nc  Z1_10.nc
+Alk_10.nc   NH4_10.nc  OM1BC_10.nc  OM1NA_10.nc  OM1PZ_10.nc  OM2CA_10.nc  OM2NZ_10.nc  OM2R_10.nc   Qp1_10.nc  Z2_10.nc
+CDOM_10.nc  NO3_10.nc  OM1CA_10.nc  OM1NZ_10.nc  OM1R_10.nc   OM2CZ_10.nc  OM2PA_10.nc  PO4_10.nc    Si_10.nc
 ```
 
 Copy the outputs to your local shiny_gem directory.
@@ -107,4 +107,7 @@ Globus endpoint for pdf directory is:
 ```
 /scratch/llowe/temp_project/CGEM/pdfs
 ```
+
+To run the R scripts on Expanse:
+
 
