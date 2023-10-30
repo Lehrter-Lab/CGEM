@@ -56,7 +56,15 @@ Check on it:
 squeue -u llowe
 ```
 
-## Shiny checking
+## Timeseries plots
+```
+cd $SCRATCH/CGEM/cnp
+sbatch submit.python.sh #if you don't already have nco
+sbatch submit.nco_extract.sh
+sbatch submit.r.sh
+```
+
+## About above scripts
 
 Create a script with ncks commands.  The Python script just prints out the commands.  Try it, to see what they look like:
 
@@ -100,9 +108,6 @@ CDOM_10.nc  NO3_10.nc  OM1CA_10.nc  OM1NZ_10.nc  OM1R_10.nc   OM2CZ_10.nc  OM2PA
 
 Copy the outputs to your local shiny_gem directory.
 
-
-
-
 Globus endpoint for pdf directory is:
 ```
 /scratch/llowe/temp_project/CGEM/pdfs
@@ -115,13 +120,6 @@ sbatch submit.r.sh
 
 Copy the `outputs/outputs_?.pdf` locally to view.
 
-## CNP
-```
-cd $SCRATCH/CGEM/cnp
-sbatch submit.python.sh #if you don't already have nco
-sbatch submit.nco_extract.sh
-sbatch submit.r.sh
-```
 
 
 
