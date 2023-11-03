@@ -4,14 +4,24 @@ library(ncdf4)
 thisdir <- getwd()
 
 #directory where timeseries are, and pdf will go there too
-outdir <- file.path(thisdir,"outputs")
+cgemdir <- file.path(thisdir,"outputs")
+
+# Reads in the arguments
+args = commandArgs(trailingOnly=TRUE)
+
+# One optional arguent is output directory
+if (length(args) > 0) {
+ outdir <- args[1]
+}else{
+ outdir <- cgemdir
+}
 
 if (!dir.exists(outdir)){
   stop("No output directory found.  Please see instructions for Extracting Timeseries at https://github.com/OyBcSt/CGEM.") 
 }
 
 
-cgemfile <- file.path(outdir,"R_cgem_ts.txt")
+cgemfile <- file.path(cgemdir,"R_cgem_ts.txt")
 #The file cgem_ts.txt should be created when running 
 # cgem.extract_time_series.py in the context of cgem_extract.sh 
 if (!file.exists(cgemfile)){
@@ -41,7 +51,7 @@ if(debug) print(which_layers)
 #Reopen the file as dataframe with variables
 #open file created by extract_time_series.py
 #skip above 5 lines
-df <- read.csv(file.path(outdir,"R_cgem_ts.txt"),skip=5)
+df <- read.csv(cgemfile,skip=5)
 #number of files
 numvars <- length(df$Var)
 #---End reading cgem_ts.txt file

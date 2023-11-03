@@ -18,42 +18,37 @@ import os
 SCRIPT_PATH = os.getcwd()
 
 #--Run directory
-#RUNDIR = "/expanse/lustre/scratch/llowe/temp_project/cgem-box"
-#RUNDIR = "/expanse/lustre/scratch/llowe/temp_project/cnp-box"
-RUNDIR = "/rsstu/users/l/lllowe/cgem/cnp-box"
+RUNDIR = '/expanse/lustre/scratch/' + os.environ['USER'] + '/temp_project/cgem-box'
+#RUNDIR = '/expanse/lustre/scratch/' + os.environ['USER'] + '/temp_project/cgem-SA'
 
 #--Output directory
-OUTPUTS = os.path.join(RUNDIR,'outputs-box')
-#OUTPUTS = os.path.join(RUNDIR,'outputs_schism_sink')
+OUTPUTS = os.path.join(RUNDIR,'outputs')
 #If outputs are not in the RUNDIR, set it here:
 #OUTPUTS = /my/path/to/outputs
 
 #--How many separate output chunks for each variable 
-#numfiles = 30
-#numfiles = 28 
 numfiles = 1
-#shiny_extract_all doesn't work if numfiles <2, in that case, use shiny_extract.py
+#numfiles = 4
 
 #Nodes and layers are 0 (Zero) indexed in netCDF files
 #--Nodes
 ##--Box model has 49 nodes, but they should all be the same 
 #which_nodes = [7,28,43]
-#which_nodes = [7,28]
-which_nodes = [10]
+which_nodes = [7]
 ##--SABay has 10240 nodes, these are the ones Zhilong emailed me on 6.13.2023:
 #which_nodes = [823,6000,492,1850,3083,78,2383,3329,4569,5779,5082,4465,6337,7193,8609,9743,2100,2421,2253]
 
 #--Layers
-##--Box model has 10 nz 
-which_layers = [1,2,3,4,5,6,7,8,9,10,11]
-#which_layers = [1]
+##--Box model has 11 layers  
+which_layers = [1,3,5,7,9,11]
 ##--SABay has 15 layers 
-#which_layers = [1,4,9,14]
+#which_layers = [1,5,10,15]
 
 #--CGEM variables
 ##-all of them
-cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1CA','OM1NA','OM1PA','OM2CA','OM2NA','OM2PA','OM1CZ','OM1NZ','OM1PZ','OM2CZ','OM2NZ','OM2PZ','OM1R','OM2R','CDOM','Si','OM1BC','OM2BC','Alk','Tr']
-#script skips extraction for variables not listed in cgem_vars.
+cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','OM2Z','OM1R','OM2R','CDOM','Si','OM1BC','OM2BC','Alk','Tr']
+##--During testing, OM1R=OM2R=OM1BC=OM2BC=0 (but you should check them anyway, occasionally)
+#cgem_vars = ['A','Qn','Qp','Z','NO3','NH4','PO4','DIC','O2','OM1A','OM2A','OM1Z','CDOM','Si','Alk','Tr']
 ##-smaller subset
 #cgem_vars = ['A','Z','NO3','NH4','PO4','O2']
 
@@ -64,8 +59,7 @@ iYr0 = '2007'
 #iYr0 = '2019'
 
 #Debug Python scripts
-debug = False
-#False 
+debug = False 
 
 #Debug R scripts
-Rdebug = False 
+Rdebug = False

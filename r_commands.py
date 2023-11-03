@@ -10,7 +10,6 @@ from setvars import *
 #Directory with original SCHISM_ output
 schismdir = OUTPUTS
 
-#Directory to output timeseries files
 #will go to a .git-ignored directory in the current working directory
 thisdir = os.getcwd()
 outdir = os.path.join(thisdir,"outputs")
