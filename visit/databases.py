@@ -18,10 +18,11 @@ from cgem_vars import *
 #SCHISM outputs here: 
 #filedir = "/rsstu/users/l/lllowe/cgem/sasj_bay_setup/outputs/"
 #filedir = "/rsstu/users/l/lllowe/cgem/cgem-real/outputs/"
-filedir = "/expanse/lustre/scratch/llowe/temp_project/cgem-SA/outputs/"
+#filedir = "/expanse/lustre/scratch/llowe/temp_project/cgem-SA/outputs/"
+filedir = "/expanse/lustre/scratch/llowe/temp_project/cgem-SA-LSC2/outputs/"
 
 #databases go here
-dbfiles = "/expanse/lustre/scratch/llowe/temp_project/CGEM/visit/databases/"
+dbfiles = "/expanse/lustre/scratch/llowe/temp_project/cgem-SA-LSC2/outputs/databases/"
 
 #Check that output directory exists
 if not os.path.exists(filedir):
@@ -32,8 +33,8 @@ if not os.path.exists(dbfiles):
 
 istart = 1
 #iend = 13 
-#Add one because it's python
-iend = 2 
+#How many completed GEN files?
+iend = 17 
 
 #Writes one text file, X.visit, for each variable specified in cgem_vars
 for var in cgem_vars:
@@ -41,7 +42,7 @@ for var in cgem_vars:
     f = open(datafile,"w")
     f = open(datafile,"a")
     print(datafile)
-    for i in range(istart,iend):
+    for i in range(istart,(iend+1)):
         print(i)
         filepath = filedir + var['var'] + "_" + str(i) + ".nc"
         #Python f-string, filepath with newline
