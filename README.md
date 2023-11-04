@@ -14,6 +14,8 @@ module use --append /home/llowe/modulefiles
 module load cgem
 ```
 
+To avoid complications, I recommend creating your own modulefiles.  Content of my module files are available in this repository.
+
 ### VisIt
 
 To use VisIt, you must install the SCHISM plugin locally and set up client-server mode for Expanse.  Instructions are on Expanse:
@@ -30,9 +32,9 @@ ls -a
 
 See [visit-scripts](https://github.com/l3-hpc/visit-scripts/blob/main/README.md) for mini-tutorials and links to videos. 
 
-
 ## Contents
-- [cgem.nml](cgem.nml) - namelist for CGEM
+- [cgem.nml](cgem.nml) - namelist for CGEM used in LSC2 runs
+- [params.nml](params.nml) - namelist for SCHISM used in LSC2 runs
 - [write_initial_conditions.py](write_initial_conditions.py) - writes initial condition files
 - [PYTHON](PYTHON.MD) - instructions for installing pyschism and pylibs
 - env_schism.yml, pyschism.module, env_pylibs.yml, pylibs.module - conda environments and custom modules for pyschism and pylibs
