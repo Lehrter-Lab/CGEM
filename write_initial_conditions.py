@@ -41,8 +41,8 @@ nospA = cgem.get('nosp').get('nospa')
 #number of zooplankton groups
 nospZ = cgem.get('nosp').get('nospz')
 if debug: print(nospA,nospZ)
-#Number of state vars, A/Qn/Qp(nospa), Z(nospz), and the rest(17)
-nf = 3*nospA + nospZ + 17 + 8
+#Number of state vars, A/Qn/Qp(nospa), Z(nospz), and the rest(18)
+nf = 3*nospA + nospZ + 25
 if debug: print('nf',nf)
 
 #get initial conditions
@@ -119,25 +119,49 @@ names.append("DIC")
 ics.append(inits.get('o2_init'))
 names.append("O2")
 
-#!-OM1A: (mmol-C/m3--particulate)
 #! -- Particulate Organic Matter from dead Phytoplankton
-ics.append(inits.get('om1_a_init'))
-names.append("OM1A")
+#!-OM1CA: (mmol-C/m3--particulate)
+ics.append(inits.get('om1ca_init'))
+names.append("OM1CA")
+#!-OM1NA: (mmol-N/m3--particulate)
+ics.append(inits.get('om1na_init'))
+names.append("OM1NA")
+#!-OM1PA: (mmol-P/m3--particulate)
+ics.append(inits.get('om1pa_init'))
+names.append("OM1PA")
 
-#!-OM2A: (mmol-C/m3--dissolved)
-#! -- Dissolved Organic Matter from dead Phytoplankton 
-ics.append(inits.get('om2_a_init'))
-names.append("OM2A")
+#! -- Dissolved Organic Matter from dead Phytoplankton
+#!-OM2CA: (mmol-C/m3--dissolved)
+ics.append(inits.get('om2ca_init'))
+names.append("OM2CA")
+#!-OM2NA: (mmol-N/m3--dissolved)
+ics.append(inits.get('om2na_init'))
+names.append("OM2NA")
+#!-OM2PA: (mmol-P/m3--dissolved)
+ics.append(inits.get('om2pa_init'))
+names.append("OM2PA")
 
-#!-OM1Z:(mmol-C/m3--particulate)
 #! -- Particulate Organic Matter from Zooplankton fecal pellets.
-ics.append(inits.get('om1_z_init'))
-names.append("OM1Z")
+#!-OM1CZ:(mmol-C/m3--particulate)
+ics.append(inits.get('om1cz_init'))
+names.append("OM1CZ")
+#!-OM1NZ:(mmol-N/m3--particulate)
+ics.append(inits.get('om1nz_init'))
+names.append("OM1NZ")
+#!-OM1PZ:(mmol-P/m3--particulate)
+ics.append(inits.get('om1pz_init'))
+names.append("OM1PZ")
 
-#!-OM2Z:(mmol-C/m3--dissolved)
-#!        -- Dissolved Organic Matter from Zooplankton fecal pellets.
-ics.append(inits.get('om2_z_init'))
-names.append("OM2Z")
+#! -- Dissolved Organic Matter from Zooplankton fecal pellets.
+#!-OM2CZ:(mmol-C/m3--dissolved)
+ics.append(inits.get('om2cz_init'))
+names.append("OM2CZ")
+#!-OM2NZ:(mmol-N/m3--dissolved)
+ics.append(inits.get('om2nz_init'))
+names.append("OM2NZ")
+#!-OM2PZ:(mmol-P/m3--dissolved)
+ics.append(inits.get('om2pz_init'))
+names.append("OM2PZ")
 
 #!-OM1R: (mmol-C/m3--particulate)
 #!-- Particulate Organic Matter from river outflow
@@ -172,26 +196,14 @@ names.append("OM2BC")
 ics.append(inits.get('alk_init'))
 names.append("ALK")
 
-#!Tracer
-ics.append(inits.get('tr_init'))
-names.append("TR")
+#!-ALK:  (mmol-HCO3/m3) -- Alkalinity
+ics.append(inits.get('alk_init'))
+names.append("ALK")
 
-ics.append(inits.get('sx1A')*inits.get('om1_a_init'))
-ics.append(inits.get('sy1A')*inits.get('om1_a_init'))
-ics.append(inits.get('sx2A')*inits.get('om2_a_init'))
-ics.append(inits.get('sy2A')*inits.get('om2_a_init'))
-ics.append(inits.get('sx1Z')*inits.get('om1_z_init'))
-ics.append(inits.get('sy1Z')*inits.get('om1_z_init'))
-ics.append(inits.get('sx2Z')*inits.get('om2_z_init'))
-ics.append(inits.get('sy2Z')*inits.get('om2_z_init'))
-names.append('sx1A')
-names.append('sy1A')
-names.append('sx2A')
-names.append('sy2A')
-names.append('sx1Z')
-names.append('sy1Z')
-names.append('sx2Z')
-names.append('sy2Z')
+#!-Tr: Tracer 
+ics.append(inits.get('tr_init'))
+names.append("Tr")
+
 
 if debug: print(len(ics),'ics:',ics)
 if debug: print(len(names),'names:',names)

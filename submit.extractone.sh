@@ -12,4 +12,4 @@ module load cgem
 
 #1 shared node
 #python write_initial_conditions.py 
-python shiny_extract.py 10 > nco-box.sh
+python shiny_extract_one.py 10 > nco-box.sh

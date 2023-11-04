@@ -1,3 +1,4 @@
+#L3 R function to plot from cgem dataframe, organized into lists with Reformat_cgem.R
 listplot <- function(time,rdata){
 
 levels = dim(rdata$data)[1]
