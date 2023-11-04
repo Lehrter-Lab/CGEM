@@ -65,6 +65,34 @@ sbatch submit.nco_extract.sh
 sbatch submit.r.sh
 ```
 
+## Images
+First, get and compile [ser2par](https://github.com/lisalenorelowe/ser2par) if you don't have it already. Put the executable in the CGEM/visit directory.  
+```
+cd ~
+git clone https://github.com/lisalenorelowe/ser2par.git
+cd ser2par
+module load cpu/0.15.4
+module load gcc/9.2.0
+module load openmpi/3.1.6
+source s2p_compile.csh 
+cp ser2par $SCRATCH/CGEM/visit
+```
+
+Modify setpaths.py and cgem_vars.py.  Create databases:
+```
+$SCRATCH/CGEM/visit
+python databases.py
+```
+
+To make all the images:
+```
+cd $SCRATCH/CGEM/visit
+sbatch s2p_run.csh
+```
+
+
+
+
 ## About above scripts
 
 Create a script with ncks commands.  The Python script just prints out the commands.  Try it, to see what they look like:
