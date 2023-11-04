@@ -33,11 +33,17 @@ ls -a
 See [visit-scripts](https://github.com/l3-hpc/visit-scripts/blob/main/README.md) for mini-tutorials and links to videos. 
 
 ## Contents
+Files in the main repo:
 - [cgem.nml](cgem.nml) - namelist for CGEM used in LSC2 runs
 - [params.nml](params.nml) - namelist for SCHISM used in LSC2 runs
 - [write_initial_conditions.py](write_initial_conditions.py) - writes initial condition files
 - [PYTHON](PYTHON.MD) - instructions for installing pyschism and pylibs
 - env_schism.yml, pyschism.module, env_pylibs.yml, pylibs.module - conda environments and custom modules for pyschism and pylibs
+
+Files in **visit** directory:
+- rm.sh - to remove garbage without accidentally deleting other things, `source rm.sh`
+- cgem_vars.py - defines a list of CGEM parameters with default names and colormap settings.  To run scripts with a smaller subset of variables, redefine cgem_vars.  
+- 
 
 ## Preprocessing
 Python script [write_initial_conditions.py](write_initial_conditions.py) writes initial condition files(GEN...ic) required to run SCHISM.  To use:
