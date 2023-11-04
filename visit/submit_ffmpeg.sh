@@ -6,5 +6,6 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=128
 #SBATCH --account=ncs124
-#SBATCH -t 05:00:00
+#SBATCH -t 48:00:00
+module load cgem
 python ffmpeg.py 

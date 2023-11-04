@@ -28,7 +28,8 @@ if not os.path.exists(IMAGES):
 #nframes = '13700'
 #nframes = '730'
 #nframes = '8759'
-nframes = '300'
+#nframes = '300'
+nframes = '4079'
 start = '0'
 which_plots = ['_surface','_near_bottom']
 
@@ -36,11 +37,11 @@ which_plots = ['_surface','_near_bottom']
 for var in cgem_vars:
     for iplot in which_plots:
         #-r is frame rate, how many images per second.  Increase to make the movie run faster.
-        command = 'ffmpeg -y -r 15 -f image2 -s 1200x1000 -start_number ' + start
+        command = 'ffmpeg -y -r 30 -s 1200x1000 -start_number ' + start
         filename = IMAGES + var['name'] + "/" + var['name'] + iplot + '_%06d.png'
         moviename = IMAGES + var['name'] + iplot + '.mp4'
         command = command + ' -i ' + filename
-        command = command + ' -vframes ' + nframes + ' -vcodec libx264 -crf 25 -pix_fmt yuv420p '
+        command = command + ' -vframes ' + nframes + ' -c:v libx264 -crf 17 -pix_fmt yuv420p '
         command = command + moviename 
         print(command)
         exitcode = subprocess.call(command,shell=True)
@@ -50,5 +51,4 @@ for var in cgem_vars:
             print(command)
             sys.exit()
     
- 
 #ffmpeg -y -r 15 -f image2 -s 1200x800 -start_number $start -i $dirname/$filename%04d.$suffix -vframes $nframes -vcodec libx264 -crf 25  -pix_fmt yuv420p ./$filename.mp4
