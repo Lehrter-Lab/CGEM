@@ -65,6 +65,8 @@ sbatch submit.nco_extract.sh
 sbatch submit.r.sh
 ```
 
+For hybrid coordinates, the NCO scripts can still be used but the R scripts will not work, because it calculates max/mins for plots and will get NA for missing values.
+
 ## Images
 First, get and compile [ser2par](https://github.com/lisalenorelowe/ser2par) if you don't have it already. Put the executable in the CGEM/visit directory.  
 ```
