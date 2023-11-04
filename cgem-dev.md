@@ -57,9 +57,10 @@ squeue -u llowe
 ```
 
 ## Timeseries plots
+For box
 ```
 cd $SCRATCH/CGEM/cnp
-sbatch submit.python.sh #if you don't already have nco
+sbatch submit.extractone.sh #if you don't already have nco
 sbatch submit.nco_extract.sh
 sbatch submit.r.sh
 ```

@@ -1,12 +1,14 @@
-#Makes movies of cgem vars
+#Creates database files for visit
+# *.visit
+# .visit are text files with a list of all files in the database
+#  In this case, X.visit has ? lines, each GEN_X_?.nc
+#Set the variables you want in cgem_vars.py
 
-#Plot CGEM
-#plot_schism_cgem.py
-##--Set path to scripts----
+##--Set path to cgem_vars.py in this directory----
 SCRIPT_PATH = "/expanse/lustre/scratch/llowe/temp_project/CGEM/visit"
-#
+
 import os
-#So it can find setup_visit.py
+#So it can find cgem_vars.py
 import sys
 sys.path.append(SCRIPT_PATH)
 
@@ -30,9 +32,10 @@ if not os.path.exists(dbfiles):
 
 istart = 1
 #iend = 13 
+#Add one because it's python
 iend = 2 
 
-#Images are in separate directories for each varible
+#Writes one text file, X.visit, for each variable specified in cgem_vars
 for var in cgem_vars:
     datafile = dbfiles + var['name'] + ".visit"
     f = open(datafile,"w")
