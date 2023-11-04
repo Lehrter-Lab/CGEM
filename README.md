@@ -6,7 +6,7 @@ Implementing CGEM in SCHISM
 [General Notes](cgem-dev.md)
 
 
-### [Python and R libraries](#pylibs)
+### Python and R libraries
 
 If you are in the OyBcSt Expanse group, you should have access to my 'cgem' module, containing pylibs, r-netcdf, f90nml, and the nco operators.  To use, do
 ```
@@ -14,7 +14,7 @@ module use --append /home/llowe/modulefiles
 module load cgem
 ```
 
-### [VisIt](#visit)
+### VisIt
 
 To use VisIt, you must install the SCHISM plugin locally and set up client-server mode for Expanse.  Instructions are on Expanse:
 ```
