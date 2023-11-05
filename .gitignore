@@ -5,7 +5,6 @@ saveoutputs*/*
 cgem_extract.sh
 launch.csh
 hydro_extract.sh
-s2p_*
 GEN_hvar*
 cnp/outputs/*
 
