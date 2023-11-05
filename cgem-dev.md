@@ -57,12 +57,21 @@ squeue -u llowe
 ```
 
 ## Timeseries plots
-For box
+For box, one node, currently node=10 (you can change it)
 ```
-cd $SCRATCH/CGEM/cnp
+cd $SCRATCH/CGEM
 sbatch submit.extractone.sh #if you don't already have nco
 sbatch submit.nco_extract.sh
 sbatch submit.r.sh
+```
+
+For larger grids, create a submit script.  First, modify `which_nodes` and other variables in setvars.py, then
+```
+python write_submit_nco.py
+```
+This creates `submit.nco.sh`.  To extract all the timeseries:
+```
+sbatch submit.nco.sh
 ```
 
 For hybrid coordinates, the NCO scripts can still be used but the R scripts will not work, because it calculates max/mins for plots and will get NA for missing values.
