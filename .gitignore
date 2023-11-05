@@ -7,6 +7,7 @@ launch.csh
 hydro_extract.sh
 GEN_hvar*
 cnp/outputs/*
+submit.nco.sh
 
 #python crap
 __pycache__
