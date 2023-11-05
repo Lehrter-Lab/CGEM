@@ -36,9 +36,21 @@ See [visit-scripts](https://github.com/l3-hpc/visit-scripts/blob/main/README.md)
 Files in the main repo:
 - [cgem.nml](cgem.nml) - namelist for CGEM used in LSC2 runs
 - [param.nml](param.nml) - namelist for SCHISM used in LSC2 runs
-- [write_initial_conditions.py](write_initial_conditions.py) - writes initial condition files
+- [write_initial_conditions.py](write_initial_conditions.py) - writes simple initial condition files for CGEM according to cgem.nml
 - [PYTHON](PYTHON.MD) - instructions for installing pyschism and pylibs
 - env_schism.yml, pyschism.module, env_pylibs.yml, pylibs.module - conda environments and custom modules for pyschism and pylibs
+- [rm.sh](rm.sh) - to remove garbage without accidentally deleting important stuff, `source rm.sh`
+- [clean.sh](clean.sh) - to remove garbage **and** everything in the *outputs* directory.
+- [listplot.R](listplot.R) - little R function to make plots based on Rdat files created with Reformat_cgem.R
+- [Reformat_cgem.R](Reformat_cgem.R) - reformats extracted netCDF timeseries files into R databases (rdat files) for plotting and using with Shiny
+- [cosine](cosine.md) - notes for compiling cosine, and how I created the param.nml and chose initial values
+- [write_initial_conditions_cosine.py](write_initial_conditions_cosine.py) - writes simple initial condition files for COSINE
+- [TryCOSINE](TryCOSINE.md) - Link to the video instructions for trying COSINE, with written description of video and list of commands used
+- [write_submit_nco.py](write_submit_nco.py) - writes a SLURM submission script for extracting a timeseries from each node as defined in setvars.py.
+- [setvars.py](setvars.py) - sets paths, variables, nodes, layers, year, debug flags for files in this directory
+- [shiny_extract_one.py](shiny_extract_one.py) - extract time series, rename, and add attributes, use when there is only 1 GEN file, GEN_X_1.nc, takes command line argument, which_node to extract
+- [shiny_extract_all.py](shiny_extract_all.py) - extract time series, rename, and add attributes, used to extract from all GEN files in the directory, GEN_X_*.nc, takes command line argument, which_node to extract
+- and there are a bunch of submit scripts for the above.  Read [cgem-dev](cgem-dev.md).
 
 Files in **visit** directory, in approximate order of use:
 - [setpaths.py](visit/setpaths.py) - Set your paths.  Follow the instructions.
