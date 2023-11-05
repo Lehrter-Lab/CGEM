@@ -4,7 +4,7 @@ I tarred up everything so you can try COSINE on the box model. I just transferre
 
 All steps are recorded in [this YouTube video](https://youtu.be/4LH2LzVSkD0).
 
-Instructions to go with the video:
+These text instructions follow what is shown in the video:
 - go to the scratch directory
 - copy my tarball, untar, cd into directory
 - look at input files
@@ -36,7 +36,7 @@ Instructions to go with the video:
 - To see what is going on, fix the colormap...try to find good limits
 - Change the colormap.  Try to use continuous ones, or it looks like weird stratification
 
-Commands
+These are the commands used.
 ```
 cd /expanse/lustre/scratch/$USER/temp_project
 cp /home/llowe/cosine-box.tar .
