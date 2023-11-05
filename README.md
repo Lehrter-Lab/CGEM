@@ -47,7 +47,7 @@ Files in **visit** directory, in approximate order of use:
 - [parallel_plot_cgem.py](visit/parallel_plot_cgem.py) - Creates types of plots as specified in cgem_vars, but the variables to be plotted are chosen by command line argument, an integer between 0 and 29 (for 30 state variables).  If USE_DB is False, only _1.nc will be plotted.
 - [s2p_commands.txt](visit/s2p_commands.txt) - ser2par looks for this file, containing commands to give each processor.  Number of commands should equal number of cores requested.
 - [s2p_commands.txt.all](visit/s2p_commands.txt.all) - This lists all possible commands, to have a saved copy in case you modify s2p_commands.txt to plot only a couple variables
-- [s2p_run.csh](visit/s2p_run.csh) - submit script for running the plots in serial.  To use, compile ser2par and place executable in this directory.  Instructions are in [cgem_dev](cgem_dev.md).
+- [s2p_run.csh](visit/s2p_run.csh) - submit script for running the plots in serial.  To use, compile ser2par and place executable in this directory.  Instructions are in [cgem-dev](cgem-dev.md).
 - [ffmpeg.py](visit/ffmpeg.py) - Script to create a movie for each image that should have been created if you successfully ran the plotting scripts with the current settings of setpaths and cgem_vars
 - [submit_ffmpeg.sh](visit/submit_ffmpeg.sh) - submit script for running ffmpeg.py
 - [rm.sh](visit/rm.sh) - to remove garbage without accidentally deleting important stuff, `source rm.sh`
