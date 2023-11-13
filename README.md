@@ -1,5 +1,7 @@
 # CGEM
-Implementing CGEM in SCHISM
+Implementing CGEM in SCHISM.
+
+- [CGEM-SCHISM Status Report](CGEM-SCHISM-Report.pdf) (11/11/2023)
 
 ## Running CGEM on Expanse
 
