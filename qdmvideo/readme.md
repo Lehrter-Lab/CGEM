@@ -60,7 +60,7 @@ The colormap legends for each animation are shown here: [QDM Legends](https://gi
 (The coloring for temperature colormap is different in those images, because I decided I liked RedWhiteBlue better than RedYellowBlue after I saved the png for qdmlegends.)
 
 Differences were handled by the following.
-- Temperature: for QDM, did colormap from 10-35(C), for ERA5, from 281.1-308.1(K)
+- Temperature: for QDM, 10-35(C), for ERA5, from 281.1-308.1(K)
 - Precipitation: for QDM, 0-40mm, ERA5 from 0.0-0.04m
 - lat/lon is clipped to the lat/lon bounds of QDM data.
   
