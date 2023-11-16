@@ -12,7 +12,7 @@ I was expecting the plots to look similar, and they look very different to me. B
 
 I'm wondering if you can point me to sets of 'equivalent data', and check my assumptions (below) about units and limits?  There are lots of things I could be doing wrong - units, time, or other assumptions.
 
-I think it will be a cool visualization...if I can plot the right things!  I have session files and templates saved, so I'm hoping it will be no big deal to just rerun the VisIt scripts to redo the animations with the different data.
+I think it will be a cool visualization...if I can plot the right things!  I have session files and templates saved, so I'm hoping it will be no big deal to just rerun the VisIt scripts to redo the animations with the different data and swap the mp4's in Camtasia (video editing software).
 
 ## Video and Data
 Here is the [video on YouTube](https://youtu.be/YM3yH8AL8MA).
@@ -70,6 +70,6 @@ The pressure is on the same scale, but both are multiplied by -1 so that high pr
 ![Transparent viz example](https://github.com/oybcst/CGEM/blob/main/qdmvideo/volumeplusstuff.png)
 
 ## Hurricanes
-Hurricane data is NOAA best track shapefiles loaded into VisIt with the same sessionfile settings, saved as transparent images, and overlain on the videos for the dates/durations of the events using Camtasia, a video editing software.
+Hurricane data is NOAA best track shapefiles loaded into VisIt with the same sessionfile settings, saved as transparent images, and overlain on the videos for the dates/durations of the events using Camtasia.
 
 
