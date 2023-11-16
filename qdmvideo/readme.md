@@ -8,7 +8,7 @@ I'm out of time for OyBcSt, but I am working on a NASA project, replicating Bria
 
 That made me wonder if QDM data would be better than NAM, and then I just went down a rabbit hole...
 
-I was expecting the plots in the video to look similar, and the data I picked is not comparable to ERA5 data. 
+I was expecting the plots in the video to look similar, but the data I picked is not comparable to ERA5 data. 
 
 So why is it still here?  I think the visualization is cool, and I can swap other data into the Camtasia project to 'fix' it.  So it is just an example of using VisIt for this kind of data.  The VisIt session files and scripts are in this directory.
 
