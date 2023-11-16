@@ -46,6 +46,7 @@ ts = datetime.datetime.utcfromtimestamp(tcur).strftime('%Y-%m-%d')
 ERA5
 ```
 t_start = calendar.timegm(datetime.datetime(1900, 1, 1, 0, 0, 0).timetuple())
+tscale = 3600.
 tcur = m.times[state]*tscale + t_start
 ts = datetime.datetime.utcfromtimestamp(tcur).strftime('%Y-%m-%d')
 ```
