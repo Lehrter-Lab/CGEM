@@ -19,7 +19,7 @@ Here is the [video on YouTube](https://youtu.be/YM3yH8AL8MA).
 
 ERA5 data is from Henrique's Box account, **ERA5-single-daily-2015to2022-selected**.  
 
-QDM is from some of your data that I have stored on OSN.  I downloaded some of these and random just to test some viz for VisIt office hours...unfortunately I forget which ones, but hopefully the metada tells you:
+QDM is from your data that I have stored on OSN.  I downloaded some of these at random just to test some viz for VisIt office hours...unfortunately I forget which ones, but hopefully the metadata tells you.  I think it might not tell the whole story, because there is EC-Earth3 'ssp126' and 'ssp585', and the metadata doesn't say which.
 ```
 // global attributes:
                 :CDI = "Climate Data Interface version 2.0.2 (https://mpimet.mpg.de/cdi)" ;
