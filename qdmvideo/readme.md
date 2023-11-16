@@ -57,6 +57,8 @@ I checked the start dates of each file with Python and got 1/1/2015 at 12 noon f
 The colormap legends for each animation are shown here: [QDM Legends](https://github.com/oybcst/CGEM/blob/main/qdmvideo/qdmlegends.png) and 
 [ERA5 Legends](https://github.com/oybcst/CGEM/blob/main/qdmvideo/eralegends.png).
 
+(The coloring for temperature colormap is different in those images, because I decided I liked RedWhiteBlue better than RedYellowBlue after I saved the png for qdmlegends.)
+
 Differences were handled by the following.
 - Temperature: for QDM, did colormap from 10-35(C), for ERA5, from 281.1-308.1(K)
 - Precipitation: for QDM, 0-40mm, ERA5 from 0.0-0.04m
