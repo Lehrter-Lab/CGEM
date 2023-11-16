@@ -8,7 +8,7 @@ I'm out of time for OyBcSt, but I am working on a NASA project, replicating Bria
 
 That made me wonder if your QDM data would be better than NAM, and then I just went down a rabbit hole...
 
-I was expecting the plots to look similar, and they look very different to me. But I just used some of your data without paying attention (see below), so I'm guessing what I picked is not comparable to ERA5 data.  
+I was expecting the plots in the video to look similar, and they look very different to me. But I just used some of your data without paying attention (see below), so I'm guessing what I picked is not comparable to ERA5 data.  
 
 I'm wondering if you can point me to sets of 'equivalent data', and check my assumptions (below) about units and limits?  There are lots of things I could be doing wrong - units, time, or other assumptions.
 
