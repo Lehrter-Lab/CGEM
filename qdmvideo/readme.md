@@ -66,7 +66,9 @@ Differences were handled by the following.
   
 Above are just unit conversions, but the wind vectors were much bigger for the ERA5 data, and I scaled them down.  So that part of the visualization is a misrepresentation. I was surprised there seem to be the same number of wind vectors, because I thought ERA5 was supposed to be lower resolution.
 
-The pressure is on the same scale, but both are multiplied by -1 so that high pressure is transparent.  (Visualization is consistent with the data, just a visualization trick to make it do what I want.)  Precipitation and pressure both have colormaps with ramped transparency, elevated with constant height.  You can see better what I did from this example:
+The pressure is on the same scale, but both are multiplied by -1 so that high pressure is transparent.  (Visualization is consistent with the data, just a visualization trick to make it do what I want.)  Precipitation and pressure both have colormaps with ramped transparency, elevated with constant height.  
+
+You can see better what I did from this example, about the 'elevated with constant height':
 ![Transparent viz example](https://github.com/oybcst/CGEM/blob/main/qdmvideo/volumeplusstuff.png)
 
 ## Hurricanes
